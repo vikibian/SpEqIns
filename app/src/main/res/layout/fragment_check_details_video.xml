@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.CheckDetailsVideoFragment">
+
+    <SurfaceView
+        android:id="@+id/check_detail_vedio_sv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/check_detail_vedio_bt_play"
+        android:background="@drawable/btn_record_play"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/check_detail_vedio_sv"
+        app:layout_constraintEnd_toEndOf="@+id/check_detail_vedio_sv"
+        app:layout_constraintStart_toStartOf="@+id/check_detail_vedio_sv"
+        app:layout_constraintTop_toTopOf="@+id/check_detail_vedio_sv" />
+
+
+    <!--&lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="@string/hello_blank_fragment" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

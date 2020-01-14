@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:stv="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.MeInformActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/about_appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/me_inform_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@color/colorPrimary"
+                    app:titleTextColor="@color/white"
+                    android:gravity="center"
+                    app:theme="@style/AppTheme.PopupOverlay"
+                    app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                    <TextView
+                        android:id="@+id/me_inform_toolbar_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1233"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="25dp"
+
+                        />
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.allen.library.SuperTextView
+                    android:id="@+id/meinform_stv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    stv:sLeftTextString="用户名:"
+                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextColor="@color/black"/>
+
+                <com.allen.library.SuperTextView
+                    android:id="@+id/meinform_stv_emai"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    stv:sLeftTextString="邮箱:"
+                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextColor="@color/black"/>
+
+
+                <com.allen.library.SuperTextView
+                    android:id="@+id/meinform_stv_telephone"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    stv:sLeftTextString="电话号码:"
+                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextColor="@color/black"/>
+
+                <top.androidman.SuperButton
+                    android:layout_marginTop="60dp"
+                    android:id="@+id/meinform_sb_back"
+                    android:layout_height="40dp"
+                    android:layout_width="100dp"
+                    android:layout_gravity="center"
+                    app:corner="10dp"
+                    app:text="返回"
+                    app:textSize="20dp"
+                    app:textColor="@color/black"
+                    app:color_normal="@color/div_white" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.neu.test.layout.SlideLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RadioGroup
+        android:id="@+id/rg_detection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#d7d0f5">
+        <RadioButton
+            android:id="@+id/rb_detection_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:textSize="15sp"
+            android:text="合格"/>
+        <!--android:checked="true"-->
+
+        <RadioButton
+            android:id="@+id/rb_detection_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:textSize="15sp"
+            android:text="不合格"/>
+    </RadioGroup>
+
+     <TextView
+         android:id="@+id/tv_detection_item"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="content"
+         android:background="#f5d4a3" >
+     </TextView>
+
+     <TextView
+         android:id="@+id/tv_detection_menu"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="删除"
+         android:background="#ff0000"
+         android:gravity="center"
+         android:padding="2dp"/>
+
+
+
+ </com.neu.test.layout.SlideLayout>
+
+

@@ -1,6 +1,8 @@
 package com.neu.test.activity;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,11 +27,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.neu.test.R;
+import com.neu.test.adapter.SuggestionGridViewAdapter;
 import com.neu.test.entity.LocationService;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class SuggestionActivity extends AppCompatActivity {
-
-
 
     private ImageView iv_photo;
     private ImageView iv_video;
@@ -45,6 +51,11 @@ public class SuggestionActivity extends AppCompatActivity {
     final int maxNum = 500;
     final int REQUEST_VIDEO = 99;
 
+    //测试多张图片显示，测试Gridview组件
+    private GridView gridView;
+    private SuggestionGridViewAdapter suggestionGridViewAdapter;
+    public  List<String> pathlistOfPhoto;
+
 
 
 
@@ -56,14 +67,30 @@ public class SuggestionActivity extends AppCompatActivity {
         tv_suggetion = findViewById(R.id.tv_suggetion);//显示不合格项
         btn_get_gps = findViewById(R.id.btn_get_gps);//获取定位按钮
         btn_submit_suggestion = findViewById(R.id.btn_submit_suggestion);
-        iv_photo = findViewById(R.id.iv_photo);//显示拍摄图片
-        iv_video = findViewById(R.id.iv_video);//显示视频第一帧
-        iv_plus = findViewById(R.id.iv_plus);//显示视频第一帧
+
+        //获取drawble目录下的plus图片  但是好像获取的文件有问题， 设置一个空的String字符也可以 在Adapter设置图片显示的那里已经实现了
+        Resources resources = getResources();
+        String path = resources.getResourceTypeName(R.drawable.plus) + "/" + resources.getResourceEntryName(R.drawable.plus)+".png";
+
+        pathlistOfPhoto = new ArrayList<>();
+        //测试多张图片显示效果
+        gridView = findViewById(R.id.suggestion_gridview);
+        suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
+        gridView.setAdapter(suggestionGridViewAdapter);
+        //Collections.reverse(pathlistOfPhoto);
+
+
+
+        //这是在使用一张图片时的代码
+//        iv_photo = findViewById(R.id.iv_photo);//显示拍摄图片
+//        iv_video = findViewById(R.id.iv_video);//显示视频第一帧
+//        iv_plus = findViewById(R.id.iv_plus);//显示视频第一帧
+
+
         tv_mygps = findViewById(R.id.tv_mygps);
         et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
         tv_num = findViewById(R.id.tv_num);//计算字数框
         tv_mygps.setMovementMethod(ScrollingMovementMethod.getInstance());//显示定位  里面的参数给TextView添加滚动条  设置滚动方式
-
         Log.e("ERROR","Suggesion crate");
 
         Intent intent = getIntent();
@@ -91,15 +118,17 @@ public class SuggestionActivity extends AppCompatActivity {
                 finish();
             }
         });
-        iv_plus.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.add(0,1,0,"相册");
-                menu.add(0,2,0,"拍照");
-                menu.add(0,3,0,"录像");
-                menu.add(0,4,0,"取消");
-            }
-        });
+
+//        iv_plus.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+//            @Override
+//            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//                menu.add(0,1,0,"相册");
+//                menu.add(0,2,0,"拍照");
+//                menu.add(0,3,0,"录像");
+//                menu.add(0,4,0,"取消");
+//            }
+//        });
+
         et_suggestion.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -119,6 +148,12 @@ public class SuggestionActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * 虽然menu选项在SuggestionGridViewAdapter.java文件中但是一样可以使用这里的选择事件按钮
+     * @param item
+     * @return
+     */
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
@@ -145,91 +180,106 @@ public class SuggestionActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //测试多张图片显示
+        String imgString = new String();
+
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_VIDEO) {
-                final String imgString = data.getStringExtra("imagePath");
-                String videoString = data.getStringExtra("path");
-                iv_video.setVisibility(View.VISIBLE);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        iv_video.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
-                                    if(bitmap == null){
-                                        Log.e ("ERROR","Bitmap失败");
-                                    }
-                                    if(bitmap != null){
-                                        Log.e ("ERROR","Bitmap成功");
-                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
-                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-                                        bitmap.recycle();
-                                        bitmap = null;
-                                        iv_video.setImageBitmap(bitmap1);
-                                        iv_video.setPivotX(iv_photo.getWidth()/2);
-                                        iv_video.setPivotY(iv_photo.getHeight()/2);
-                                        iv_video.setRotation(0);
-                                        iv_video.setVisibility(View.VISIBLE);
+                imgString = data.getStringExtra("imagePath");
+                //不需要旋转90度  需要在设置图片的时候进行判断
+                //在此处需要更新图片数组
+                pathlistOfPhoto.add(imgString);
+                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
+                gridView.setAdapter(suggestionGridViewAdapter);
 
-                                        Log.e ("ERROR","Bitmap更换成功");
-                                    }
-
-                                }
-                                catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                    }
-                }).start();
+//                final String imgString = data.getStringExtra("imagePath");
+//                String videoString = data.getStringExtra("path");
+//                iv_video.setVisibility(View.VISIBLE);
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        iv_video.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
+//                                    if(bitmap == null){
+//                                        Log.e ("ERROR","Bitmap失败");
+//                                    }
+//                                    if(bitmap != null){
+//                                        Log.e ("ERROR","Bitmap成功");
+//                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
+//                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
+//                                        bitmap.recycle();
+//                                        bitmap = null;
+//                                        iv_video.setImageBitmap(bitmap1);
+//                                        iv_video.setPivotX(iv_photo.getWidth()/2);
+//                                        iv_video.setPivotY(iv_photo.getHeight()/2);
+//                                        iv_video.setRotation(0);
+//                                        iv_video.setVisibility(View.VISIBLE);
+//
+//                                        Log.e ("ERROR","Bitmap更换成功");
+//                                    }
+//
+//                                }
+//                                catch (Exception e){
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//
+//                    }
+//                }).start();
 
             }
             if (requestCode == RequestCor) {
-
                 Log.e("ERROR","对接成功");
-                final String imgString = data.getStringExtra("imagePath");
-                iv_photo.setVisibility(View.VISIBLE);
-                Log.e("ERROR",imgString);
+                imgString = data.getStringExtra("imagePath");
+                //在此处需要更新图片数组
+                pathlistOfPhoto.add(imgString);
+                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
+                gridView.setAdapter(suggestionGridViewAdapter);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        iv_photo.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
-                                    if(bitmap == null){
-                                        Log.e ("ERROR","Bitmap失败");
-                                    }
-                                    if(bitmap != null){
-                                        Log.e ("ERROR","Bitmap成功");
-                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
-                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-                                        bitmap.recycle();
-                                        bitmap = null;
-                                        iv_photo.setImageBitmap(bitmap1);
-                                        iv_photo.setPivotX(iv_photo.getWidth()/2);//设置锚点
-                                        iv_photo.setPivotY(iv_photo.getHeight()/2);
-                                        iv_photo.setRotation(90);
-                                        iv_photo.setVisibility(View.VISIBLE);
 
-                                        Log.e ("ERROR","Bitmap更换成功");
-                                    }
-
-                                }
-                                catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
-                    }
-                }).start();
-
+//                final String imgString = data.getStringExtra("imagePath");
+//                iv_photo.setVisibility(View.VISIBLE);
+//                Log.e("ERROR",imgString);
+//
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        iv_photo.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
+//                                    if(bitmap == null){
+//                                        Log.e ("ERROR","Bitmap失败");
+//                                    }
+//                                    if(bitmap != null){
+//                                        Log.e ("ERROR","Bitmap成功");
+//                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
+//                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
+//                                        bitmap.recycle();
+//                                        bitmap = null;
+//                                        iv_photo.setImageBitmap(bitmap1);
+//                                        iv_photo.setPivotX(iv_photo.getWidth()/2);//设置锚点
+//                                        iv_photo.setPivotY(iv_photo.getHeight()/2);
+//                                        iv_photo.setRotation(90);
+//                                        iv_photo.setVisibility(View.VISIBLE);
+//
+//                                        Log.e ("ERROR","Bitmap更换成功");
+//                                    }
+//
+//                                }
+//                                catch (Exception e){
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        });
+//
+//                    }
+//                }).start();
 
             }
         }
@@ -375,7 +425,7 @@ public class SuggestionActivity extends AppCompatActivity {
                // sb.append("\nStreet : ");// 街道
               //  sb.append(location.getStreet());
 
-                sb.append("\n");// 地址信息
+                sb.append("");// 地址信息:\n
                 sb.append(location.getAddrStr());
 
                 sb.append("\n经度 : ");// 经度

@@ -428,7 +428,7 @@ public class SuggestionActivity extends AppCompatActivity {
                 sb.append("");// 地址信息:\n
                 sb.append(location.getAddrStr());
 
-                sb.append("\n经度 : ");// 经度
+                sb.append("   经度 : ");// 经度
                 sb.append(location.getLongitude());
                 sb.append(" 纬度 : ");// 纬度
                 sb.append(location.getLatitude());

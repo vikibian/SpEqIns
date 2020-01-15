@@ -57,8 +57,8 @@ public class CheckDetailsPhotoFragment extends Fragment {
         photoPath = pictureActivity.checkdetailsPhoto;
 
         //真机上的图片位置
-        //photoPaths.add("/storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
-        //photoPaths.add("/storage/emulated/0/DCIM/Camera/1578971327735IMG.jpg");
+//        photoPaths.add("/storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
+//        photoPaths.add("/storage/emulated/0/DCIM/Camera/1578971327735IMG.jpg");
 
         /**
          * 这是AndroidStudio模拟器上测试图片的位置

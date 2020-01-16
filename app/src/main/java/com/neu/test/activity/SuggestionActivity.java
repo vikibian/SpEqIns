@@ -55,6 +55,8 @@ public class SuggestionActivity extends AppCompatActivity {
     private GridView gridView;
     private SuggestionGridViewAdapter suggestionGridViewAdapter;
     public  List<String> pathlistOfPhoto;
+    //测试视频和图片的显示分开，因为在缩小时他们的方向不同，旋转的角度不同
+    public static String videoPath = new String();
 
 
 
@@ -187,6 +189,7 @@ public class SuggestionActivity extends AppCompatActivity {
             if (requestCode == REQUEST_VIDEO) {
                 imgString = data.getStringExtra("imagePath");
                 //不需要旋转90度  需要在设置图片的时候进行判断
+                videoPath = imgString;
                 //在此处需要更新图片数组
                 pathlistOfPhoto.add(imgString);
                 suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);

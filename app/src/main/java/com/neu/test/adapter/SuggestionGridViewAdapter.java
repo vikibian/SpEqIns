@@ -29,7 +29,6 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
     private Context context;
     private List<String> photoList ;
     private int flag;
-    private static int pos = 1000;
 
     //记录List的大小
     private int num ;
@@ -113,7 +112,7 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
                                     viewHolder.imageView.setPivotX(viewHolder.imageView.getWidth()/2);//设置锚点
                                     viewHolder.imageView.setPivotY(viewHolder.imageView.getHeight()/2);
 
-
+                                    //利用flag进行视频截图第一帧的显示
 //                                    if (flag == 1){
 //                                        viewHolder.imageView.setRotation(0);
 //                                        flag = 0 ;
@@ -129,7 +128,6 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
                                     }
 
                                     viewHolder.imageView.setVisibility(View.VISIBLE);
-
 
                                 }
 

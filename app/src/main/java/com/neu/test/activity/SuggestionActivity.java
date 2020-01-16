@@ -390,7 +390,7 @@ public class SuggestionActivity extends AppCompatActivity {
     }
 
 
-    /*****
+    /**
      *
      * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
      *
@@ -414,7 +414,6 @@ public class SuggestionActivity extends AppCompatActivity {
                // sb.append(location.getLocTypeDescription());
                // sb.append("\nradius : ");// 半径
                 //sb.append(location.getRadius());
-
                 //sb.append("\nCountryCode : ");// 国家码
                 //sb.append(location.getCountryCode());
                // sb.append("\nCountry : ");// 国家名称
@@ -422,7 +421,7 @@ public class SuggestionActivity extends AppCompatActivity {
                // sb.append("\ncitycode : ");// 城市编码
                 //sb.append(location.getCityCode());
                 //sb.append("\ncity : ");// 城市
-           //     sb.append(location.getCity());
+                //sb.append(location.getCity());
                // sb.append("\nDistrict : ");// 区
                 //sb.append(location.getDistrict());
                // sb.append("\nStreet : ");// 街道
@@ -435,7 +434,6 @@ public class SuggestionActivity extends AppCompatActivity {
                 sb.append(location.getLongitude());
                 sb.append(" 纬度 : ");// 纬度
                 sb.append(location.getLatitude());
-
 
                // sb.append("\nUserIndoorState: ");// *****返回用户室内外判断结果*****
                // sb.append(location.getUserIndoorState());
@@ -463,7 +461,7 @@ public class SuggestionActivity extends AppCompatActivity {
                     sb.append(location.getGpsAccuracyStatus());// *****gps质量判断*****
                     sb.append("\ndescribe : ");
                     sb.append("gps定位成功");
-                } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
+                 } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
                     // 运营商信息
                     if (location.hasAltitude()) {// *****如果有海拔高度*****
                         sb.append("\nheight : ");

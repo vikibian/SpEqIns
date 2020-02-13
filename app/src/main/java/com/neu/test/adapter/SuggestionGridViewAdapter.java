@@ -29,13 +29,15 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
     private Context context;
     private List<String> photoList ;
     private int flag;
-    private static int pos = 1000;
 
     //记录List的大小
     private int num ;
 
     //调用函数  之后可以把函数移动到这个文件里面
     private SuggestionActivity suggestionActivity = new SuggestionActivity();
+
+    //设置视频第一帧图片的旋转方向
+    private String videoPath = new String();
 
     public SuggestionGridViewAdapter(Context applicationContext, List<String> pathlistOfPhoto, int flag){
         this.context = applicationContext;
@@ -56,7 +58,6 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
         photoList.add(path);
 
 
-        //TODO:对于视频和照片没有分清楚，可以考虑用键值对来解决，当flag等于1到时候肯定是pathlistOfPhoto最后一个是视频
     }
 
 
@@ -110,14 +111,23 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
                                     viewHolder.imageView.setImageBitmap(bitmap1);
                                     viewHolder.imageView.setPivotX(viewHolder.imageView.getWidth()/2);//设置锚点
                                     viewHolder.imageView.setPivotY(viewHolder.imageView.getHeight()/2);
-                                    if (flag == 1){
+
+                                    //利用flag进行视频截图第一帧的显示
+//                                    if (flag == 1){
+//                                        viewHolder.imageView.setRotation(0);
+//                                        flag = 0 ;
+//                                    }else if (flag == 0){
+//                                        viewHolder.imageView.setRotation(90);
+//                                    }
+
+                                    //利用视频第一帧图片的路径进行判断
+                                    if (suggestionActivity.videoPath == photoList.get(position)){
                                         viewHolder.imageView.setRotation(0);
-                                        flag = 0 ;
-                                    }else if (flag == 0){
+                                    }else {
                                         viewHolder.imageView.setRotation(90);
                                     }
-                                    viewHolder.imageView.setVisibility(View.VISIBLE);
 
+                                    viewHolder.imageView.setVisibility(View.VISIBLE);
 
                                 }
 

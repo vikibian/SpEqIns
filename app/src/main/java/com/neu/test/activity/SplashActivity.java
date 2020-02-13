@@ -14,6 +14,8 @@ import me.wangyuwei.particleview.ParticleView;
 public class SplashActivity extends AppCompatActivity {
     ParticleView mPvSplash;
     private FrameLayout frameLayout_splash;
+    //public static String baseurl = "http://localhost:8080/WEB1010";
+    public static String baseurl = "http://192.168.1.6:8080/WEB1010";//使用android模拟器测试tomcat服务器时需要是用电脑的ip
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

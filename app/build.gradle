@@ -59,6 +59,20 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     //    闪屏界面粒子效果库
     implementation 'me.wangyuwei:ParticleView:1.0.4'
+    //    好看的Toast
+    implementation 'com.github.GrenderG:Toasty:1.4.2'
+
+    //Gson封装库
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+//    implementation("com.squareup.okhttp3:okhttp:4.3.1")
+
+//    implementation 'com.zhy:okhttputils:2.6.2'
+    implementation files('libs/okhttp-3.4.1.jar')
+    implementation files('libs/okio-1.9.0.jar')
+    implementation files('libs/okhttputils-2_6_2.jar')
+
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //    implementation 'androidx.appcompat:appcompat:1.1.0'
     //    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

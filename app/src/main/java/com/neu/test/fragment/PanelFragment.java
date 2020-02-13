@@ -13,7 +13,7 @@ import com.kelin.scrollablepanel.library.ScrollablePanel;
 import com.neu.test.R;
 import com.neu.test.util.ListContent;
 import com.neu.test.util.ListName;
-import com.neu.test.util.ScrollablePanel1Adapter;
+import com.neu.test.adapter.ScrollablePanel1Adapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,11 @@
 package com.neu.test.activity;
 
 import android.app.AlertDialog;
+import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +19,28 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.entity.DetectionItem;
 import com.neu.test.layout.SlideLayout;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.netBeans.AddTaskBean;
+import com.neu.test.net.netBeans.LoginBean;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
+
 
 public class DetctionActivity extends AppCompatActivity {
+    private static String TAG = "DetctionActivity";
 
     private ListView lv_detection;
     private Button btn_add_detection;
@@ -36,6 +50,10 @@ public class DetctionActivity extends AppCompatActivity {
     int detctionPosition;
     int taskType ;
     int hegeFlag;
+
+    private String[] taskTypes = {"自查","复查","上级","随机"};
+    LayoutInflater layoutInflater ;
+    View textEntryView ;
 
 
     //    @Override
@@ -64,6 +82,11 @@ public class DetctionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detction);
+
+        layoutInflater = LayoutInflater.from(DetctionActivity.this);
+        textEntryView = layoutInflater.inflate(R.layout.detection_dialog, null);
+
+
         lv_detection = findViewById(R.id.lv_detection);
         btn_add_detection = findViewById(R.id.btn_add_detection);
         btn_sure_detection = findViewById(R.id.btn_sure_detection);
@@ -105,20 +128,22 @@ public class DetctionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                LayoutInflater layoutInflater = LayoutInflater.from(DetctionActivity.this);
-                final View textEntryView = layoutInflater.inflate(R.layout.detection_dialog, null);
+//                LayoutInflater layoutInflater = LayoutInflater.from(DetctionActivity.this);
+//                final View textEntryView = layoutInflater.inflate(R.layout.detection_dialog, null);
                 AlertDialog dlg = new AlertDialog.Builder(DetctionActivity.this)
                         .setTitle("输入你要添加的检测项")
                         .setView(textEntryView)
                         .setPositiveButton("确定",new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
-                                itemString = item.getText().toString();
-                                DetectionItem testItem = new DetectionItem(itemString);
-                                listData.add(testItem);
-                                detectionAdapter.notifyDataSetChanged();
-                                lv_detection.invalidate();
+//                                EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
+//                                itemString = item.getText().toString();
+//                                DetectionItem testItem = new DetectionItem(itemString);
+//                                listData.add(testItem);
+//                                detectionAdapter.notifyDataSetChanged();
+//                                lv_detection.invalidate();
+
+                                postTaskAndGetResult();
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -147,6 +172,64 @@ public class DetctionActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+    }
+
+    private void postTaskAndGetResult() {
+
+        String url = SplashActivity.baseurl+"/addTaskServlet";
+        Log.d(TAG,"POST url: "+url);
+
+
+        JSONObject tSchedule = new JSONObject();
+        JSONObject jsonObject = null;
+        try {
+            tSchedule.put("TASKID","123461");
+            tSchedule.put("DEVCLASS","3000");
+            tSchedule.put("DEVID","12345");
+            tSchedule.put("LOGINNAME",LoginActivity.testinputName);
+            tSchedule.put("TASKTYPE",taskTypes[taskType].toString());
+
+            jsonObject = new JSONObject();
+            jsonObject.put("tSchedule", tSchedule);
+            Log.e(TAG,"tSchedule: "+ jsonObject.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, jsonObject, new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Log.e(TAG,"error: "+e.toString());
+                Log.e(TAG,"i: "+i);
+            }
+
+            @Override
+            public void onResponse(String s, int i) {
+                //测试Gson
+                Gson gson = new Gson();
+                AddTaskBean addTaskBean = gson.fromJson(s,AddTaskBean.class);
+                AddTaskBean.ResultBean resultBean = addTaskBean.getResult();
+                String message = resultBean.getMessage();
+
+
+                if(message.equals("添加任务成功")){
+                    String itemString;
+                    EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
+                    itemString = item.getText().toString();
+                    DetectionItem testItem = new DetectionItem(itemString);
+                    listData.add(testItem);
+                    detectionAdapter.notifyDataSetChanged();
+                    lv_detection.invalidate();
+                    Toasty.success(DetctionActivity.this,"添加任务成功！",Toast.LENGTH_SHORT,true).show();
+                } else if(message.equals("操作失败")){
+                    Toasty.error(DetctionActivity.this, "添加任务失败！", Toast.LENGTH_LONG,true).show();
+                }
+
             }
         });
 

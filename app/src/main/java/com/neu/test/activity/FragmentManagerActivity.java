@@ -13,13 +13,16 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.entity.Device;
 import com.neu.test.fragment.CheckFragment;
@@ -27,13 +30,30 @@ import com.neu.test.fragment.MeFragment;
 import com.neu.test.fragment.SearchFragment;
 import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.netBeans.GetTaskBean;
+import com.neu.test.net.netBeans.LoginBean;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
+import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
+
+import static com.neu.test.activity.LoginActivity.inputName;
+import static com.neu.test.net.netBeans.GetTaskBean.*;
 
 
 public class FragmentManagerActivity extends AppCompatActivity {
+
+    private final String TAG = "FragmentManager";
 
 
     private final int SDK_PERMISSION_REQUEST = 127;
@@ -53,6 +73,9 @@ public class FragmentManagerActivity extends AppCompatActivity {
     int dataFlag ;
     int hegeFlag;
 
+    private List<ResultBean.ContentBean> contentBeans ;
+
+
     private Handler mHandler = new Handler();
 
 
@@ -67,6 +90,10 @@ public class FragmentManagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fragment_manager);
 
         initView();
+        //获得任务
+        getTaskByPost();
+
+
         getData();
         initData();
         initListener();
@@ -81,6 +108,57 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
         mBottomBarLayout = (BottomBarLayout) findViewById(R.id.bbl);
 
+    }
+
+
+    private void getTaskByPost() {
+        String url = SplashActivity.baseurl+"/getTaskServlet";
+        Log.d(TAG,"POST url: "+url);
+
+
+        JSONObject user = new JSONObject();
+        try {
+            user.put("username",LoginActivity.testinputName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.e(TAG,"user: "+ user.toString());
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, user, new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Log.e(TAG,"error: "+e.toString());
+                Log.e(TAG,"i: "+i);
+            }
+
+            @Override
+            public void onResponse(String s, int id) {
+                //测试Gson
+                Gson gson = new Gson();
+                GetTaskBean getTaskBean = gson.fromJson(s, GetTaskBean.class);
+
+                ResultBean resultBean = getTaskBean.getResult();
+                String message = resultBean.getMessage();
+                contentBeans = resultBean.getContent();
+
+                if (message.equals("获取任务成功")) {
+                    for (int i = 0; i<contentBeans.size();i++) {
+                        Log.d(TAG, "  "+i+contentBeans.get(i).getTASKTYPE().toString());
+                        //原来的意思是 按照下派任务的类型分为4个类别  分别放到4个List数组中，但是
+                        //如果这样的话，初始化List数组时，会出现问题
+                        //对于取里面数据的解决方法，我觉得可以新建一个方法或者类 传入要查找的任务类型 返回List数组，
+                        //其中返回的List数组中放置的是按照任务类型分开的想要的某一类型的数据
+
+
+                    }
+                } else {
+                    Toast.makeText(FragmentManagerActivity.this, "获取任务失败！", Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
     }
 
 

@@ -45,11 +45,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.TestActivity"></activity>
         <activity
-            android:theme="@style/NoBar"
-            android:name=".activity.CheckDetailsActivity">
-
-        </activity>
+            android:name=".activity.CheckDetailsActivity"
+            android:theme="@style/NoBar"></activity>
         <activity android:name=".activity.PDFActivity" />
         <activity
             android:name=".activity.MeAboutActivity"

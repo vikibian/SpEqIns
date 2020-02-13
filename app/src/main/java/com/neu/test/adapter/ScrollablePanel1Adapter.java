@@ -1,4 +1,4 @@
-package com.neu.test.util;
+package com.neu.test.adapter;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +15,9 @@ import com.kelin.scrollablepanel.library.PanelAdapter;
 import com.neu.test.R;
 import com.neu.test.fragment.PanelFragment;
 import com.neu.test.fragment.ShowSearchedResultFragment;
+import com.neu.test.util.ListContent;
+import com.neu.test.util.ListName;
+import com.neu.test.util.ResultBean;
 
 import java.util.ArrayList;
 import java.util.List;

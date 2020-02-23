@@ -28,6 +28,7 @@ import com.neu.test.activity.SuggestionActivity;
 import com.neu.test.activity.VideoActivity;
 import com.neu.test.util.ImageUtil;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,15 +117,30 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
             String suffix = photoList.get(position).substring( length-3,length);
 
             if (suffix.equals("mp4")) {
-            Log.e (TAG," 视频地址: "+photoList.get(position));
+                Log.e (TAG," 视频地址: "+photoList.get(position));
 
-            Bitmap bitmap = waterMaskVideoPhoto(photoList.get(position));
+                String name = getVideoName(photoList.get(position));
+                String imPath =  Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/"+name+"IMG.jpg";
+                File imFile = new File(imPath);
+                if (imFile.exists()){
+                    Log.e(TAG," 文件存在！");
 
-            Glide
-                    .with(context)
-                    .load(bitmap)
-                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(viewHolder.imageView);
+                    Bitmap bitmap = waterMaskVideoPhoto(name,imPath);
+
+                    Glide
+                        .with(context)
+                        .load(bitmap)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .into(viewHolder.imageView);
+                }else {
+                    Log.e(TAG," 文件不存在！");
+                    Glide
+                            .with(context)
+                            .load(photoList.get(position))
+                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                            .into(viewHolder.imageView);
+                }
+
             } else if (suffix.equals("jpg")||suffix.equals("png")){
                 Log.e(TAG,"jpg suffix: "+suffix);
                 Glide
@@ -162,23 +178,35 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
     /**
      * @date : 2020/2/23
+     * @time : 21:51
+     * @author : viki
+     * @description : 判断是不是系统中早已存在的图片
+     * @param videopath
+     */
+
+    private String getVideoName(String videopath) {
+        String name = videopath.substring(videopath.lastIndexOf("/")+1,
+                videopath.lastIndexOf("V"));
+        Log.e(TAG,"视频地址：lastIndex / "+videopath.lastIndexOf("/")+1);
+        Log.e(TAG,"视频地址：lastIndex . "+videopath.lastIndexOf(".")+1);
+        Log.e(TAG,"视频地址：name: "+name);
+        return name;
+    }
+
+    /**
+     * @date : 2020/2/23
      * @time : 21:24
      * @author : viki
      * @description : 添加水印图片
      */
 
-    private Bitmap waterMaskVideoPhoto(String videopath) {
+    private Bitmap waterMaskVideoPhoto(String name, String imagepath) {
 
         Bitmap bitmap = null;
 
         try {
-            String name = videopath.substring(videopath.lastIndexOf("/")+1,
-                    videopath.lastIndexOf("V"));
-            Log.e(TAG,"视频地址：lastIndex / "+videopath.lastIndexOf("/")+1);
-            Log.e(TAG,"视频地址：lastIndex . "+videopath.lastIndexOf(".")+1);
-            Log.e(TAG,"视频地址：name: "+name);
 
-            String imagepath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/"+name+"IMG.jpg";
+
             Bitmap src = BitmapFactory.decodeFile(imagepath);
             //Bitmap src = BitmapFactory.decodeResource(context.getResources(),R.drawable.plus);
             Bitmap mask = BitmapFactory.decodeResource(context.getResources(),R.mipmap.watermask);

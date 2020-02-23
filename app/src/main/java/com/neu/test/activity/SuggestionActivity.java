@@ -271,7 +271,7 @@ public class SuggestionActivity extends AppCompatActivity {
      * @date : 2020/2/23
      * @time : 20:55
      * @author : viki
-     * @description :
+     * @description :获取相册
      */
 
     private void startPhotoGallery() {
@@ -280,7 +280,7 @@ public class SuggestionActivity extends AppCompatActivity {
                 .choose(MimeType.ofAll())//图片类型
                 .countable(true)//true:选中后显示数字;false:选中后显示对号
                 .maxSelectable(5)//可选的最大数
-                .capture(true)//选择照片时，是否显示拍照
+                //.capture(true)//选择照片时，是否显示拍照
                 //参数1 true表示拍照存储在共有目录，false表示存储在私有目录；
                 // 参数2与 AndroidManifest中authorities值相同，用于适配7.0系统 必须设置
                 //"com.neu.testimageload.fileprovider"

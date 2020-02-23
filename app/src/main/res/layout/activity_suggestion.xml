@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:divider="@color/gray"
     tools:context=".activity.SuggestionActivity">
 
     <LinearLayout
@@ -67,6 +68,14 @@
     </LinearLayout>
 
 
+    <View
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/gray"
+        android:layout_width="match_parent"
+        android:layout_height="2dp">
+
+    </View>
 
     <LinearLayout
         android:orientation="horizontal"

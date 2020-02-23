@@ -59,12 +59,12 @@ public class PDFActivity extends AppCompatActivity {
         btn_pdf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PDFActivity.this,FragmentManagerActivity.class);
-                intent.putExtra("taskType",j);
-                intent.putExtra("hegeFlag",hegeFlag);
-                intent.putExtra("position",dataFlag);
+                //Intent intent = new Intent(PDFActivity.this,FragmentManagerActivity.class);
+//                intent.putExtra("taskType",j);
+//                intent.putExtra("hegeFlag",hegeFlag);
+//                intent.putExtra("position",dataFlag);
                 finish();
-                startActivity(intent);
+                //startActivity(intent);
 
 
             }
@@ -90,10 +90,17 @@ public class PDFActivity extends AppCompatActivity {
         paint.setTextSize(11);//36
         for ( int i = 0 ;i<resultData.size();i++){
             String text1 = null;
-            text1 = resultData.get(i).getItemContent();
+            text1 = resultData.get(i).getCHECKCONTENT();
             canvas.drawText(text1, leftMargin, titleBaseLine, paint);
             String text2 = null;
-            text2 = resultData.get(i).getResultStatus();
+
+            //进行选项状态的判断 如果前一个界面没有点击是否合格的选项则设置为空
+            if (resultData.get(i).getResultStatus()==null){
+                text2 = " ";
+            }else {
+                text2 = resultData.get(i).getResultStatus();
+            }
+
             titleBaseLine = titleBaseLine + 11;
             canvas.drawText(text2, leftMargin, titleBaseLine, paint);
             titleBaseLine = titleBaseLine + 11;

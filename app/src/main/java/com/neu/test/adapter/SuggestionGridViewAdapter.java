@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
+import android.os.Environment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -15,16 +18,23 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.neu.test.R;
 import com.neu.test.activity.PictureActivity;
 import com.neu.test.activity.SuggestionActivity;
 import com.neu.test.activity.VideoActivity;
+import com.neu.test.util.ImageUtil;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SuggestionGridViewAdapter extends BaseAdapter {
+    private static String TAG = "SuggestionAdapter";
 
     private Context context;
     private List<String> photoList ;
@@ -49,13 +59,17 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
         photoList = new ArrayList<>();
         for (int i=0;i<pathlistOfPhoto.size();i++){
+            //Log.d ("photoList position"," "+photoList.get(i));
             photoList.add(pathlistOfPhoto.get(i).toString());
         }
         Collections.reverse(photoList);
+        //photoList.add("/storage/emulated/0/DCIM/Camera/1581774108382IMG.jpg");
         //获取drawble目录下的plus图片  但是好像获取的文件有问题
         Resources resources = context.getResources();
-        String path = resources.getResourceTypeName(R.drawable.plus) + "/" + resources.getResourceEntryName(R.drawable.plus)+".png";
+        String path = resources.getResourceTypeName(R.drawable.plus3) + "/" + resources.getResourceEntryName(R.drawable.plus3)+".png";
         photoList.add(path);
+        Log.e ("plus2 "," "+path);
+        Log.e ("photoList size"," "+photoList.size());
 
 
     }
@@ -83,65 +97,54 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.gridview_item,null);
             viewHolder = new ViewHolder(convertView);
-
-
-            if (position == photoList.size()-1){
-                Bitmap  bitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.plus);
-                viewHolder.imageView.setImageBitmap(bitmap1);
-            }else {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        viewHolder.imageView.post(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                Bitmap bitmap = BitmapFactory.decodeFile(photoList.get(position));
-                                Log.e("多张图片显示","  : "+"  位置："+position);//+photoList.get(position)
-                                if(bitmap == null){
-                                    Log.e ("ERROR","Bitmap失败");
-
-                                }
-                                if(bitmap != null){
-                                    //Log.e ("ERROR","Bitmap成功");
-                                    int scale = suggestionActivity.reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
-                                    Bitmap bitmap1 = suggestionActivity.PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-                                    bitmap.recycle();
-                                    bitmap = null;
-                                    viewHolder.imageView.setImageBitmap(bitmap1);
-                                    viewHolder.imageView.setPivotX(viewHolder.imageView.getWidth()/2);//设置锚点
-                                    viewHolder.imageView.setPivotY(viewHolder.imageView.getHeight()/2);
-
-                                    //利用flag进行视频截图第一帧的显示
-//                                    if (flag == 1){
-//                                        viewHolder.imageView.setRotation(0);
-//                                        flag = 0 ;
-//                                    }else if (flag == 0){
-//                                        viewHolder.imageView.setRotation(90);
-//                                    }
-
-                                    //利用视频第一帧图片的路径进行判断
-                                    if (suggestionActivity.videoPath == photoList.get(position)){
-                                        viewHolder.imageView.setRotation(0);
-                                    }else {
-                                        viewHolder.imageView.setRotation(90);
-                                    }
-
-                                    viewHolder.imageView.setVisibility(View.VISIBLE);
-
-                                }
-
-                            }
-                        });
-                    }
-                }).start();
-            }
-
-
             convertView.setTag(viewHolder);
         }else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+        Log.e("图片地址：",photoList.get(position));
+
+        if (position == (photoList.size()-1)){
+            Log.e ("position"," "+(photoList.size()-1));
+            Log.e ("== "," 判断加号图片"+(photoList.size()-1));
+            //Glide.with(context).load(R.drawable.plus).into(viewHolder.imageView);
+            Glide.with(context).load(R.drawable.plus3).into(viewHolder.imageView);
+
+        }else if (position<(photoList.size()-1)){
+            Log.e ("Glide"," Glide显示图片:"+position);
+            int length = photoList.get(position).length();
+            String suffix = photoList.get(position).substring( length-3,length);
+
+            if (suffix.equals("mp4")) {
+            Log.e (TAG," 视频地址: "+photoList.get(position));
+
+            Bitmap bitmap = waterMaskVideoPhoto(photoList.get(position));
+
+            Glide
+                    .with(context)
+                    .load(bitmap)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(viewHolder.imageView);
+            } else if (suffix.equals("jpg")||suffix.equals("png")){
+                Log.e(TAG,"jpg suffix: "+suffix);
+                Glide
+                        .with(context)
+                        .load(photoList.get(position))
+                        .transform(new RotateTransformation(context, 0f))
+                        .into(viewHolder.imageView);
+            }else {
+                Log.e(TAG,"else suffix: "+suffix);
+                //加载其他图片类型
+                Glide
+                        .with(context)
+                        .load(photoList.get(position))
+                        .transform(new RotateTransformation(context, 0f))
+                        .into(viewHolder.imageView);
+            }
+
+        }
+
+        //Glide.with(context).load(R.drawable.plus).into(viewHolder.imageView);
 
         viewHolder.imageView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
@@ -157,6 +160,42 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * @date : 2020/2/23
+     * @time : 21:24
+     * @author : viki
+     * @description : 添加水印图片
+     */
+
+    private Bitmap waterMaskVideoPhoto(String videopath) {
+
+        Bitmap bitmap = null;
+
+        try {
+            String name = videopath.substring(videopath.lastIndexOf("/")+1,
+                    videopath.lastIndexOf("V"));
+            Log.e(TAG,"视频地址：lastIndex / "+videopath.lastIndexOf("/")+1);
+            Log.e(TAG,"视频地址：lastIndex . "+videopath.lastIndexOf(".")+1);
+            Log.e(TAG,"视频地址：name: "+name);
+
+            String imagepath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/"+name+"IMG.jpg";
+            Bitmap src = BitmapFactory.decodeFile(imagepath);
+            //Bitmap src = BitmapFactory.decodeResource(context.getResources(),R.drawable.plus);
+            Bitmap mask = BitmapFactory.decodeResource(context.getResources(),R.mipmap.watermask);
+            Log.e(TAG," mask宽度： "+mask.getWidth());
+            Log.e(TAG," mask高度度： "+mask.getHeight());
+
+            Bitmap suoxiao = ThumbnailUtils.extractThumbnail(mask,200,200);
+            Log.e(TAG," 缩小后mask宽度： "+suoxiao.getWidth());
+            Log.e(TAG," 缩小后mask高度度： "+suoxiao.getHeight());
+
+            bitmap = ImageUtil.createWaterMaskCenter(src,suoxiao);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return bitmap;
+    }
 
 
     class ViewHolder{
@@ -164,6 +203,35 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
         public ViewHolder(View view){
             imageView = view.findViewById(R.id.gridview_item_photo);
+        }
+    }
+
+    static class RotateTransformation extends BitmapTransformation {
+
+        private float rotateRotationAngle = 0f;
+
+        public RotateTransformation(Context context, float rotateRotationAngle) {
+            super();
+
+            this.rotateRotationAngle = rotateRotationAngle;
+        }
+
+        @Override
+        protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+            Matrix matrix = new Matrix();
+
+            matrix.postRotate(rotateRotationAngle);
+
+            return Bitmap.createBitmap(toTransform, 0, 0, toTransform.getWidth(), toTransform.getHeight(), matrix, true);
+        }
+
+        public String getId() {
+            return "rotate" + rotateRotationAngle;
+        }
+
+        @Override
+        public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
+
         }
     }
 }

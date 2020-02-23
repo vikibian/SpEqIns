@@ -1,6 +1,8 @@
 package com.neu.test.entity;
 
-public class Device {
+import java.io.Serializable;
+
+public class Device implements Serializable {
 
 
     public String getDeviceName() {

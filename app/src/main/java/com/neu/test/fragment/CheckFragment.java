@@ -2,6 +2,7 @@ package com.neu.test.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,56 +17,62 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.activity.DetctionActivity;
+import com.neu.test.activity.LoginActivity;
+import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.Device;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.ListItemCallBack;
+import com.neu.test.util.BaseUrl;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
 
 public class CheckFragment extends Fragment {
 
+    private static String TAG = "CheckFragment";
+
     private ListView lv_check;
     CheckAdapter checkAdapter;
-    List<Device> dataDevice;
+    List<Task> tasks;
     BottomBarLayout mBottomBarLayout;
-    Integer taskType;
+    private String taskType;
 
-    public CheckFragment(List<Device> dataDevice, BottomBarLayout bottomBarLayout,int taskType){
-        this.dataDevice = dataDevice;
+
+    public CheckFragment(List<Task> tasks, BottomBarLayout bottomBarLayout){
+        this.tasks = tasks;
         mBottomBarLayout = bottomBarLayout;
-        this.taskType = taskType;
-
     }
 
-//    @Override
-//    public boolean onContextItemSelected(@NonNull MenuItem item) {
-//        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-//        int selectedPosition = ((AdapterView.AdapterContextMenuInfo) item.getMenuInfo()).position;
-//        switch(item.getItemId()){
-//            case 0:
-//                dataDevice.remove(selectedPosition);//选择行的位置
-//                checkAdapter.notifyDataSetChanged();
-//                lv_check.invalidate();
-//
-//                break;
-//            case 1:
-//                break;
-//
-//
-//        }
-//        return super.onContextItemSelected(item);
-//    }
+    /**
+     * @date : 2020/2/22
+     * @time : 10:05
+     * @author : viki
+     * @description : 传入任务类型的参数
+     */
+
+    public CheckFragment(List<Task> tasks, BottomBarLayout bottomBarLayout, String s){
+        this.tasks = tasks;
+        mBottomBarLayout = bottomBarLayout;
+        taskType = s;
+    }
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_check, null);
         lv_check = view.findViewById(R.id.lv_check);
-
-        // mBottomBarLayout.setUnread(0, 20);//设置第一个页签的未读数为20
-        //准备数据
-        //getData();
         //准备BaseAdapter
         checkAdapter = new CheckAdapter();
         //设置Adapter显示列表
@@ -73,15 +80,21 @@ public class CheckFragment extends Fragment {
         lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Device test =dataDevice.get(position);
-                String s = test.getDeviceName();
+                Task test = tasks.get(position);
+                Log.e("CheckFargment"," DEVID  "+tasks.get(position).getDEVID());
+                Log.e("CheckFargment"," TASKID  "+tasks.get(position).getTASKID());
+                Log.e("CheckFargment"," DEVCLASS  "+tasks.get(position).getDEVCLASS());
+                String s = test.getDEVID();
+                String DEVCLASS = test.getDEVCLASS();
                 int taskPosition = position;
-                Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), DetctionActivity.class);
-                intent.putExtra("TITLE",s);
-                intent.putExtra("position",taskPosition);
-                intent.putExtra("taskType",taskType);
-                startActivity(intent);
+                getDetctionData(DEVCLASS,s,test);
+
+//                Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getActivity(), DetctionActivity.class);
+//                intent.putExtra("TITLE",s);
+//                intent.putExtra("position",taskPosition);
+//                intent.putExtra("taskType",taskType);
+//                startActivity(intent);
 
             }
         });
@@ -97,17 +110,37 @@ public class CheckFragment extends Fragment {
 //        });
 
 
-
-
-
-
-
-
-
         return view;
     }
 
+    private void getDetctionData(String devclass, final String title, final Task task) {
+        Map<String, String> map = new HashMap<>();
+        map.put("DEVCLASS",devclass);
+        String url = BaseUrl.BaseUrl+"getCheckContentServlet";
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListItemCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
 
+            @Override
+            public void onResponse(Result<List<DetectionItem>> response, int id) {
+                if(response.getMessage().equals("获取检查项成功")) {
+                    List<DetectionItem> items = response.getContent();
+                    Intent intent = new Intent(getActivity(), DetctionActivity.class);
+                    intent.putExtra("items", (Serializable) items);
+                    intent.putExtra("userName", task.getLOGINNAME());
+                    intent.putExtra("task", task);
+                    intent.putExtra("tasktype",taskType);
+
+                    Log.e(TAG," "+task.getTASKID());
+                    intent.putExtra("TITLE", title);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
 
 
     class CheckAdapter extends BaseAdapter{
@@ -116,19 +149,22 @@ public class CheckFragment extends Fragment {
         //返回集合数据数量
         @Override
         public int getCount() {
-            return dataDevice.size();
+            return tasks.size();
         }
 
         //返回指定下标的数据对象
         @Override
         public Object getItem(int position) {
-            return dataDevice.get(position);
+            return tasks.get(position);
         }
 
         @Override
         public long getItemId(int position) {
             return 0;
         }
+    //        "UNTITD":"",
+    //                "DEVCLASS":""
+    //
 
         /**
          * 返回指定下表对应的item的View对象
@@ -149,7 +185,7 @@ public class CheckFragment extends Fragment {
 
             //根据position设置对应数据
             //获得当前数据对象
-            Device device = dataDevice.get(position);
+            Task task = tasks.get(position);
             TextView tv_check_device = convertView.findViewById(R.id.tv_check_device);
             TextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
@@ -167,19 +203,12 @@ public class CheckFragment extends Fragment {
             tv_check_address.setTextColor(color);
             tv_check_endtime.setTextColor(color);
 
-            tv_check_device.setText(device.getDeviceName());
-            tv_check_address.setText(device.getDeviceAddress());
-            tv_check_endtime.setText(device.getEndTime());
+            tv_check_device.setText(task.getDEVID());
+            tv_check_address.setText(task.getTASKID());
+            tv_check_endtime.setText(task.getTASKTYPE());
             return convertView;
         }
     }
-
-
-
-
-
-
-
 
 
 }

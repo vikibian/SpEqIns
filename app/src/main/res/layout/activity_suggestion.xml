@@ -22,7 +22,7 @@
         <EditText
             android:id="@+id/et_suggestion"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="150dp"
             android:gravity="left|top"
             android:background="@null" />
 
@@ -73,24 +73,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/btn_get_gps"
-            android:layout_marginLeft="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
-            android:text="开始定位"/>
+        <!--<Button-->
+            <!--android:id="@+id/btn_get_gps"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|left"-->
+            <!--android:text="开始定位"/>-->
 
         <TextView
             android:layout_marginLeft="10dp"
             android:id="@+id/tv_mygps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
             android:text=""/>
 
     </LinearLayout>
 
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:id="@+id/tv_mygps"-->
+            <!--android:layout_weight="9"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center|bottom"-->
+            <!--android:text=""/>-->
+
+        <!--<Button-->
+            <!--android:layout_weight="1"-->
+            <!--android:id="@+id/btn_submit_suggestion"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="right|bottom"-->
+            <!--android:text="确定"/>-->
+
+    <!--</LinearLayout>-->
 
     <Button
         android:id="@+id/btn_submit_suggestion"
@@ -98,11 +122,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:text="确定"/>
-
-
-
-
-
 
 
 

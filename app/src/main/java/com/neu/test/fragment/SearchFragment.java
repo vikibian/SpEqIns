@@ -1,7 +1,9 @@
 package com.neu.test.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +18,34 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.andremion.floatingnavigationview.FloatingNavigationView;
+import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.activity.DetctionActivity;
+import com.neu.test.activity.FragmentManagerActivity;
+import com.neu.test.activity.LoginActivity;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SidebarUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SearchFragment extends Fragment implements View.OnClickListener {
+    private static String TAG = "SearchFragment";
 
     private DrawerLayout mDrawerLayout;
     private RelativeLayout searchRightDrawer;
@@ -130,6 +150,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initActivity(View view ) {
+        searchTtoolbarTextview = view.findViewById(R.id.textview_opeator_name);
         mDrawerLayout = view.findViewById(R.id.search_drawerLayout);
         searchRightDrawer = view.findViewById(R.id.search_right_drawer);
         mFloatingNavigationView = view.findViewById(R.id.search_fb);
@@ -144,6 +165,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         MBsp_Checked = view.findViewById(R.id.MBsp_deviceChecked);
         MBsp_User = view.findViewById(R.id.MBsp_deviceUser);
 
+        //设置操作人员
+        searchTtoolbarTextview.setText(LoginActivity.inputName);
 
 
         //search_select_time.setOnClickListener(this);//时间选择Button点击事件设置
@@ -168,11 +191,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 try {
                     if (SidebarUtils.isStartBeforeEnd(starttime,endtime)){
                         mDrawerLayout.closeDrawer(searchRightDrawer);
-                        initFragment();
-                        isDirection_right = false;
-                        flag_check=true;
+
+                        getSearchedData();
+//                        //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
+//                        initFragment();
+//                        isDirection_right = false;
+//                        flag_check=true;
                     }else {
-                        Toast.makeText(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG).show();
+                        Toasty.warning(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG,true).show();
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -186,5 +213,52 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         }
 
+    }
+
+    private void getSearchedData() {
+        String url = BaseUrl.BaseUrl+"selectItemResultServlet";
+        Map<String, String> searchmap = new HashMap<>();
+        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
+        searchmap.put("DEVID","123456");
+
+//        searchmap.put("StartedTime","12345");//起始时间
+//        searchmap.put("EndTime","12345");//终止时间
+//        searchmap.put("DEVCLASS","12345");//设备种类
+//        searchmap.put("DEVCLASS","12345");//合格情况
+//        searchmap.put("DEVCLASS","12345");//检查情况
+//        searchmap.put("DEVCLASS","12345");//检查人员
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(searchmap), new ListTaskCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                System.out.println(e.getMessage());
+                Log.e(TAG," error: "+e.getMessage());
+                Toasty.warning(getContext(),"客官，网络不给力",Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(Result<List<Task>> response, int id) {
+                if(response.getMessage().equals("获取成功")){
+//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
+                    Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
+                    List<Task> tasks = response.getContent();
+                    if(response.getContent().size()==0){
+//                        Toast.makeText(LoginActivity.this,"无数据",Toast.LENGTH_LONG).show();
+                        Log.e("TAG"," response.getContent: "+"无数据");
+                        tasks = new ArrayList<Task>();
+                    }
+                    Toast.makeText(getContext(),"成功",Toast.LENGTH_LONG).show();
+                    //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
+                    initFragment();
+                    isDirection_right = false;
+                    flag_check=true;
+                }
+                else {
+                    Toasty.error(getContext(),"搜索数据失败!",Toast.LENGTH_LONG,true).show();
+
+                }
+            }
+        });
     }
 }

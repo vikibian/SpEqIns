@@ -12,12 +12,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
-import com.neu.test.net.netBeans.LoginBean;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
+import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.net.OkHttp;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.neu.test.util.BaseUrl;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
@@ -31,34 +38,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public static String testinputName = "test";
     public static String testinputPassword = "test";//修改密码界面会用到  先为该参数赋值 方便后面的测试
-    public static int testuserid = 1;//在修改密码界面会用的到
+    public static String testuserid = "1";//在修改密码界面会用的到
 
-    private EditText input_name;
-    private EditText input_password;
-    private Button bt_login;
-    private Button bt_signin;
+    private EditText input_name; //输入用户名
+    private EditText input_password; //输入密码
+    private Button bt_login; //登录
+    private Button bt_signin; //注册
+    String url;  //登录的接口网址
 
     private boolean isSuccess ;
 
-//    private Handler handler = new Handler(){
-//        @Override
-//        public void handleMessage(Message msg) {
-//            if(msg.what == 1){
-//                String s = (String) msg.obj;
-//                Log.d(TAG,"msg.obj: "+ s);
-//                if(s.equals("登录成功")){
-//                    Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
-//                    finish();
-//                    startActivity(intent);
-//                }
-//                else{
-//                    Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_LONG).show();
-//                    input_name.setText(null);
-//                    input_password.setText(null);
-//                }
-//            }
-//        }
-//    };
 
 
     @Override
@@ -84,18 +73,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch(v.getId()){
             case R.id.bt_login:
                 //先注销  方便测试
-                //login();
+                login();
 
                 //临时添加方便测试
-                Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
-                finish();
-                startActivity(intent);
-                break;
-            case R.id.bt_signin:
-                sinup();
 //                Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
 //                finish();
 //                startActivity(intent);
+                break;
+            case R.id.bt_signin:
+                sinup();
+
                 break;
         }
     }
@@ -113,12 +100,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         else{
             inputName = input_name.getText().toString().trim();
             inputPassword = input_password.getText().toString().trim();
-//            new Thread(){
-//                @Override
-//                public void run() {
-//                    InternetRequest(inputName,inputPassword);
-//                }
-//            }.start();
 
             getDataBypost();
         }
@@ -127,122 +108,54 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getDataBypost() {
-        String url = SplashActivity.baseurl+"/loginServlet";
+        url = BaseUrl.BaseUrl+"loginServlet";
         Log.d(TAG,"POST url: "+url);
+        Map<String, String> map = new HashMap<>();
+        map.put("username",inputName);
+        map.put("password",inputPassword);
+        Log.e(TAG,"map: "+ map.toString());
 
 
-        JSONObject user = new JSONObject();
-        try {
-            user.put("username",inputName);
-            user.put("password",inputPassword);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String gson = new Gson().toJson(map);
+        Log.e(TAG,"gson: "+ gson);
 
-        Log.e(TAG,"user: "+ user.toString());
         OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, user, new StringCallback() {
+        okHttp.postBypostString(url, gson, new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
-                Log.e(TAG,"error: "+e.toString());
-                Log.e(TAG,"i: "+i);
+                System.out.println(e.getMessage());
+                Log.e("error"," "+e.toString());
+//                Toast.makeText(LoginActivity.this,"客官，网络不给力",Toast.LENGTH_LONG).show();
+                Toasty.warning(LoginActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
-            public void onResponse(String s, int i) {
-                //测试Gson
-                Gson gson = new Gson();
-                LoginBean loginBean = gson.fromJson(s, LoginBean.class);
-
-                LoginBean.ResultBean resultBean = loginBean.getResult();
-                LoginBean.ResultBean.ContentBean contentBean = resultBean.getContent();
-
-                userid = contentBean.getUSERID();
-                String message = resultBean.getMessage();
-
-
-//                Log.d(TAG,"s: " +s);
-//                String  messageJson = " ";
-//                try {
-//                    JSONObject resultJson = new JSONObject(s);
-//                    JSONObject userJson = (JSONObject) resultJson.get("result");
-//                    Log.d(TAG,"userJson:"+userJson.toString());
-//                    messageJson = userJson.getString("message");
-//                    Log.d(TAG,"messageJson:"+messageJson);
-//
-//                    //获取userid
-//                    JSONObject content = (JSONObject) userJson.get("content");
-//                    userid = content.getInt("USERID");
-//                    Log.d(TAG,"userid:"+userid);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
-
-                if(message.equals("登录成功")){
+            public void onResponse(Result<List<Task>> response, int id) {
+                if(response.getMessage().equals("登录成功")){
+//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
+                    Toasty.success(LoginActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
+                    List<Task> tasks = response.getContent();
+                    if(response.getContent().size()==0){
+//                        Toast.makeText(LoginActivity.this,"无数据",Toast.LENGTH_LONG).show();
+                        Log.e("TAG"," response.getContent: "+"无数据");
+                        tasks = new ArrayList<Task>();
+                    }
+                    Toast.makeText(LoginActivity.this,"成功",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
-                    finish();
+                    intent.putExtra("userTask", (Serializable) tasks);
+                    Log.e("TAG"," tasks: "+tasks.size());
+                    intent.putExtra("userName",inputName);
                     startActivity(intent);
-                } else if(message.equals("密码错误")){
-                    Toasty.error(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_LONG,true).show();
-                    input_name.setText(null);
-                    input_password.setText(null);
+                    finish();
                 }
+                else {
+                    Toasty.error(LoginActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
 
+                }
             }
         });
     }
 
-
-//    private void InternetRequest(String inputName,String inputPassword){
-//        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-//        //String postUrl = "http://apis.juhe.cn/mobile/get";
-//        //String postUrl = "http://i2hc9f.natappfree.cc/WEB1010/LoginServlet";
-//        String postUrl = SplashActivity.baseurl+"/loginServlet";
-//
-//        Map<String,String> map = new HashMap<String, String>();
-//        map.put("username",inputName);
-//        map.put("password",inputPassword);
-//        JSONObject jsonObject = new JSONObject(map);
-//        Log.d(TAG,"map: "+map.toString());
-//
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postUrl,jsonObject,new Response.Listener<JSONObject>() {
-//
-//            @Override
-//            public void onResponse(JSONObject jsonObject) {
-//                Log.e("response-->" , jsonObject.toString());
-//                try {
-//                    JSONObject result = (JSONObject) jsonObject.get("result");
-//                    String s1 = result.getString("message");
-//                    Log.d(TAG,"s1: "+s1);
-//                    Message message = Message.obtain();
-//                    message.what = 1;
-//                    message.obj = s1;
-//                    handler.sendMessage(message);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                System.out.println("suc");
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e("response-->" , error.getMessage());
-//                System.out.println("fal");
-//            }
-//        }) {
-//
-//            @Override
-//            public Map<String,String> getHeaders() throws AuthFailureError {
-//                HashMap<String,String> heads = new HashMap<String,String>();
-//                heads.put("Accept","application/json");
-//                heads.put("Content-Type","application/json;charset=UTF-8");
-//                return heads;
-//            }
-//        };
-//        queue.add(jsonObjectRequest);
-//    }
 
 
     /**

@@ -19,12 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
-import com.neu.test.net.netBeans.SignupBean;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseUrl;
 
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
@@ -109,73 +114,58 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void getDataByPost() {
-        String url = SplashActivity.baseurl+"/registerServlet";
+        String url = BaseUrl.BaseUrl +"registerServlet";
         Log.d(TAG,"POST url: "+url);
         JSONObject jsonObject = null;
 
-        JSONObject user = new JSONObject();
-        userId = userId+1;
-        Log.d(TAG,"userID: "+userId);
-        //传入的数据不全
-        try {
-            user.put("USERID",signup_name.getText().toString());//userId
-            user.put("LOGINNAME",signup_name.getText().toString());//signup_name.getText().toString()
-            user.put("LOGINPWD",signup_password.getText().toString());//signup_password.getText().toString()
-            user.put("UNTITD","");
-            user.put("DEVCLASS","");
+        Map<String, String> map = new HashMap<>();
+        map.put("USERID",signup_name.getText().toString());
+        map.put("LOGINNAME",signup_name.getText().toString());
+        map.put("LOGINPWD",signup_password.getText().toString());
+        map.put("UNTITD","");
+        map.put("DEVCLASS","");
+        Log.e(TAG,"map: "+ map.toString());
+        String user = new Gson().toJson(map);
 
-            jsonObject = new JSONObject();
-            jsonObject.put("user",user);
-            Log.e(TAG,"jsonObject: "+ jsonObject.toString());
+        Map<String, String> usermap = new HashMap<>();
+        usermap.put("user",user);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, jsonObject, new StringCallback() {
+        okHttp.postBypostString(url, new Gson().toJson(usermap), new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
-
+                System.out.println(e.getMessage());
+                Log.e("error"," "+e.getMessage());
+//                Toast.makeText(LoginActivity.this,"客官，网络不给力",Toast.LENGTH_LONG).show();
+                Toasty.warning(SignupActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
-            public void onResponse(String s, int i) {
-                Gson gson = new Gson();
-                SignupBean signupBean = gson.fromJson(s,SignupBean.class);
-                SignupBean.ResultBean resultBean = signupBean.getResult();
-                String message = resultBean.getMessage();
+            public void onResponse(Result<List<Task>> response, int id) {
+                if(response.getMessage().equals("注册成功")){
+//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
+                    Toasty.success(SignupActivity.this,"注册成功!",Toast.LENGTH_LONG,true).show();
 
-//                    result = s;
-//                    Log.d(TAG,"s: " +s);
-//                    Log.d(TAG,"reponse: " +result);
-//
-//                    String  messageJson = " ";
-//                    Log.d(TAG,"message result:"+result);
-//                    try {
-//                        JSONObject resultJson = new JSONObject(result);
-//                        JSONObject userJson = (JSONObject) resultJson.get("result");
-//                        Log.d(TAG,"userJson:"+userJson.toString());
-//                        messageJson = userJson.getString("message");
-//                        Log.d(TAG,"messageJson:"+messageJson);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+                    if(response.getContent().size()==0){
+                        Toast.makeText(SignupActivity.this,"无数据",Toast.LENGTH_LONG).show();
+                        Log.e("TAG"," response.getContent: "+"无数据");
 
-
-                if (message.equals("注册成功")){
+                    }
                     successCreated();
                     Toasty.success(getBaseContext(),"注册成功！",Toast.LENGTH_SHORT,true).show();
-                }else if (message.equals("用户名已注册")){
+                } else if (response.getMessage().equals("用户名已注册")){
                     Toasty.warning(getBaseContext(), "该用户名已注册！",Toast.LENGTH_SHORT,true).show();
-                } else if (message.equals("提交失败")){
+                } else if (response.getMessage().equals("提交失败")){
                     Toasty.warning(getBaseContext(), "创建用户信息失败！",Toast.LENGTH_SHORT,true).show();
                 }
+
             }
         });
 
 
     }
+
 
     private void signupFailed() {
         Toasty.warning(getBaseContext(), "用户信息填写不全，创建失败！", Toast.LENGTH_LONG,true).show();

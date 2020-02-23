@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class VideoActivity extends AppCompatActivity {
+    private static String TAG = "VideoActivity";
 
     private boolean mStartedFlag = false; //录像中标志
     private MediaRecorder mRecorder = null ;
@@ -58,22 +59,9 @@ public class VideoActivity extends AppCompatActivity {
 
     public static String checkDetailsVideoPath;
 
+    private String abDate;
 
-//
-//    Handler handler = new Handler();
-//    Runnable runnable = new Runnable() {
-//        @Override
-//        public void run() {
-//            timer++;
-//            if(timer<maxSec){
-//                handler.postDelayed(this,1000);
-//            }
-//            else {
-//                stopRecord();
-//                System.currentTimeMillis();
-//            }
-//        }
-//    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,7 +200,8 @@ public class VideoActivity extends AppCompatActivity {
             //设置记录会话的最大持续时间（毫秒）
             mRecorder.setMaxDuration(30 * 1000);
             path = Environment.getExternalStorageDirectory()+"/DCIM/Video/";
-            String impName = getDate()+"VIDEO"+".mp4";
+            abDate = getDate();
+            String impName = abDate+"VIDEO"+".mp4";
             if (path != null) {
                 File dir = new File(path);
                 if (!dir.exists()) {
@@ -220,6 +209,7 @@ public class VideoActivity extends AppCompatActivity {
                 }
                 File file = new File(dir,impName);  //创建文件对象
                 path = file.getAbsolutePath();
+                Log.e(TAG,"path ab : "+ path);
 
                 checkDetailsVideoPath = path;
 
@@ -255,7 +245,7 @@ public class VideoActivity extends AppCompatActivity {
                 mCamera=null;
                 mBtnPlay.setVisibility(View.VISIBLE);
                 Bitmap newBitmap = getVideoThumb(path);
-                String impName = System.currentTimeMillis()+"IMG"+".jpg";
+                String impName = abDate+"IMG"+".jpg";
                 imgPath = bitmap2File(newBitmap,impName);
                 mLlRecordOp.setVisibility(View.VISIBLE);
             }
@@ -271,7 +261,7 @@ public class VideoActivity extends AppCompatActivity {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(data,0,data.length);//根据拍照获得的数据创建位图
                         camera.stopPreview();//停止预览
                         String srtImgPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/";
-                        String impName = System.currentTimeMillis()+"IMG"+".jpg";
+                        String impName = abDate+"IMG"+".jpg";
                         //获取sd中图片的位置
                         File appDir = new File(srtImgPath);
                         if(!appDir.exists()){ //如果目录不存在就创建
@@ -284,7 +274,7 @@ public class VideoActivity extends AppCompatActivity {
                         Uri uri = Uri.fromFile(file);
                         try {//保存拍到的图片
                             FileOutputStream fos = new FileOutputStream(file);  //创建一个输出流对象
-                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);  //图片压缩
+                            bitmap.compress(Bitmap.CompressFormat.JPEG,50,fos);  //图片压缩
                             fos.flush();//缓冲区全部写入输出流
                             fos.close();;
                         }
@@ -377,7 +367,7 @@ public class VideoActivity extends AppCompatActivity {
             camera.stopPreview();//停止预览
             //设置路径
             String srtImgPath = Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera/";
-            String impName = System.currentTimeMillis()+"IMG"+".jpg";
+            String impName = abDate+"IMG"+".jpg";
 
             //获取sd中图片的位置
             File appDir = new File(srtImgPath);

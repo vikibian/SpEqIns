@@ -2,6 +2,7 @@ package com.neu.test.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -59,6 +60,7 @@ public class SlideLayout extends FrameLayout {
         contentView = findViewById(R.id.tv_detection_item);
 
         menuView = findViewById(R.id.tv_detection_menu);
+        Log.e("SideLayout"," "+menuView.getTextAlignment());
 
         rb_detection_1 = findViewById(R.id.rb_detection_1);
         rb_detection_2 = findViewById(R.id.rb_detection_2);

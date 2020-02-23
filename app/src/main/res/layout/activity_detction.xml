@@ -6,6 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".activity.DetctionActivity"
     android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="标题"-->
+            <!--android:textSize="20sp"/>-->
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </FrameLayout>
+
     <ListView
         android:id="@+id/lv_detection"
         android:layout_width="match_parent"
@@ -36,5 +64,7 @@
             android:layout_gravity="right"
             android:text="确定"/>
     </LinearLayout>
+
+
 
 </LinearLayout>

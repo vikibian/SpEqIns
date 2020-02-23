@@ -7,6 +7,7 @@
 
     <ImageView
         android:id="@+id/gridview_item_photo"
+        android:scaleType="centerInside"
         android:layout_width="125dp"
         android:layout_height="125dp" />
 

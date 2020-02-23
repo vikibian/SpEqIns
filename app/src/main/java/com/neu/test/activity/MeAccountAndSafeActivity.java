@@ -14,12 +14,15 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
-import com.neu.test.net.netBeans.ResetPasswordBean;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseUrl;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
@@ -134,70 +137,46 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
         } else if(!newpassword.equals(confirmnewpassword)){
             Toasty.error(this, "新密码输入不一致！",Toast.LENGTH_SHORT,true).show();
         } else {
-            getDataByPost();
+            getDataByPost(LoginActivity.testuserid,LoginActivity.inputName,me_ac_sa_newpassword.getText().toString());
         }
     }
 
-    private void getDataByPost() {
-        String url = SplashActivity.baseurl+"/resetPsdServlet";
+    private void getDataByPost(String testuserid, String testinputName, String pwd) {
+        String url = BaseUrl.BaseUrl +"resetPsdServlet";
         Log.d(TAG,"POST url: "+url);
-        JSONObject jsonObject = null;
+        Map<String, String> user = new HashMap<>();
+        user.put("USERID",testuserid);
+        user.put("LOGINNAME",testinputName);
+        user.put("LOGINPWD",pwd);
+        String stringuser = new Gson().toJson(user);
 
-        JSONObject user = new JSONObject();
-        //传入的数据不全
-        try {
-            user.put("USERID",LoginActivity.testuserid);
-            user.put("LOGINNAME",LoginActivity.testinputName);
-            user.put("LOGINPWD",me_ac_sa_newpassword.getText().toString());
+        Map<String,String> map = new HashMap<>();
+        map.put("user",stringuser);
 
-            jsonObject = new JSONObject();
-            jsonObject.put("user",user);
-            Log.e(TAG,"jsonObject: "+ jsonObject.toString());
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, jsonObject, new StringCallback() {
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
-
+                Log.e("error"," "+e.getMessage());
+//                Toast.makeText(LoginActivity.this,"客官，网络不给力",Toast.LENGTH_LONG).show();
+                Toasty.warning(MeAccountAndSafeActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
-            public void onResponse(String s, int i) {
-                Gson gson = new Gson();
-                ResetPasswordBean resetPasswordBean = gson.fromJson(s, ResetPasswordBean.class);
-                ResetPasswordBean.ResultBean resultBean = resetPasswordBean.getResult();
-                String message = resultBean.getMessage();
-
-
-//                    Log.d(TAG,"s: " +s);
-//
-//                    String  messageJson = " ";
-//                    try {
-//                        JSONObject resultJson = new JSONObject(s);
-//                        JSONObject Json = (JSONObject) resultJson.get("result");
-//                        Log.d(TAG,"Json:"+Json.toString());
-//                        messageJson = Json.getString("message");
-//                        Log.d(TAG,"messageJson:"+messageJson);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-
-                if (message.equals("更改成功")){
+            public void onResponse(Result<List<Task>> response, int id) {
+                if (response.getMessage().equals("更改成功")){
                     Toasty.success(getBaseContext(),"密码修改成功！",Toast.LENGTH_SHORT,true).show();
                     jump();
-                }else if (message.equals("用户名输入错误")){
+                }else if (response.getMessage().equals("用户名输入错误")){
                     Toasty.warning(getBaseContext(), "用户名输入错误！",Toast.LENGTH_SHORT,true).show();
-                } else if (message.equals("操作失败")){
+                } else if (response.getMessage().equals("操作失败")){
                     Toasty.warning(getBaseContext(), "操作失败！",Toast.LENGTH_SHORT,true).show();
                 }
             }
         });
     }
+
 
     private void jump() {
         setResult(RESULT_OK);

@@ -13,42 +13,23 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.gson.Gson;
 import com.neu.test.R;
-import com.neu.test.entity.Device;
+import com.neu.test.entity.Task;
 import com.neu.test.fragment.CheckFragment;
 import com.neu.test.fragment.MeFragment;
 import com.neu.test.fragment.SearchFragment;
 import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
-import com.neu.test.net.OkHttp;
-import com.neu.test.net.netBeans.GetTaskBean;
-import com.neu.test.net.netBeans.LoginBean;
-import com.zhy.http.okhttp.callback.StringCallback;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-
-import es.dmoral.toasty.Toasty;
-import okhttp3.Call;
-
-import static com.neu.test.activity.LoginActivity.inputName;
-import static com.neu.test.net.netBeans.GetTaskBean.*;
 
 
 public class FragmentManagerActivity extends AppCompatActivity {
@@ -66,14 +47,15 @@ public class FragmentManagerActivity extends AppCompatActivity {
     public BottomBarLayout mBottomBarLayout;
 
     private RotateAnimation mRotateAnimation;
-    private List<Device> dataDevice;
-    private List<Device> dataRedevice;
-    private List<Device> dataTask;
-    private List<Device> dataRandom;
-    int dataFlag ;
-    int hegeFlag;
 
-    private List<ResultBean.ContentBean> contentBeans ;
+    private List<Task> selfTasks = new ArrayList<Task>(); //自查任务
+    private List<Task> reselfTasks = new ArrayList<Task>(); //复查任务
+    private List<Task> kingTasks = new ArrayList<Task>(); //上级任务
+    private List<Task> randomTasks = new ArrayList<Task>();  //随机任务
+    private List<Task> allTasks ;  //随机任务
+    String userName;
+
+
 
 
     private Handler mHandler = new Handler();
@@ -91,10 +73,8 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
         initView();
         //获得任务
-        getTaskByPost();
+//        getTaskByPost();
 
-
-        getData();
         initData();
         initListener();
         getPersimmions();
@@ -111,194 +91,147 @@ public class FragmentManagerActivity extends AppCompatActivity {
     }
 
 
-    private void getTaskByPost() {
-        String url = SplashActivity.baseurl+"/getTaskServlet";
-        Log.d(TAG,"POST url: "+url);
+//    private void getTaskByPost() {
+//        String url = SplashActivity.baseurl+"/getTaskServlet";
+//        Log.d(TAG,"POST url: "+url);
+//
+//
+//        JSONObject user = new JSONObject();
+//        try {
+//            user.put("username",LoginActivity.testinputName);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Log.e(TAG,"user: "+ user.toString());
+//        OkHttp okHttp = new OkHttp();
+//        okHttp.postBypostString(url, user.toString(), new StringCallback() {
+//            @Override
+//            public void onError(Call call, Exception e, int i) {
+//                Log.e(TAG,"error: "+e.toString());
+//                Log.e(TAG,"i: "+i);
+//            }
+//
+//            @Override
+//            public void onResponse(String s, int id) {
+//                //测试Gson
+//                Gson gson = new Gson();
+//
+//                if (message.equals("获取任务成功")) {
+//                    for (int i = 0; i<contentBeans.size();i++) {
+//                        Log.d(TAG, "  "+i+contentBeans.get(i).getTASKTYPE().toString());
+//                        //原来的意思是 按照下派任务的类型分为4个类别  分别放到4个List数组中，但是
+//                        //如果这样的话，初始化List数组时，会出现问题
+//                        //对于取里面数据的解决方法，我觉得可以新建一个方法或者类 传入要查找的任务类型 返回List数组，
+//                        //其中返回的List数组中放置的是按照任务类型分开的想要的某一类型的数据
+//
+//
+//                    }
+//                } else {
+//                    Toast.makeText(FragmentManagerActivity.this, "获取任务失败！", Toast.LENGTH_SHORT).show();
+//                }
+//
+//
+//            }
+//        });
+//    }
 
 
-        JSONObject user = new JSONObject();
-        try {
-            user.put("username",LoginActivity.testinputName);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.e(TAG,"user: "+ user.toString());
-        OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, user, new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int i) {
-                Log.e(TAG,"error: "+e.toString());
-                Log.e(TAG,"i: "+i);
-            }
-
-            @Override
-            public void onResponse(String s, int id) {
-                //测试Gson
-                Gson gson = new Gson();
-                GetTaskBean getTaskBean = gson.fromJson(s, GetTaskBean.class);
-
-                ResultBean resultBean = getTaskBean.getResult();
-                String message = resultBean.getMessage();
-                contentBeans = resultBean.getContent();
-
-                if (message.equals("获取任务成功")) {
-                    for (int i = 0; i<contentBeans.size();i++) {
-                        Log.d(TAG, "  "+i+contentBeans.get(i).getTASKTYPE().toString());
-                        //原来的意思是 按照下派任务的类型分为4个类别  分别放到4个List数组中，但是
-                        //如果这样的话，初始化List数组时，会出现问题
-                        //对于取里面数据的解决方法，我觉得可以新建一个方法或者类 传入要查找的任务类型 返回List数组，
-                        //其中返回的List数组中放置的是按照任务类型分开的想要的某一类型的数据
-
-
-                    }
-                } else {
-                    Toast.makeText(FragmentManagerActivity.this, "获取任务失败！", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-    }
-
-
-    public void getData(){
-        dataDevice = new ArrayList<Device>();
-        dataDevice.add(new Device("电梯11","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯12","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯13","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯14","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯15","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯16","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯17","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯18","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯19","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯20","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯21","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯22","沈阳市和平区","2019-09-23"));
-        dataDevice.add(new Device("电梯23","沈阳市和平区","2019-09-23"));
-
-
-
-        dataRedevice = new ArrayList<Device>();
-        dataRedevice.add(new Device("起重机12","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯13","沈阳市沈河区","2019-09-21"));
-        dataRedevice.add(new Device("起重机14","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯15","沈阳市沈河区","2019-09-21"));
-        dataRedevice.add(new Device("起重机16","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯17","沈阳市沈河区","2019-09-21"));
-        dataRedevice.add(new Device("起重机18","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯19","沈阳市沈河区","2019-09-21"));
-        dataRedevice.add(new Device("起重机20","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯21","沈阳市沈河区","2019-09-21"));
-        dataRedevice.add(new Device("起重机22","沈阳市和平区","2019-09-23"));
-        dataRedevice.add(new Device("电梯23","沈阳市沈河区","2019-09-21"));
-
-
-        dataTask = new ArrayList<Device>();
-        dataTask.add(new Device("起重机01","沈阳市浑南区","2019-09-28"));
-        dataTask.add(new Device("电梯34","沈阳市浑南区","2019-09-28"));
-        dataTask.add(new Device("起重机02","沈阳市浑南区","2019-09-28"));
-        dataTask.add(new Device("电梯51","沈阳市浑南区","2019-09-28"));
-        dataTask.add(new Device("起重机03","沈阳市浑南区","2019-09-28"));
-
-        dataRandom = new ArrayList<Device>();
-        dataRandom.add(new Device("起重机88","沈阳市浑南区","2019-09-30"));
-        dataRandom.add(new Device("电梯888","沈阳市沈河区","2019-09-30"));
-        dataRandom.add(new Device("起重机89","沈阳市和平区","2019-09-30"));
-        dataRandom.add(new Device("电梯899","沈阳市皇姑区","2019-09-30"));
-        dataRandom.add(new Device("起重机90","沈阳市铁西区","2019-09-30"));
-        dataRandom.add(new Device("起重机91","沈阳市于洪区","2019-09-30"));
-        dataRandom.add(new Device("电梯991","沈阳市辽中区","2019-09-30"));
-
-
-
-
-    }
+//    public void getData(){
+//        dataDevice = new ArrayList<Device>();
+//        dataDevice.add(new Device("电梯11","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯12","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯13","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯14","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯15","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯16","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯17","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯18","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯19","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯20","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯21","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯22","沈阳市和平区","2019-09-23"));
+//        dataDevice.add(new Device("电梯23","沈阳市和平区","2019-09-23"));
+//
+//
+//
+//        dataRedevice = new ArrayList<Device>();
+//        dataRedevice.add(new Device("起重机12","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯13","沈阳市沈河区","2019-09-21"));
+//        dataRedevice.add(new Device("起重机14","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯15","沈阳市沈河区","2019-09-21"));
+//        dataRedevice.add(new Device("起重机16","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯17","沈阳市沈河区","2019-09-21"));
+//        dataRedevice.add(new Device("起重机18","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯19","沈阳市沈河区","2019-09-21"));
+//        dataRedevice.add(new Device("起重机20","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯21","沈阳市沈河区","2019-09-21"));
+//        dataRedevice.add(new Device("起重机22","沈阳市和平区","2019-09-23"));
+//        dataRedevice.add(new Device("电梯23","沈阳市沈河区","2019-09-21"));
+//
+//
+//        dataTask = new ArrayList<Device>();
+//        dataTask.add(new Device("起重机01","沈阳市浑南区","2019-09-28"));
+//        dataTask.add(new Device("电梯34","沈阳市浑南区","2019-09-28"));
+//        dataTask.add(new Device("起重机02","沈阳市浑南区","2019-09-28"));
+//        dataTask.add(new Device("电梯51","沈阳市浑南区","2019-09-28"));
+//        dataTask.add(new Device("起重机03","沈阳市浑南区","2019-09-28"));
+//
+//        dataRandom = new ArrayList<Device>();
+//        dataRandom.add(new Device("起重机88","沈阳市浑南区","2019-09-30"));
+//        dataRandom.add(new Device("电梯888","沈阳市沈河区","2019-09-30"));
+//        dataRandom.add(new Device("起重机89","沈阳市和平区","2019-09-30"));
+//        dataRandom.add(new Device("电梯899","沈阳市皇姑区","2019-09-30"));
+//        dataRandom.add(new Device("起重机90","沈阳市铁西区","2019-09-30"));
+//        dataRandom.add(new Device("起重机91","沈阳市于洪区","2019-09-30"));
+//        dataRandom.add(new Device("电梯991","沈阳市辽中区","2019-09-30"));
+//    }
 
     private void initData() {
 
+        allTasks = new ArrayList<>();
+
 
         Intent intent = getIntent();
-        if (intent != null) {
-            Log.e("ERROR", "onstart in");
-            int i;
-            dataFlag = intent.getIntExtra("position",-3);
-            i = intent.getIntExtra("taskType",-1);
-            hegeFlag = intent.getIntExtra("hegeFlag",-3);
-            if(dataFlag+hegeFlag>-1){
-                switch (i) {
-                    case 0:
-                        if (hegeFlag == 0)
-                            dataRedevice.add(dataDevice.get(dataFlag));
-                        dataDevice.remove(dataFlag);
-                        break;
-
-                    case 1:
-                        if (hegeFlag == 1)
-                            dataRedevice.remove(dataFlag);
-                        break;
-                    case 2:
-                        if (hegeFlag == 0)
-                            dataRedevice.add(dataTask.get(dataFlag));
-                        dataTask.remove(dataFlag);
-                        break;
-                    case 3:
-                        if (hegeFlag == 0)
-                            dataRedevice.add(dataRandom.get(dataFlag));
-                        dataRandom.remove(dataFlag);
-                        break;
-                }
+        String[] taskType = {"自查","复查","上级","随机"};
+        allTasks = (List<Task>) intent.getSerializableExtra("userTask");
+        userName = intent.getStringExtra("userName");
+        for (int i=0; i<allTasks.size();i++){
+            if (allTasks.get(i).getTASKTYPE().equals("自查")){
+                selfTasks.add(allTasks.get(i));
+            }
+            else if (allTasks.get(i).getTASKTYPE().equals("复查")){
+                reselfTasks.add(allTasks.get(i));
+            }
+            else if (allTasks.get(i).getTASKTYPE().equals("上级")){
+                kingTasks.add(allTasks.get(i));
+            }else {
+                randomTasks.add(allTasks.get(i));
             }
         }
 
-         CheckFragment checkFragment = new CheckFragment(dataDevice,mBottomBarLayout,0);
+         CheckFragment checkFragment = new CheckFragment(selfTasks,mBottomBarLayout,taskType[0]);
          mFragmentList.add(checkFragment);
 
-//        SearchFragment searchFragment = new SearchFragment();
-//
-////        Bundle bundle2 = new Bundle();
-////
-////        bundle2.putString(TabFragment.CONTENT, "查询");
-////
-////        videoFragment.setArguments(bundle2);
-//
-//        mFragmentList.add(searchFragment);
 
-
-
-        CheckFragment reCheck = new CheckFragment(dataRedevice,mBottomBarLayout,1);
+        CheckFragment reCheck = new CheckFragment(reselfTasks,mBottomBarLayout,taskType[1]);
         mFragmentList.add(reCheck);
 
-        CheckFragment taskFrag = new CheckFragment(dataTask,mBottomBarLayout,2);
+        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[2]);
         mFragmentList.add(taskFrag);
 
 
-        CheckFragment randomFrag = new CheckFragment(dataRandom,mBottomBarLayout,3);
+        CheckFragment randomFrag = new CheckFragment(randomTasks,mBottomBarLayout,taskType[3]);
         mFragmentList.add(randomFrag);
 
         SearchFragment searchFragment = new SearchFragment();
 
-//        Bundle bundle2 = new Bundle();
-//
-//        bundle2.putString(TabFragment.CONTENT, "查询");
-//
-//        videoFragment.setArguments(bundle2);
 
         mFragmentList.add(searchFragment);
 
 
         MeFragment meFragment = new MeFragment();
-
-//        Bundle bundle4 = new Bundle();
-//
-//        bundle4.putString(TabFragment.CONTENT, "我的");
-//
-//        meFragment.setArguments(bundle4);
-
         mFragmentList.add(meFragment);
-
-
 
 
         changeFragment(0); //默认显示第一页
@@ -313,32 +246,16 @@ public class FragmentManagerActivity extends AppCompatActivity {
             @Override
 
             public void onItemSelected(final BottomBarItem bottomBarItem, int previousPosition, final int currentPosition) {
-
                 Log.i("MainActivity", "position: " + currentPosition);
-
-
-
                 changeFragment(currentPosition);
-
-
-
                 if (currentPosition == 0) {
-
                     //如果是第一个，即首页
-
                     if (previousPosition == currentPosition) {
-
                         //如果是在原来位置上点击,更换首页图标并播放旋转动画
-
                         if (mRotateAnimation != null && !mRotateAnimation.hasEnded()){
-
                             //如果当前动画正在执行
-
                             return;
-
                         }
-
-
 
                         bottomBarItem.setSelectedIcon(R.mipmap.tab_loading);//更换成加载图标 setResId
 
@@ -410,10 +327,10 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
 
 
-        mBottomBarLayout.setUnread(0, dataDevice.size());//设置第一个页签的未读数为20
-        mBottomBarLayout.setUnread(1, dataRedevice.size());//设置第二个页签的未读数
-        mBottomBarLayout.setUnread(2, dataTask.size());//设置第二个页签的未读数
-        mBottomBarLayout.setUnread(3, dataRandom.size());//设置第二个页签的未读数
+        mBottomBarLayout.setUnread(0, selfTasks.size());//设置第一个页签的未读数为20
+        mBottomBarLayout.setUnread(1, reselfTasks.size());//设置第二个页签的未读数
+        mBottomBarLayout.setUnread(2, kingTasks.size());//设置第二个页签的未读数
+        mBottomBarLayout.setUnread(3, randomTasks.size());//设置第二个页签的未读数
 
 
         // mBottomBarLayout.showNotify(2);//设置第三个页签显示提示的小红点
@@ -454,53 +371,6 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
     }
 
-
-//
-//    @Override
-//
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-//        getMenuInflater().inflate(R.menu.menu_demo, menu);
-//
-//        return true;
-//
-//    }
-//
-//
-//
-//    @Override
-//
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//
-//        int id = item.getItemId();
-//
-//        switch (id) {
-//
-//            case R.id.action_clear_unread:
-//
-//                mBottomBarLayout.setUnread(0, 0);
-//
-//                mBottomBarLayout.setUnread(1, 0);
-//
-//                break;
-//
-//            case R.id.action_clear_notify:
-//
-//                mBottomBarLayout.hideNotify(2);
-//
-//                break;
-//
-//            case R.id.action_clear_msg:
-//
-//                mBottomBarLayout.hideMsg(3);
-//
-//                break;
-//
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//
-//    }
 
 
 

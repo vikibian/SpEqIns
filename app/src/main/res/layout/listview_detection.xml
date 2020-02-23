@@ -4,44 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <TextView
+        android:id="@+id/tv_detection_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="content"
+        android:textSize="15dp"
+        android:background="@color/seashell">
+        <!--android:background="#f5d4a3" >-->
+    </TextView>
+
     <RadioGroup
         android:id="@+id/rg_detection"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#d7d0f5">
+        android:layout_height="wrap_content">
+        <!--android:background="#d7d0f5">-->
         <RadioButton
             android:id="@+id/rb_detection_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="top"
+            android:gravity="center_vertical"
             android:textSize="15sp"
-            android:text="合格"/>
+            android:text="合格"
+            android:background="@color/floralwhite"/>
         <!--android:checked="true"-->
+
 
         <RadioButton
             android:id="@+id/rb_detection_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="top"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="12dp"
             android:textSize="15sp"
-            android:text="不合格"/>
+            android:text="不合格"
+            android:background="@color/floralwhite"/>
     </RadioGroup>
 
-     <TextView
-         android:id="@+id/tv_detection_item"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:text="content"
-         android:background="#f5d4a3" >
-     </TextView>
+
 
      <TextView
          android:id="@+id/tv_detection_menu"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
+         android:layout_marginTop="10dp"
          android:text="删除"
+         android:textAlignment="center"
          android:background="#ff0000"
-         android:gravity="center"
+         android:gravity="center_vertical"
          android:padding="2dp"/>
 
 

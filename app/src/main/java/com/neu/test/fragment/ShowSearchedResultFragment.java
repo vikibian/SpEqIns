@@ -77,17 +77,17 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         View view = inflater.inflate(R.layout.fragment_show_searched_result, container, false);
         mResultBean = (ResultBean) getArguments().getSerializable("result");
 
-        listDatas = new ArrayList<DetectionItem>();
-        listDatas.add(new DetectionItem("现场人员是否具有有效证件。","不合格"));
-        listDatas.add(new DetectionItem("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
-        listDatas.add(new DetectionItem("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
-        listDatas.add(new DetectionItem("电梯内设置的报警装置是否可靠，联系是否畅通。","不合格"));
-        listDatas.add(new DetectionItem("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
-        listDatas.add(new DetectionItem("门防夹保护装置是否有效。","合格"));
-        listDatas.add(new DetectionItem("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
-        listDatas.add(new DetectionItem("限速器校验报告是否在有效期内。","合格"));
-        listDatas.add(new DetectionItem("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
-        listDatas.add(new DetectionItem("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
+//        listDatas = new ArrayList<DetectionItem>();
+//        listDatas.add(new DetectionItem("现场人员是否具有有效证件。","不合格"));
+//        listDatas.add(new DetectionItem("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
+//        listDatas.add(new DetectionItem("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
+//        listDatas.add(new DetectionItem("电梯内设置的报警装置是否可靠，联系是否畅通。","不合格"));
+//        listDatas.add(new DetectionItem("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
+//        listDatas.add(new DetectionItem("门防夹保护装置是否有效。","合格"));
+//        listDatas.add(new DetectionItem("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
+//        listDatas.add(new DetectionItem("限速器校验报告是否在有效期内。","合格"));
+//        listDatas.add(new DetectionItem("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
+//        listDatas.add(new DetectionItem("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
 
         initView(view);
         initContent();
@@ -105,17 +105,17 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
                 Toast.makeText(getContext(),"i "+i+" l "+l,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), CheckDetailsActivity.class);
-                DetectionItem detectionItem = new DetectionItem(" "," ");
+//                DetectionItem detectionItem = new DetectionItem(" "," ");
 
-                if (posFlag == 1){
-                    detectionItem = listDatas_qualified.get(i);
-                }else if (posFlag == 2){
-                    detectionItem = listDatas_unqualified.get(i);
-                }else if(posFlag == 0){
-                    detectionItem = listDatas.get(i);
-                }
+//                if (posFlag == 1){
+//                    detectionItem = listDatas_qualified.get(i);
+//                }else if (posFlag == 2){
+//                    detectionItem = listDatas_unqualified.get(i);
+//                }else if(posFlag == 0){
+//                    detectionItem = listDatas.get(i);
+//                }
 
-                intent.putExtra("result",detectionItem);
+//                intent.putExtra("result",detectionItem);
                 intent.putExtra("result_resultBean",mResultBean);
                 startActivity(intent);
 

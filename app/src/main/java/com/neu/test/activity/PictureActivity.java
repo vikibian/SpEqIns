@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.nanchen.compresshelper.CompressHelper;
 import com.neu.test.R;
 
 import java.io.File;
@@ -80,6 +81,7 @@ public class PictureActivity extends AppCompatActivity {
                     Camera.Parameters parameters = camara.getParameters();//获取摄像头参数
                     parameters.setPictureFormat(PixelFormat.JPEG);//设置图片格式
                     parameters.set("jpeg-quality", 100); //设置图片质量
+                    parameters.setRotation(90);
                     parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);//连续对焦
                     camara.setParameters(parameters);//重新设置摄像头参数
                     camara.startPreview();//开始预览
@@ -163,18 +165,9 @@ public class PictureActivity extends AppCompatActivity {
             }
             File file = new File(appDir,impName);  //创建文件对象
 
-            //设置照片的绝对路径
-            srtImgPath = srtImgPath + impName;
-
-            Uri uri = Uri.fromFile(file);
-            picString = srtImgPath;
-
-
-            checkdetailsPhoto = picString;
-
             try {//保存拍到的图片
                 FileOutputStream fos = new FileOutputStream(file);  //创建一个输出流对象
-                bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);  //图片压缩
+                bitmap.compress(Bitmap.CompressFormat.JPEG,50,fos);  //图片压缩
                 fos.flush();//缓冲区全部写入输出流
                 fos.close();
 
@@ -184,9 +177,34 @@ public class PictureActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Uri uri = Uri.fromFile(file);
+
+            String testphoto = System.currentTimeMillis()+"IMG";
+
+            File newfile = new CompressHelper.Builder(getApplicationContext())
+                    .setMaxWidth(720)  // 默认最大宽度为720
+                    .setMaxHeight(960) // 默认最大高度为960
+                    .setQuality(80)// 默认压缩质量为80
+                    .setFileName(testphoto) // 设置你需要修改的文件名
+                    .setCompressFormat(Bitmap.CompressFormat.PNG) // 设置默认压缩为jpg格式
+                    .setDestinationDirectoryPath(Environment.getExternalStorageDirectory().toString()+"/DCIM/Camera/")
+                    .build()
+                    .compressToFile(file);
+            uri = Uri.fromFile(newfile);
+
+            //设置照片的绝对路径
+            srtImgPath = newfile.getAbsolutePath();
+
+            picString = srtImgPath;
+
+
+            checkdetailsPhoto = picString;
+
+
             //将图片插入到系统图库
             try {
-                MediaStore.Images.Media.insertImage(PictureActivity.this.getContentResolver(),file.getAbsolutePath(),impName,null);
+                MediaStore.Images.Media.insertImage(PictureActivity.this.getContentResolver(),newfile.getAbsolutePath(),testphoto+"IMG.png",null);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

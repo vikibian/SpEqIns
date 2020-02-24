@@ -1,7 +1,6 @@
 package com.neu.test.fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,8 +19,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.andremion.floatingnavigationview.FloatingNavigationView;
 import com.google.gson.Gson;
 import com.neu.test.R;
-import com.neu.test.activity.DetctionActivity;
-import com.neu.test.activity.FragmentManagerActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
@@ -31,7 +28,6 @@ import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SidebarUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,9 +97,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         initsidebar();
 
-        if (flag_check){
-            initFragment();
-        }
+//        if (flag_check){
+//            initFragment();
+//        }
 
         //initFragment();
 
@@ -112,9 +108,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    private void initFragment() {
+    private void initFragment(List<Task> tasks) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        PanelFragment fragment = new PanelFragment();
+        PanelFragment fragment = new PanelFragment(tasks);
         transaction.replace(R.id.fragment_main,fragment);
         transaction.commit();
 
@@ -207,7 +203,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.sidebar_admin_concel:
                 mDrawerLayout.closeDrawer(searchRightDrawer);
-                initFragment();
+                //initFragment(tasks);
                 isDirection_right = false;
                 break;
 
@@ -216,10 +212,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getSearchedData() {
-        String url = BaseUrl.BaseUrl+"selectItemResultServlet";
+        String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
-        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
-        searchmap.put("DEVID","123456");
+        searchmap.put("LOGINNAME",LoginActivity.inputName);
+        searchmap.put("DEVCLASS","3000");
+        searchmap.put("RESULT","0");
+        searchmap.put("TASKTYPE","自查");
+//        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
+//        searchmap.put("DEVID","123456");
 
 //        searchmap.put("StartedTime","12345");//起始时间
 //        searchmap.put("EndTime","12345");//终止时间
@@ -232,25 +232,29 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         okHttp.postBypostString(url, new Gson().toJson(searchmap), new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
-                System.out.println(e.getMessage());
-                Log.e(TAG," error: "+e.getMessage());
+                System.out.println(e.toString());
+                Log.e(TAG," error: "+e.toString());
                 Toasty.warning(getContext(),"客官，网络不给力",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
             public void onResponse(Result<List<Task>> response, int id) {
-                if(response.getMessage().equals("获取成功")){
+                if(response.getMessage().equals("获取任务成功")){
 //                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
                     Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
-                    List<Task> tasks = response.getContent();
+                    List<Task> tasks ;
                     if(response.getContent().size()==0){
-//                        Toast.makeText(LoginActivity.this,"无数据",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"无数据",Toast.LENGTH_LONG).show();
                         Log.e("TAG"," response.getContent: "+"无数据");
                         tasks = new ArrayList<Task>();
+                    }else {
+                        Log.e("TAG"," response.getContent: "+"有数据");
+                        tasks = response.getContent();
+                        Log.e("TAG"," Content: "+tasks.toString());
                     }
                     Toast.makeText(getContext(),"成功",Toast.LENGTH_LONG).show();
                     //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
-                    initFragment();
+                    initFragment(tasks);
                     isDirection_right = false;
                     flag_check=true;
                 }

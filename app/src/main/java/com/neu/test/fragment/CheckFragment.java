@@ -84,7 +84,7 @@ public class CheckFragment extends Fragment {
                 Log.e("CheckFargment"," DEVID  "+tasks.get(position).getDEVID());
                 Log.e("CheckFargment"," TASKID  "+tasks.get(position).getTASKID());
                 Log.e("CheckFargment"," DEVCLASS  "+tasks.get(position).getDEVCLASS());
-                String s = test.getDEVID();
+                String s = test.getUSEUNITNAME();
                 String DEVCLASS = test.getDEVCLASS();
                 int taskPosition = position;
                 getDetctionData(DEVCLASS,s,test);
@@ -203,9 +203,9 @@ public class CheckFragment extends Fragment {
             tv_check_address.setTextColor(color);
             tv_check_endtime.setTextColor(color);
 
-            tv_check_device.setText(task.getDEVID());
-            tv_check_address.setText(task.getTASKID());
-            tv_check_endtime.setText(task.getTASKTYPE());
+            tv_check_device.setText(task.getUSEUNITNAME());
+            tv_check_address.setText(task.getPLACE());
+            tv_check_endtime.setText(task.getDEADLINE());
             return convertView;
         }
     }

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+  <TextView
+    android:id="@+id/tv_detection_item1"
+    android:layout_width="match_parent"
+    android:layout_height="58dp"
+      android:background="@color/seashell" />
+
+  <LinearLayout
+        android:id="@+id/rg_detection_"
+        android:paddingTop="10px"
+        android:paddingBottom="10px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#F5F5F5">
+
+    <RadioGroup
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:orientation="horizontal">
+
+      <RadioButton
+        android:id="@+id/rb_detection_1_1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+          android:background="@color/floralwhite"
+        android:checked="true"
+        android:text="合格"
+        android:textSize="15sp" />
+
+      <RadioButton
+        android:id="@+id/rb_detection_2_2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+          android:background="@color/floralwhite"
+        android:text="不合格"
+        android:textSize="15sp" />
+    </RadioGroup>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+        android:background="@color/floralwhite"
+      android:gravity="right">
+      <Button
+        android:id="@+id/btn_add_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+          android:background="@color/floralwhite"
+        android:text="详细"
+        android:textSize="15sp" />
+    </LinearLayout>
+  </LinearLayout>
+
+ </LinearLayout>
+
+

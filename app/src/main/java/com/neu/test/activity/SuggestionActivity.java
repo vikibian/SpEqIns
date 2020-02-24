@@ -128,7 +128,10 @@ public class SuggestionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         suggestion = intent.getStringExtra("suggestion");
         devclass = intent.getStringExtra("DEVCLASS");
-        tv_suggetion.setText(suggestion);  //写下不合格的检查项
+//        tv_suggetion.setText(suggestion);  //写下不合格的检查项
+
+        String isHege = intent.getStringExtra("isHege");
+        tv_suggetion.setText(suggestion+"----"+isHege);  //写下不合格的检查项
 
 
 

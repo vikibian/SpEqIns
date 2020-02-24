@@ -36,6 +36,7 @@ public class ResultActivity extends AppCompatActivity {
                             //System.out.println(resultData.get(i).getItemContent());
                             TextView tv = new TextView(ResultActivity.this);
                             tv.setText(resultData.get(i).getItemContent()+"\n"+resultData.get(i).getResultStatus());
+//                            tv.setText(resultData.get(i).getCHECKCONTENT()+"\n"); //+resultData.get(i).getResultStatus());
                             sv_result.addView(tv);
                         }
                     }

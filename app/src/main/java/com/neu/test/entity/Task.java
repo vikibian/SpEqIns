@@ -87,4 +87,40 @@ public class Task implements Serializable {
     private String CHECKDATE;  //检测日期
     private String TASKTYPE;  //任务类型
 
+    private String USEUNITNAME;
+    private  String PLACE; //地址
+    private String LONGITUDE;  //经度
+    private String LATITUDE;  //纬度
+
+    public String getUSEUNITNAME() {
+        return USEUNITNAME;
+    }
+
+    public void setUSEUNITNAME(String USEUNITNAME) {
+        this.USEUNITNAME = USEUNITNAME;
+    }
+
+    public String getPLACE() {
+        return PLACE;
+    }
+
+    public void setPLACE(String PLACE) {
+        this.PLACE = PLACE;
+    }
+
+    public String getLONGITUDE() {
+        return LONGITUDE;
+    }
+
+    public void setLONGITUDE(String LONGITUDE) {
+        this.LONGITUDE = LONGITUDE;
+    }
+
+    public String getLATITUDE() {
+        return LATITUDE;
+    }
+
+    public void setLATITUDE(String LATITUDE) {
+        this.LATITUDE = LATITUDE;
+    }
 }

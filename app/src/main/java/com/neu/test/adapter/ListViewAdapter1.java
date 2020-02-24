@@ -59,12 +59,14 @@ public class ListViewAdapter1 extends BaseAdapter {
 
             if (listDatas.get(position).getResultStatus().equals("合格")){
                 viewHolder.mTextView_name.setText(listDatas.get(position).getItemContent());
+                //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
                 viewHolder.mTextView_status.setText("合格");
                 int color = Color.parseColor("#008000");
                 viewHolder.circleImageView.setBackgroundColor(color);
             }
             if (listDatas.get(position).getResultStatus().equals("不合格")){
                 viewHolder.mTextView_name.setText(listDatas.get(position).getItemContent());
+                //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
                 viewHolder.mTextView_status.setText("不合格");
                 int color = Color.parseColor("#ff3333");
                 viewHolder.circleImageView.setBackgroundColor(color);

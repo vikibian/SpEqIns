@@ -106,16 +106,16 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                 Toast.makeText(getContext(),"i "+i+" l "+l,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), CheckDetailsActivity.class);
 //                DetectionItem detectionItem = new DetectionItem(" "," ");
+                DetectionItem detectionItem = new DetectionItem();
+                if (posFlag == 1){
+                    detectionItem = listDatas_qualified.get(i);
+                }else if (posFlag == 2){
+                    detectionItem = listDatas_unqualified.get(i);
+                }else if(posFlag == 0){
+                    detectionItem = listDatas.get(i);
+                }
 
-//                if (posFlag == 1){
-//                    detectionItem = listDatas_qualified.get(i);
-//                }else if (posFlag == 2){
-//                    detectionItem = listDatas_unqualified.get(i);
-//                }else if(posFlag == 0){
-//                    detectionItem = listDatas.get(i);
-//                }
-
-//                intent.putExtra("result",detectionItem);
+                intent.putExtra("result",detectionItem);
                 intent.putExtra("result_resultBean",mResultBean);
                 startActivity(intent);
 

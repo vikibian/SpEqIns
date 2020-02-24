@@ -52,6 +52,7 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int row, int column) {
         int itemType = getItemViewType(row,column);
         Log.d("Adpater ","  itemType:"+itemType);
+        Log.d("Adpater "," 观察行列变化 row: "+row+"  column : "+column);
         switch (itemType){
             case ITEM_NAME:
                 setItemName(column, (ItemNameHolder) holder);
@@ -71,13 +72,14 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
 
     }
 
-
+    //设置左上角的文字
     private void setItemTitle(int row, int column, ItemTitleHolder holder) {
         if(row == 0 && column==0){
             holder.itemTitleTextview.setText("条目");
         }
     }
 
+    //设置第一行的文字
     private void setItemName(int column, ItemNameHolder holder) {
         ListName name = listnames.get(column-1);
         if(name != null&&column>0){
@@ -85,6 +87,7 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
         }
     }
 
+    //设置第一列的文字
     private void setItemRow(final int row, ItemRowHolder holder) {
         holder.itemRowTextView.setText(String.valueOf(row));
         holder.itemRowTextView.setClickable(true);
@@ -96,7 +99,9 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
         });
     }
 
+    //设置剩余位置的文字
     private void setItemContent(final int row,final int column, ItemContentHolder holder) {
+
         final ListContent content = listcontents.get(row-1).get(column-1);
         if(content!=null){
             holder.itemContentTextview.setText(content.getContent());

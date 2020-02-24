@@ -58,7 +58,9 @@ public class CheckDetailsTextFragment extends Fragment {
 
     private void initFragment(View view) {
         textView_inform = view.findViewById(R.id.check_detail_text_detailInform);
-//        textView_inform.setText(mDetectionItem.getItemContent());
+        textView_inform.setText(mDetectionItem.getItemContent());
+        //textView_inform.setText(mDetectionItem.getCHECKCONTENT());
+
 
         textView_time = view.findViewById(R.id.check_detail_time);
         textView_time.setText(resultBean.getTime());

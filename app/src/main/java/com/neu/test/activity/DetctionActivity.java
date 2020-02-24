@@ -3,15 +3,12 @@ package com.neu.test.activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioAttributes;
 import android.os.Bundle;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,7 +47,8 @@ public class DetctionActivity extends AppCompatActivity {
     private ListView lv_detection;
     private Button btn_add_detection;
     private Button btn_sure_detection;
-    DetectionAdapter detectionAdapter;
+    private DetectionAdapter detectionAdapter;
+    private DetectionAdapter1 detectionAdapter1;
     public List<DetectionItem> listData  = new ArrayList<>();; //检测项数据
 
     private String userName;
@@ -58,6 +56,8 @@ public class DetctionActivity extends AppCompatActivity {
     private Task task = new Task();
     private String taskType;
     private String title;
+
+    private  String  isHege="合格";
 
     private Toolbar toolbar;
     private TextView toolbar_textView;
@@ -87,8 +87,12 @@ public class DetctionActivity extends AppCompatActivity {
 
         //String position = "position";
         listData = (List<DetectionItem>) getIntent().getSerializableExtra("items");
-        detectionAdapter = new DetectionAdapter();
-        lv_detection.setAdapter(detectionAdapter);
+        Log.e(TAG," listData: "+listData.size());
+//        detectionAdapter = new DetectionAdapter();
+//        lv_detection.setAdapter(detectionAdapter);
+
+        detectionAdapter1 = new DetectionAdapter1();
+        lv_detection.setAdapter(detectionAdapter1);
 
 
 //        lv_detection.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -200,9 +204,10 @@ public class DetctionActivity extends AppCompatActivity {
         //toolbar.setSubtitle("SubTitle");
 //        toolbar.setTitle("");
         toolbar_textView = (TextView) findViewById(R.id.toolbar_title);
-        toolbar.setTitle(title);
+        toolbar.setTitle(title+"("+taskType+")");
+
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar_textView.setText(taskType);
+        toolbar_textView.setText(" ");
         setSupportActionBar(toolbar);
 //        ActionBar actionBar = getSupportActionBar();
 //        if (actionBar != null){
@@ -322,15 +327,6 @@ public class DetctionActivity extends AppCompatActivity {
 
     }
 
-//    private void listGotData() {
-//
-//        Log.d(TAG,"  listGotData  ");
-//
-//        for (int i =0;i<contentBeans.size();i++){
-//            Log.d(TAG, "  contentBeans: "+contentBeans.get(i).getCHECKCONTENT()+"  i: "+i);
-////            listData.add(new DetectionItem(contentBeans.get(i).getCHECKCONTENT(),"合格"));
-//        }
-//    }
 
     class DetectionAdapter extends BaseAdapter{
 
@@ -377,7 +373,7 @@ public class DetctionActivity extends AppCompatActivity {
                 @Override
 
                 public void onClick(View v) {
-                    jumpToSuggesstionActivity(position);
+                    jumpToSuggesstionActivity(position, isHege);
                     Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
 
                 }
@@ -425,13 +421,95 @@ public class DetctionActivity extends AppCompatActivity {
         }
     }
 
-    private void jumpToSuggesstionActivity(int position) {
+    class DetectionAdapter1 extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return listData.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return listData.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ViewHolder viewHolder=null;
+            //如果没有复用的
+            if(convertView == null){
+                //加载item的布局
+                convertView = View.inflate(DetctionActivity.this, R.layout.listview_detection1, null);
+                viewHolder = new ViewHolder();
+                viewHolder.contentView= (TextView) convertView.findViewById(R.id.tv_detection_item1);
+                viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1_1);
+                viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2_2);
+                viewHolder.btn_add_content = convertView.findViewById(R.id.btn_add_content);
+                convertView.setTag(viewHolder);
+            }
+            else {
+                viewHolder = (ViewHolder) convertView.getTag();
+
+            }
+
+            viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
+
+            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+
+                public void onClick(View v) {
+
+                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
+
+                }
+
+            });
+            viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isHege = "合格";
+                    listData.get(position).setResultStatus("合格");
+                }
+            });
+
+            viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    isHege = "不合格";
+                    listData.get(position).setResultStatus("不合格");
+                }
+            });
+
+            viewHolder.btn_add_content.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    jumpToSuggesstionActivity(position,isHege);
+                }
+            });
+
+            return convertView;
+        }
+    }
+
+
+
+
+
+    private void jumpToSuggesstionActivity(int position, String isHege) {
         //listData.get(position).setResultStatus(status);
         String noItem = listData.get(position).getCHECKCONTENT();
         String devclass = listData.get(position).getDEVCLASS();
         Intent intent = new Intent(DetctionActivity.this, SuggestionActivity.class);
         intent.putExtra("suggestion",noItem);
         intent.putExtra("DEVCLASS",devclass);
+        intent.putExtra("isHege",isHege);
         startActivity(intent);
     }
 
@@ -492,6 +570,8 @@ public class DetctionActivity extends AppCompatActivity {
         public RadioButton rb_detection_1;
         public RadioButton rb_detection_2;
        // public RadioButton rg_detection;
+
+        public Button btn_add_content;
 
 
     }

@@ -72,17 +72,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.bt_login:
-                //先注销  方便测试
                 login();
-
-                //临时添加方便测试
-//                Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
-//                finish();
-//                startActivity(intent);
                 break;
             case R.id.bt_signin:
                 sinup();
-
                 break;
         }
     }

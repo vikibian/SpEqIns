@@ -45,10 +45,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.TestActivity"></activity>
+        <activity android:name=".activity.PhotoVideoActivity"></activity>
+        <activity android:name=".activity.TestActivity" />
         <activity
             android:name=".activity.CheckDetailsActivity"
-            android:theme="@style/NoBar"></activity>
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.PDFActivity" />
         <activity
             android:name=".activity.MeAboutActivity"
@@ -92,10 +93,9 @@
 
         <activity android:name=".activity.SuggestionActivity" />
         <activity android:name=".activity.ResultActivity" />
-        <activity android:name=".activity.DetctionActivity"
-            android:theme="@style/NoBar">
-
-        </activity>
+        <activity
+            android:name=".activity.DetctionActivity"
+            android:theme="@style/NoBar"></activity>
         <activity android:name=".activity.ViewPagerActivity" />
         <activity
             android:name=".activity.FragmentManagerActivity"
@@ -110,7 +110,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths_public" />
         </provider>
-
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +58,7 @@ public class DetctionActivity extends AppCompatActivity {
     private String taskType;
     private String title;
 
-    private  String  isHege="合格";
+    //private  String  isHege="合格";
 
     private Toolbar toolbar;
     private TextView toolbar_textView;
@@ -88,8 +89,8 @@ public class DetctionActivity extends AppCompatActivity {
         //String position = "position";
         listData = (List<DetectionItem>) getIntent().getSerializableExtra("items");
         Log.e(TAG," listData: "+listData.size());
-//        detectionAdapter = new DetectionAdapter();
-//        lv_detection.setAdapter(detectionAdapter);
+        detectionAdapter = new DetectionAdapter();
+        lv_detection.setAdapter(detectionAdapter);
 
         detectionAdapter1 = new DetectionAdapter1();
         lv_detection.setAdapter(detectionAdapter1);
@@ -313,17 +314,6 @@ public class DetctionActivity extends AppCompatActivity {
 
     public void getData(){
         listData = new ArrayList<DetectionItem>();
-//        listData.add(new DetectionItem("现场人员是否具有有效证件。","合格"));
-//        listData.add(new DetectionItem("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
-//        listData.add(new DetectionItem("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
-//        listData.add(new DetectionItem("电梯内设置的报警装置是否可靠，联系是否畅通。","合格"));
-//        listData.add(new DetectionItem("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
-//        listData.add(new DetectionItem("门防夹保护装置是否有效。","合格"));
-//        listData.add(new DetectionItem("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
-//        listData.add(new DetectionItem("限速器校验报告是否在有效期内。","合格"));
-//        listData.add(new DetectionItem("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
-//        listData.add(new DetectionItem("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
-
 
     }
 
@@ -335,7 +325,6 @@ public class DetctionActivity extends AppCompatActivity {
             Log.d(TAG,"listData adapter: "+listData.size());
             return listData.size();
         }
-
         @Override
         public Object getItem(int position) {
             return listData.get(position);
@@ -363,31 +352,21 @@ public class DetctionActivity extends AppCompatActivity {
             }
             else {
                 viewHolder = (ViewHolder) convertView.getTag();
-
             }
 
             viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
-
             viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
-
                 @Override
 
                 public void onClick(View v) {
-                    jumpToSuggesstionActivity(position, isHege);
+                    jumpToSuggesstionActivity(position);
                     Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
-
                 }
-
             });
-
-
-
             viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listData.get(position).setResultStatus("不合格");
-
-
                 }
             });
 
@@ -397,9 +376,6 @@ public class DetctionActivity extends AppCompatActivity {
                     listData.get(position).setResultStatus("合格");
                 }
             });
-
-
-
             viewHolder.menuView.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -409,19 +385,17 @@ public class DetctionActivity extends AppCompatActivity {
                     listData.remove(position);
                     detectionAdapter.notifyDataSetChanged();
                     lv_detection.invalidate();
-
                 }
-
             });
-
             SlideLayout slideLayout = (SlideLayout) convertView;
             slideLayout.setOnStateChangeListener(new MyOnStateChangeListener());
-
             return convertView;
         }
     }
 
     class DetectionAdapter1 extends BaseAdapter{
+
+        private Map<Integer,Integer> hashMap = new HashMap<>();// key封装的是它爹的tag值，value封装儿子radiobutton
 
         @Override
         public int getCount() {
@@ -450,60 +424,79 @@ public class DetctionActivity extends AppCompatActivity {
                 viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1_1);
                 viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2_2);
                 viewHolder.btn_add_content = convertView.findViewById(R.id.btn_add_content);
+                viewHolder.rg_detection_group = convertView.findViewById(R.id.rb_detection_group);
                 convertView.setTag(viewHolder);
             }
             else {
                 viewHolder = (ViewHolder) convertView.getTag();
-
             }
 
-            viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
+            viewHolder.rg_detection_group.setTag(position);//给RadioGroup  弄个tag标记
+            if(hashMap.containsKey(position))
+            {
+                viewHolder.rg_detection_group.check(hashMap.get(position));
+            }
+            else
+            {
+                viewHolder.rg_detection_group.clearCheck();
+            }
 
-            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
-
+            viewHolder.rg_detection_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if ((Integer)group.getTag() == position){
+                        boolean b = false;
+                        if (checkedId  == R.id.rb_detection_1_1){
+                            b = true;
+                            hashMap.put((Integer) group.getTag(),R.id.rb_detection_1_1);
+                        }else if (checkedId == R.id.rb_detection_2_2){
+                            b = true;
+                            hashMap.put((Integer) group.getTag(),R.id.rb_detection_2_2);
+                        }
 
-                public void onClick(View v) {
-
-                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
-
+                    }
                 }
+            });
+
+            viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
+            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
+                    jumpToSuggesstionActivity(position);
+                }
+
 
             });
             viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    isHege = "合格";
-                    listData.get(position).setResultStatus("合格");
+                        listData.get(position).setResultStatus("合格");
                 }
             });
+
 
             viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    isHege = "不合格";
+
                     listData.get(position).setResultStatus("不合格");
                 }
             });
-
             viewHolder.btn_add_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    jumpToSuggesstionActivity(position,isHege);
+                    jumpToSuggesstionActivity(position);
                 }
             });
-
             return convertView;
         }
     }
 
 
-
-
-
-    private void jumpToSuggesstionActivity(int position, String isHege) {
+    private void jumpToSuggesstionActivity(int position) {
         //listData.get(position).setResultStatus(status);
+        String isHege = listData.get(position).getResultStatus();
         String noItem = listData.get(position).getCHECKCONTENT();
         String devclass = listData.get(position).getDEVCLASS();
         Intent intent = new Intent(DetctionActivity.this, SuggestionActivity.class);
@@ -516,60 +509,36 @@ public class DetctionActivity extends AppCompatActivity {
 
     public SlideLayout slideLayout = null;
     class MyOnStateChangeListener implements SlideLayout.OnStateChangeListener {
-
         @Override
-
         public void onOpen(SlideLayout layout) {
-
             slideLayout = layout;
-
         }
-
-
         @Override
-
         public void onMove(SlideLayout layout) {
-
             if (slideLayout != null && slideLayout !=layout)
-
             {
-
                 slideLayout.closeMenu();
-
             }
-
         }
-
 
         @Override
-
         public void onClose(SlideLayout layout) {
-
             if (slideLayout == layout)
-
             {
-
                 slideLayout = null;
-
             }
-
         }
-
     }
 
 
 
     static class ViewHolder
-
     {
-
         public TextView contentView;
-
         public TextView menuView;
-
         public RadioButton rb_detection_1;
         public RadioButton rb_detection_2;
-       // public RadioButton rg_detection;
+        public RadioGroup rg_detection_group;
 
         public Button btn_add_content;
 

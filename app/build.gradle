@@ -73,6 +73,8 @@ dependencies {
     implementation 'com.zhihu.android:matisse:0.5.3-beta3'
     //图片压缩库
     implementation 'com.github.nanchen2251:CompressHelper:1.0.5'
+    //调用相机的库
+    implementation 'cjt.library.wheel:camera:1.1.2'
 
 
 //    implementation("com.squareup.okhttp3:okhttp:4.3.1")

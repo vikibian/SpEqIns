@@ -70,6 +70,7 @@ public class SuggestionActivity extends AppCompatActivity {
     final int RequestCor = 521;
     final int maxNum = 500;
     final int REQUEST_VIDEO = 99;
+    final int REQUEST_TEST = 66;
 
     //测试多张图片显示，测试Gridview组件
     private GridView gridView;
@@ -174,27 +175,6 @@ public class SuggestionActivity extends AppCompatActivity {
     }
 
     private void postFiles(String text, List<String> pathOfPhotos) {
-//        Map<String, File> fileMap = new LinkedHashMap<>();
-//
-//        for (int i=0;i<testpathlistOfPhoto.size();i++){
-//            File file = new File(testpathlistOfPhoto.get(i));
-//            Log.d(TAG," pathlistOfPhoto: "+testpathlistOfPhoto.get(i));
-////            int num = testpathlistOfPhoto.size()-1;
-////            Log.d(TAG," num: "+num);
-//            int length = testpathlistOfPhoto.get(i).length();
-//            Log.d(TAG," length: "+length);
-//            String suffix = testpathlistOfPhoto.get(i).substring(length -3,length);
-//            Log.d(TAG," i: "+i);
-//
-//            if (suffix.equals("mp4")){
-//                fileMap.put("videoFile",file);
-//            }else {
-//                fileMap.put("imageFile",file);
-//            }
-//
-//            Log.e(TAG," filemap.size: "+fileMap.size());
-//        }
-
 
         String url = BaseUrl.BaseUrl+"testServlet";
         Log.d(TAG,"POST url: "+url);
@@ -255,14 +235,10 @@ public class SuggestionActivity extends AppCompatActivity {
                 startPhotoGallery();
                 break;
             case 2:
-                Intent intentPicture = new Intent(SuggestionActivity.this,PictureActivity.class);
-                startActivityForResult(intentPicture,RequestCor);
+                Intent intentall = new Intent(SuggestionActivity.this,PhotoVideoActivity.class);
+                startActivityForResult(intentall,REQUEST_TEST);
                 break;
             case 3:
-                Intent intentVideo = new Intent(SuggestionActivity.this,VideoActivity.class);
-                startActivityForResult(intentVideo,REQUEST_VIDEO);
-                break;
-            case 4:
                 break;
 
 
@@ -300,9 +276,10 @@ public class SuggestionActivity extends AppCompatActivity {
         String videoString = new String();
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_VIDEO) {
 
-                imgString = data.getStringExtra("imagePath");
+            if (requestCode == REQUEST_TEST) {
+
+                //imgString = data.getStringExtra("imagePath");
                 testvideoPath =data.getStringExtra("path");
                 videoString =data.getStringExtra("path");
                 Log.d(TAG," videopath: "+testvideoPath);
@@ -316,98 +293,37 @@ public class SuggestionActivity extends AppCompatActivity {
                 suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
                 gridView.setAdapter(suggestionGridViewAdapter);
 
-//                final String imgString = data.getStringExtra("imagePath");
-//                String videoString = data.getStringExtra("path");
-//                iv_video.setVisibility(View.VISIBLE);
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        iv_video.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                try {
-//                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
-//                                    if(bitmap == null){
-//                                        Log.e ("ERROR","Bitmap失败");
-//                                    }
-//                                    if(bitmap != null){
-//                                        Log.e ("ERROR","Bitmap成功");
-//                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
-//                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-//                                        bitmap.recycle();
-//                                        bitmap = null;
-//                                        iv_video.setImageBitmap(bitmap1);
-//                                        iv_video.setPivotX(iv_photo.getWidth()/2);
-//                                        iv_video.setPivotY(iv_photo.getHeight()/2);
-//                                        iv_video.setRotation(0);
-//                                        iv_video.setVisibility(View.VISIBLE);
-//
-//                                        Log.e ("ERROR","Bitmap更换成功");
-//                                    }
-//
-//                                }
-//                                catch (Exception e){
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
-//
-//                    }
-//                }).start();
-
             }
-            if (requestCode == RequestCor) {
-                Log.e("ERROR","对接成功");
-                imgString = data.getStringExtra("imagePath");
-                Log.e("图片地址","  "+imgString);
-                //在此处需要更新图片数组
-                pathlistOfPhoto.add(imgString);
-                Log.e("图片地址","  "+pathlistOfPhoto.get(0));
-                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
-                gridView.setAdapter(suggestionGridViewAdapter);
 
-
-//                final String imgString = data.getStringExtra("imagePath");
-//                iv_photo.setVisibility(View.VISIBLE);
-//                Log.e("ERROR",imgString);
+//            if (requestCode == REQUEST_VIDEO) {
 //
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        iv_photo.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                try {
-//                                    Bitmap bitmap = BitmapFactory.decodeFile(imgString);
-//                                    if(bitmap == null){
-//                                        Log.e ("ERROR","Bitmap失败");
-//                                    }
-//                                    if(bitmap != null){
-//                                        Log.e ("ERROR","Bitmap成功");
-//                                        int scale = reckonThumbnail(bitmap.getWidth(),bitmap.getHeight(),125,125);
-//                                        Bitmap bitmap1 = PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-//                                        bitmap.recycle();
-//                                        bitmap = null;
-//                                        iv_photo.setImageBitmap(bitmap1);
-//                                        iv_photo.setPivotX(iv_photo.getWidth()/2);//设置锚点
-//                                        iv_photo.setPivotY(iv_photo.getHeight()/2);
-//                                        iv_photo.setRotation(90);
-//                                        iv_photo.setVisibility(View.VISIBLE);
+//                imgString = data.getStringExtra("imagePath");
+//                testvideoPath =data.getStringExtra("path");
+//                videoString =data.getStringExtra("path");
+//                Log.d(TAG," videopath: "+testvideoPath);
+//                //不需要旋转90度  需要在设置图片的时候进行判断
+//                videoPath = imgString;
+//                //在此处需要更新图片数组
+//                //pathlistOfPhoto.add(imgString);
 //
-//                                        Log.e ("ERROR","Bitmap更换成功");
-//                                    }
+//                pathlistOfPhoto.add(videoString);
 //
-//                                }
-//                                catch (Exception e){
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
+//                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
+//                gridView.setAdapter(suggestionGridViewAdapter);
 //
-//                    }
-//                }).start();
-
-            }
+//
+//            }
+//            if (requestCode == RequestCor) {
+//                Log.e("ERROR","对接成功");
+//                imgString = data.getStringExtra("imagePath");
+//                Log.e("图片地址","  "+imgString);
+//                //在此处需要更新图片数组
+//                pathlistOfPhoto.add(imgString);
+//                Log.e("图片地址","  "+pathlistOfPhoto.get(0));
+//                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
+//                gridView.setAdapter(suggestionGridViewAdapter);
+//
+//            }
         }
 
         //Masstise返回的图片数据

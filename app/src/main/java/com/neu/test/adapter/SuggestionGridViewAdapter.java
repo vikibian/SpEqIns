@@ -54,8 +54,6 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
         this.context = applicationContext;
         this.num = pathlistOfPhoto.size();
         this.flag = flag;
-        //this.photoList = pathlistOfPhoto;
-        //Collections.reverse(photoList);
 
 
         photoList = new ArrayList<>();
@@ -119,27 +117,11 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
             if (suffix.equals("mp4")) {
                 Log.e (TAG," 视频地址: "+photoList.get(position));
 
-                String name = getVideoName(photoList.get(position));
-                String imPath =  Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/Camera/"+name+"IMG.jpg";
-                File imFile = new File(imPath);
-                if (imFile.exists()){
-                    Log.e(TAG," 文件存在！");
-
-                    Bitmap bitmap = waterMaskVideoPhoto(name,imPath);
-
-                    Glide
-                        .with(context)
-                        .load(bitmap)
-                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .into(viewHolder.imageView);
-                }else {
-                    Log.e(TAG," 文件不存在！");
                     Glide
                             .with(context)
                             .load(photoList.get(position))
                             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .into(viewHolder.imageView);
-                }
 
             } else if (suffix.equals("jpg")||suffix.equals("png")){
                 Log.e(TAG,"jpg suffix: "+suffix);
@@ -166,9 +148,8 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
                 menu.add(0,1,0,"相册");
-                menu.add(0,2,0,"拍照");
-                menu.add(0,3,0,"录像");
-                menu.add(0,4,0,"取消");
+                menu.add(0,2,0,"相机");
+                menu.add(0,3,0,"取消");
             }
         });
 

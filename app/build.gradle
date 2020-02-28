@@ -76,6 +76,16 @@ dependencies {
     //调用相机的库
     implementation 'cjt.library.wheel:camera:1.1.2'
 
+    //搜索的库
+    implementation 'com.carson_ho:SearchLayout:1.0.1'
+
+    //SmartTable库
+    implementation 'com.github.huangyanbin:SmartTable:2.2.0'
+
+    //bm-x PhotoView
+    implementation 'com.bm.photoview:library:1.4.1'
+    //视频加载库
+    implementation 'com.github.xiaoyanger0825:NiceVieoPlayer:v2.2'
 
 //    implementation("com.squareup.okhttp3:okhttp:4.3.1")
 

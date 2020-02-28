@@ -16,7 +16,7 @@
             android:id="@+id/search_fb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:layout_gravity="right"
             app:backgroundTint="#03AAED"
             app:rippleColor="@color/white"

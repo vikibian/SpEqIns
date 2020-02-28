@@ -23,11 +23,13 @@ import com.neu.test.activity.DetctionActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.Device;
+import com.neu.test.entity.JianChaItem;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListItemCallBack;
+import com.neu.test.net.callback.ListItemsCallBack;
 import com.neu.test.util.BaseUrl;
 
 import java.io.Serializable;
@@ -48,6 +50,11 @@ public class CheckFragment extends Fragment {
     BottomBarLayout mBottomBarLayout;
     private String taskType;
 
+    public List<DetectionItem> testItem;
+
+    public CheckFragment(){
+
+    }
 
     public CheckFragment(List<Task> tasks, BottomBarLayout bottomBarLayout){
         this.tasks = tasks;
@@ -116,18 +123,20 @@ public class CheckFragment extends Fragment {
     private void getDetctionData(String devclass, final String title, final Task task) {
         Map<String, String> map = new HashMap<>();
         map.put("DEVCLASS",devclass);
-        String url = BaseUrl.BaseUrl+"getCheckContentServlet";
+        map.put("UNITNAME",task.getUSEUNITNAME());
+        map.put("TASKTYPE",task.getTASKTYPE());
+        String url = BaseUrl.BaseUrl+"getCheckItems";
         OkHttp okHttp=new OkHttp();
-        okHttp.postBypostString(url, new Gson().toJson(map), new ListItemCallBack() {
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListItemsCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
-            public void onResponse(Result<List<DetectionItem>> response, int id) {
+            public void onResponse(Result<List<JianChaItem>> response, int id) {
                 if(response.getMessage().equals("获取检查项成功")) {
-                    List<DetectionItem> items = response.getContent();
+                    List<JianChaItem> items = response.getContent();
                     Intent intent = new Intent(getActivity(), DetctionActivity.class);
                     intent.putExtra("items", (Serializable) items);
                     intent.putExtra("userName", task.getLOGINNAME());
@@ -203,7 +212,7 @@ public class CheckFragment extends Fragment {
             tv_check_address.setTextColor(color);
             tv_check_endtime.setTextColor(color);
 
-            tv_check_device.setText(task.getUSEUNITNAME());
+            tv_check_device.setText(task.getDEVID());
             tv_check_address.setText(task.getPLACE());
             tv_check_endtime.setText(task.getDEADLINE());
             return convertView;

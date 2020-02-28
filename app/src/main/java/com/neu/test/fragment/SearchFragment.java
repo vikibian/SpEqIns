@@ -61,11 +61,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private MaterialBetterSpinner MBsp_Qualify;
     private MaterialBetterSpinner MBsp_Checked;
     private MaterialBetterSpinner MBsp_User;
+    private MaterialBetterSpinner MBsp_taskType;
 
     ArrayAdapter<String> adapterDeviceType;
     ArrayAdapter<String> adapterDeviceQualify;
     ArrayAdapter<String> adapterDeviceChecked;
     ArrayAdapter<String> adapterDeviceUser;
+    ArrayAdapter<String> adapterTaskType;
 
 
     public SearchFragment() {
@@ -121,6 +123,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         String[] deviceQualify = {"合格","不合格"};
         String[] deviceChecked = {"已检查","未检查","待复查"};
         String[] deviceUser = {"admin","operator"};
+        String[] taskType = {"自查","复查","下派","随机"};
 
         adapterDeviceType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceType);
         adapterDeviceType.setDropDownViewResource(R.layout.my_spinner_item);
@@ -132,15 +135,20 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         MBsp_Qualify.setAdapter(adapterDeviceQualify);
         MBsp_Qualify.setText(deviceQualify[0]);
 
-        adapterDeviceChecked = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceChecked);
-        adapterDeviceChecked.setDropDownViewResource(R.layout.my_spinner_item);
-        MBsp_Checked.setAdapter(adapterDeviceChecked);
-        MBsp_Checked.setText(deviceChecked[0]);
+        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,taskType);
+        adapterTaskType.setDropDownViewResource(R.layout.my_spinner_item);
+        MBsp_taskType.setAdapter(adapterTaskType);
+        MBsp_taskType.setText(taskType[0]);
 
-        adapterDeviceUser = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceUser);
-        adapterDeviceUser.setDropDownViewResource(R.layout.my_spinner_item);
-        MBsp_User.setAdapter(adapterDeviceUser);
-        MBsp_User.setText(deviceUser[0]);
+//        adapterDeviceChecked = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceChecked);
+//        adapterDeviceChecked.setDropDownViewResource(R.layout.my_spinner_item);
+//        MBsp_Checked.setAdapter(adapterDeviceChecked);
+//        MBsp_Checked.setText(deviceChecked[0]);
+//
+//        adapterDeviceUser = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceUser);
+//        adapterDeviceUser.setDropDownViewResource(R.layout.my_spinner_item);
+//        MBsp_User.setAdapter(adapterDeviceUser);
+//        MBsp_User.setText(deviceUser[0]);
 
 
     }
@@ -158,8 +166,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         MBsp_Type = view.findViewById(R.id.MBsp_deviceType);
         MBsp_Qualify = view.findViewById(R.id.MBsp_deviceQualify);
-        MBsp_Checked = view.findViewById(R.id.MBsp_deviceChecked);
-        MBsp_User = view.findViewById(R.id.MBsp_deviceUser);
+//        MBsp_Checked = view.findViewById(R.id.MBsp_deviceChecked);
+//        MBsp_User = view.findViewById(R.id.MBsp_deviceUser);
+        MBsp_taskType = view.findViewById(R.id.MBsp_taskType);
 
         //设置操作人员
         searchTtoolbarTextview.setText(LoginActivity.inputName);
@@ -212,12 +221,24 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getSearchedData() {
+        Log.e(TAG," Type : "+MBsp_Type.getText());
+        Log.e(TAG," Qualify : "+MBsp_Qualify.getText());
+
+        String hege = new String();
+        if (MBsp_Qualify.getText().equals("合格")){
+            hege = "1";
+        }else if(MBsp_Qualify.getText().equals("不合格")){
+            hege = "-1";
+        }else{
+            hege = "0";
+        }
+
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
         searchmap.put("LOGINNAME",LoginActivity.inputName);
         searchmap.put("DEVCLASS","3000");
-        searchmap.put("RESULT","0");
-        searchmap.put("TASKTYPE","自查");
+        searchmap.put("RESULT",hege);
+        searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
 //        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
 //        searchmap.put("DEVID","123456");
 
@@ -251,6 +272,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         Log.e("TAG"," response.getContent: "+"有数据");
                         tasks = response.getContent();
                         Log.e("TAG"," Content: "+tasks.toString());
+                        Log.e("TAG"," 接收task: "+tasks.size());
                     }
                     Toast.makeText(getContext(),"成功",Toast.LENGTH_LONG).show();
                     //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后

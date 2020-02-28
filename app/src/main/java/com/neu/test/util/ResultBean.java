@@ -6,7 +6,7 @@ import java.io.Serializable;
 /*
     这个类主要用来在查询结果后详细查看某一项结果时 进行数据传递
  */
-
+@Deprecated
 public class ResultBean implements Serializable {
     private String time;
     private String deviceType;

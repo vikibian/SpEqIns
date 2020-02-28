@@ -1,5 +1,6 @@
 package com.neu.test.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -14,23 +15,42 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.activity.CheckDetailsActivity;
 import com.neu.test.activity.DetctionActivity;
+import com.neu.test.activity.FragmentManagerActivity;
+import com.neu.test.activity.LoginActivity;
 import com.neu.test.adapter.DropDownMenuAdapter;
 import com.neu.test.adapter.ListViewAdapter1;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionItem1;
+import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.Result;
+import com.neu.test.entity.Task;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.ListDetectionResultCallBack;
+import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseUrl;
 import com.neu.test.util.ListContent;
 import com.neu.test.util.ResultBean;
 import com.yyydjk.library.DropDownMenu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
 
 public class ShowSearchedResultFragment extends Fragment implements View.OnClickListener {
 
@@ -47,8 +67,6 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     private ListView listView;
     private ListViewAdapter1 listViewAdapter1;
 
-    private List<ListContent> resultListContent ;
-    private ResultBean mResultBean ;
     private CircleImageView circleImageView;
 
     private DropDownMenu dropDownMenu;
@@ -57,12 +75,19 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     private DropDownMenuAdapter dropDownMenuAdapter;
     private List<View> popupViews = new ArrayList<>();
     private int posFlag=0;
-    private List<DetectionItem> listDatas;
+    private List<DetectionItem1> listDatas;
+
+    private List<Task> tasks;
+    private Task task;
+    private List<DetectionResult> listResult;
+    private String taskID;
+    private String devID;
 
 
-    private List<DetectionItem> listDatas_qualified = new ArrayList<>();
-    private List<DetectionItem> listDatas_unqualified = new ArrayList<>();
-
+//    private List<DetectionItem1> listDatas_qualified = new ArrayList<>();
+//    private List<DetectionItem1> listDatas_unqualified = new ArrayList<>();
+    private List<DetectionResult> listDatas_qualified = new ArrayList<>();
+    private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
 
 
     public ShowSearchedResultFragment() {
@@ -70,26 +95,30 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_show_searched_result, container, false);
-        mResultBean = (ResultBean) getArguments().getSerializable("result");
+        task = (Task) getArguments().getSerializable("tasks");
+        Log.e(TAG,"获取数据");
+        Log.e(TAG,"获取数据"+task.toString());
+        taskID = task.getTASKID();
+        devID = task.getDEVID();
 
-//        listDatas = new ArrayList<DetectionItem>();
-//        listDatas.add(new DetectionItem("现场人员是否具有有效证件。","不合格"));
-//        listDatas.add(new DetectionItem("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
-//        listDatas.add(new DetectionItem("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
-//        listDatas.add(new DetectionItem("电梯内设置的报警装置是否可靠，联系是否畅通。","不合格"));
-//        listDatas.add(new DetectionItem("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
-//        listDatas.add(new DetectionItem("门防夹保护装置是否有效。","合格"));
-//        listDatas.add(new DetectionItem("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
-//        listDatas.add(new DetectionItem("限速器校验报告是否在有效期内。","合格"));
-//        listDatas.add(new DetectionItem("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
-//        listDatas.add(new DetectionItem("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
+        listDatas = new ArrayList<DetectionItem1>();
+        listDatas.add(new DetectionItem1("现场人员是否具有有效证件。","不合格"));
+        listDatas.add(new DetectionItem1("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
+        listDatas.add(new DetectionItem1("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
+        listDatas.add(new DetectionItem1("电梯内设置的报警装置是否可靠，联系是否畅通。","不合格"));
+        listDatas.add(new DetectionItem1("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
+        listDatas.add(new DetectionItem1("门防夹保护装置是否有效。","合格"));
+        listDatas.add(new DetectionItem1("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
+        listDatas.add(new DetectionItem1("限速器校验报告是否在有效期内。","合格"));
+        listDatas.add(new DetectionItem1("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
+        listDatas.add(new DetectionItem1("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
 
         initView(view);
+        getTaskList();
         initContent();
         initDropDownMenu();
 
@@ -106,34 +135,69 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                 Toast.makeText(getContext(),"i "+i+" l "+l,Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), CheckDetailsActivity.class);
 //                DetectionItem detectionItem = new DetectionItem(" "," ");
-                DetectionItem detectionItem = new DetectionItem();
+//                DetectionItem1 detectionItem = new DetectionItem1();
+                DetectionResult detectionResult = new DetectionResult();
                 if (posFlag == 1){
-                    detectionItem = listDatas_qualified.get(i);
+                    detectionResult = listDatas_qualified.get(i);
                 }else if (posFlag == 2){
-                    detectionItem = listDatas_unqualified.get(i);
+                    detectionResult = listDatas_unqualified.get(i);
                 }else if(posFlag == 0){
-                    detectionItem = listDatas.get(i);
+                    detectionResult = listResult.get(i);
                 }
 
-                intent.putExtra("result",detectionItem);
-                intent.putExtra("result_resultBean",mResultBean);
+                intent.putExtra("detectionResult",detectionResult);
+                intent.putExtra("task",task);
+
                 startActivity(intent);
 
             }
         });
 
-
-
         return view;
     }
 
-    private void filiterResult() {
-        for (int i=0;i<listDatas.size();i++){
-            if (listDatas.get(i).getResultStatus().equals("合格")){
-                listDatas_qualified.add(listDatas.get(i));
+    private void getTaskList() {
+        String url;
+        url = BaseUrl.BaseUrl+"selectItemResultServlet";
+        Log.d(TAG,"POST url: "+url);
+        Map<String, String> map = new HashMap<>();
+        map.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        Log.e(TAG,"map: "+ map.toString());
+        map.put("DEVID","123456");//123456  devID
+        Log.e(TAG,"map: "+ map.toString());
+
+
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                System.out.println(e.toString());
+                Log.e(TAG," 数据错误");
             }
-            if (listDatas.get(i).getResultStatus().equals("不合格")){
-                listDatas_unqualified.add(listDatas.get(i));
+
+            @Override
+            public void onResponse(Result<List<DetectionResult>> reponse, int i) {
+                if (reponse.getMessage().equals("获取成功")){
+                    listResult  = reponse.getContent();
+                    if (reponse.getMessage().length() == 0){
+                        Log.e(TAG,"没有post数据");
+                    }else {
+                        //初始化listview应该在获取数据之后
+                        initListViewAdapter1();
+                    }
+                }
+            }
+        });
+    }
+
+    private void filiterResult() {
+        for (int i=0;i<listResult.size();i++){
+            if (listResult.get(i).getSTATUS().equals("1")){
+                listDatas_qualified.add(listResult.get(i));
+            }
+            if (listDatas.get(i).getResultStatus().equals("-1")){
+                listDatas_unqualified.add(listResult.get(i));
             }
         }
     }
@@ -156,18 +220,20 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                 posFlag = position;
 
 
-                List<DetectionItem> listQualifed = new ArrayList<>();
-                List<DetectionItem> listunQualifed = new ArrayList<>();
-                for(int i=0;i<listDatas.size();i++){
-                    if(listDatas.get(i).getResultStatus().equals("合格")){
-                        listQualifed.add(listDatas.get(i));
+//                List<DetectionItem1> listQualifed = new ArrayList<>();
+//                List<DetectionItem1> listunQualifed = new ArrayList<>();
+                List<DetectionResult> listQualifed = new ArrayList<>();
+                List<DetectionResult> listunQualifed = new ArrayList<>();
+                for(int i=0;i<listResult.size();i++){
+                    if(listResult.get(i).getSTATUS().equals("1")){
+                        listQualifed.add(listResult.get(i));
                     }
-                    else if(listDatas.get(i).getResultStatus().equals("不合格")){
-                        listunQualifed.add(listDatas.get(i));
+                    else if(listResult.get(i).getSTATUS().equals("-1")){
+                        listunQualifed.add(listResult.get(i));
                     }
                 }
                 if(position==0){
-                    refresh(listDatas);
+                    refresh(listResult);
                 }else if (position==1){
                     refresh(listQualifed);
                 }else if (position==2){
@@ -179,51 +245,56 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         initDropDownMenuListView(listDatas);
     }
 
-    private void refresh(List<DetectionItem> listDatas) {
-        listViewAdapter1 = new ListViewAdapter1(getContext(),listDatas,choose[posFlag]);
-        listView.setAdapter(listViewAdapter1);
-    }
 
     private void initContent() {
-        if (mResultBean!=null){
-            int i=0;
+        if (task!=null){
             //时间
-            textView_time.setText(mResultBean.getTime());
+            textView_time.setText(task.getCHECKDATE());
             //增加下划线
             textView_time.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            //设备种类
-            textView_deviceType.setText(mResultBean.getDeviceType());
-            textView_deviceType.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            //合格情况
-            textView_qualify.setText(mResultBean.getQualify());
-            textView_qualify.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            //是否已检查
-            textView_checked.setText(mResultBean.getIschecked());
-            textView_checked.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            //检察人员
-            textView_user.setText(mResultBean.getUser());
-            textView_user.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-            //地址
+            Log.e(TAG,"接收数据显示："+task.getCHECKDATE());
+            Log.e(TAG,"接收数据显示："+task.toString());
 
+            //设备种类
+            textView_deviceType.setText(task.getDEVCLASS());
+            textView_deviceType.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+            //合格情况
+            textView_qualify.setText(task.getRESULT());
+            textView_qualify.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+            //是否已检查
+//            textView_checked.setText(mResultBean.getIschecked());
+//            textView_checked.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+            //检察人员
+            textView_user.setText(task.getLOGINNAME());
+            textView_user.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+            //地址
+            textView_address.setText(task.getPLACE());
             textView_address.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
-            textView_title.setText(mResultBean.getDeviceType()+"检查情况");
+            textView_title.setText(task.getDEVID()+"检查情况");
         }
 
-        initListViewAdapter1();
+    }
 
+    private void refresh(List<DetectionResult> listRes) {
+        listViewAdapter1 = new ListViewAdapter1(getContext(),listRes,choose[posFlag]);
+        listView.setAdapter(listViewAdapter1);
     }
 
     //对ListViewAdapter1进行适配
     private void initListViewAdapter1() {
         DetctionActivity detctionActivity = new DetctionActivity();
         detctionActivity.getData();
-        listViewAdapter1 = new ListViewAdapter1(getContext(),listDatas,choose[posFlag]);
+        //listViewAdapter1 = new ListViewAdapter1(getContext(),listDatas,choose[posFlag]);
+        listViewAdapter1 = new ListViewAdapter1(getContext(),listResult,choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
 
     }
 
-    private void initDropDownMenuListView(List<DetectionItem> listData) {
+    private void initDropDownMenuListView(List<DetectionItem1> listData) {
         ListView listView_1 = new ListView(getContext());
         DetctionActivity detctionActivity = new DetctionActivity();
         detctionActivity.getData();
@@ -237,11 +308,10 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         textView_time = view.findViewById(R.id.searched_result_time);
         textView_deviceType = view.findViewById(R.id.searched_result_deviceType);
         textView_qualify = view.findViewById(R.id.searched_result_qualify);
-        textView_checked = view.findViewById(R.id.searched_result_checked);
+//        textView_checked = view.findViewById(R.id.searched_result_checked);
         textView_user = view.findViewById(R.id.searched_result_user);
         textView_address = view.findViewById(R.id.searched_result_address);
-//        resultToolbarTextview = view.findViewById(R.id.reslut_toolbar_textview);
-//        bt_goback = view.findViewById(R.id.bt_goback);
+
         listView = view.findViewById(R.id.show_searched_result_listview);
 
         dropDownMenu = view.findViewById(R.id.dropdownmenu);
@@ -257,5 +327,60 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 //                getFragmentManager().popBackStack();
 //                break;
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.e(TAG," onAttach");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e(TAG," onCreate");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.e(TAG," onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG," onResume");
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG," onpause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(TAG," onstop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.e(TAG," onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG," onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.e(TAG," onDetach");
     }
 }

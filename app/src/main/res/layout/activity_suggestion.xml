@@ -8,6 +8,28 @@
     android:divider="@color/gray"
     tools:context=".activity.SuggestionActivity">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_suggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+            <TextView
+                android:id="@+id/toolbar_title_suggestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </FrameLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,24 +69,7 @@
             android:layout_height="wrap_content">
 
         </GridView>
-        <!--<ImageView-->
-            <!--android:id="@+id/iv_photo"-->
-            <!--android:layout_width="125dp"-->
-            <!--android:layout_height="125dp"-->
-            <!--android:visibility="gone"-->
-            <!--/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/iv_video"-->
-            <!--android:layout_width="125dp"-->
-            <!--android:layout_height="125dp"-->
-            <!--android:visibility="gone"-->
-            <!--/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/iv_plus"-->
-            <!--android:layout_width="120dp"-->
-            <!--android:layout_height="120dp"-->
-            <!--android:src="@drawable/plus"-->
-            <!--/>-->
+
     </LinearLayout>
 
 

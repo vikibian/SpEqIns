@@ -9,15 +9,20 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="10dp">
 
-        <com.kelin.scrollablepanel.library.ScrollablePanel
-            android:id="@+id/rearch_admin_scrollablepanel"
+        <!--<com.kelin.scrollablepanel.library.ScrollablePanel-->
+            <!--android:id="@+id/rearch_admin_scrollablepanel"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="5dp"-->
+            <!--android:layout_marginTop="15dp"-->
+            <!--/>-->
+        <com.bin.david.form.core.SmartTable
+            android:id="@+id/table"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="15dp"
             />
 
     </LinearLayout>

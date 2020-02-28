@@ -145,16 +145,6 @@
 
                     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                         android:id="@+id/MBsp_deviceQualify"
-                        android:hint="合格情况"
-                        android:textSize="18dp"
-                        android:layout_gravity="center_horizontal"
-                        android:textAlignment="center"
-                        android:layout_width="180dp"
-                        android:layout_height="wrap_content"
-                        app:met_floatingLabel="normal"/>
-
-                    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                        android:id="@+id/MBsp_deviceChecked"
                         android:hint="检查情况"
                         android:textSize="18dp"
                         android:layout_gravity="center_horizontal"
@@ -164,14 +154,24 @@
                         app:met_floatingLabel="normal"/>
 
                     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                        android:id="@+id/MBsp_deviceUser"
-                        android:hint="人员"
+                        android:id="@+id/MBsp_taskType"
+                        android:hint="任务类型"
                         android:textSize="18dp"
                         android:layout_gravity="center_horizontal"
                         android:textAlignment="center"
                         android:layout_width="180dp"
                         android:layout_height="wrap_content"
                         app:met_floatingLabel="normal"/>
+
+                    <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner-->
+                        <!--android:id="@+id/MBsp_deviceUser"-->
+                        <!--android:hint="人员"-->
+                        <!--android:textSize="18dp"-->
+                        <!--android:layout_gravity="center_horizontal"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:layout_width="180dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--app:met_floatingLabel="normal"/>-->
 
                     <LinearLayout
                         android:layout_marginTop="50dp"

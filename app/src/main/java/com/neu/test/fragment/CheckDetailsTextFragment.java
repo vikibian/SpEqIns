@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.neu.test.R;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionItem1;
+import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.Task;
 import com.neu.test.util.ResultBean;
 
 /**
@@ -21,8 +24,9 @@ public class CheckDetailsTextFragment extends Fragment {
 
     private String content;
     private TextView textView_inform;
-    private DetectionItem mDetectionItem;
-    private ResultBean resultBean;
+    private DetectionItem1 mDetectionItem;
+    private DetectionResult detectionResult;
+    private Task task;
     private TextView textView_time;
     private TextView textView_deviceType;
     private TextView textView_qualify;
@@ -35,13 +39,13 @@ public class CheckDetailsTextFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public CheckDetailsTextFragment(DetectionItem detectionItem) {
+    public CheckDetailsTextFragment(DetectionItem1 detectionItem) {
         this.mDetectionItem = detectionItem;
     }
 
-    public CheckDetailsTextFragment(DetectionItem detectionItem, ResultBean resultBean) {
-        this.mDetectionItem = detectionItem;
-        this.resultBean = resultBean;
+    public CheckDetailsTextFragment(DetectionResult detectionResult, Task task) {
+        this.detectionResult = detectionResult;
+        this.task = task;
     }
 
 
@@ -58,27 +62,27 @@ public class CheckDetailsTextFragment extends Fragment {
 
     private void initFragment(View view) {
         textView_inform = view.findViewById(R.id.check_detail_text_detailInform);
-        textView_inform.setText(mDetectionItem.getItemContent());
+        textView_inform.setText(detectionResult.getCHECKCONTENT());
         //textView_inform.setText(mDetectionItem.getCHECKCONTENT());
 
 
         textView_time = view.findViewById(R.id.check_detail_time);
-        textView_time.setText(resultBean.getTime());
+        textView_time.setText(task.getCHECKDATE());
 
         textView_deviceType = view.findViewById(R.id.check_detail_deviceType);
-        textView_deviceType.setText(resultBean.getDeviceType());
+        textView_deviceType.setText(task.getDEVCLASS());
 
         textView_qualify = view.findViewById(R.id.check_detail_qualify);
-        textView_qualify.setText(resultBean.getQualify());
+        textView_qualify.setText(task.getRESULT());
 
-        textView_checked = view.findViewById(R.id.check_detail_checked);
-        textView_checked.setText(resultBean.getIschecked());
+//        textView_checked = view.findViewById(R.id.check_detail_checked);
+        //textView_checked.setText(resultBean.getIschecked());
 
         textView_user = view.findViewById(R.id.check_detail_user);
-        textView_user.setText(resultBean.getUser());
+        textView_user.setText(task.getLOGINNAME());
 
         textView_address = view.findViewById(R.id.check_detail_address);
-        textView_address.setText(" ");
+        textView_address.setText(task.getPLACE());
 
 
     }

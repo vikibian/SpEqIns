@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kelin.scrollablepanel.library.PanelAdapter;
 import com.neu.test.R;
+import com.neu.test.entity.Task;
 import com.neu.test.fragment.PanelFragment;
 import com.neu.test.fragment.ShowSearchedResultFragment;
 import com.neu.test.util.ListContent;
@@ -22,6 +23,15 @@ import com.neu.test.util.ResultBean;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
+//已经不使用了
+/**
+ * @date : 2020/2/27
+ * @time : 15:42
+ * @author : viki
+ * @description :
+ */
+
 public class ScrollablePanel1Adapter extends PanelAdapter {
     private static final int ITEM_TITLE = 0;
     private static final int ITEM_NAME = 1;
@@ -29,8 +39,15 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
     private static final int ITEM_CONTENT = 3;
     private PanelFragment panelFragment;
 
+    private List<Task> tasks ;
+
     private List<ListName> listnames = new ArrayList<>();
     private List<List<ListContent>> listcontents = new ArrayList<>();
+
+    public ScrollablePanel1Adapter(PanelFragment panelFragment, List<Task> tasks) {
+        this.panelFragment = panelFragment;
+        this.tasks = tasks;
+    }
 
     public ScrollablePanel1Adapter(PanelFragment panelFragment) {
         this.panelFragment = panelFragment;
@@ -202,17 +219,17 @@ public class ScrollablePanel1Adapter extends PanelAdapter {
     private void clickToJump(int row,View v) {
         //Toast.makeText(v.getContext(),listcontents.get(row-1).toString()+" 被点击了",Toast.LENGTH_LONG).show();
 
-        ResultBean resultBean = new ResultBean();
-
-        resultBean.setTime(listcontents.get(row-1).get(0).getContent());
-        resultBean.setDeviceType(listcontents.get(row-1).get(1).getContent());
-        resultBean.setQualify(listcontents.get(row-1).get(2).getContent());
-        resultBean.setIschecked(listcontents.get(row-1).get(3).getContent());
-        resultBean.setUser(listcontents.get(row-1).get(4).getContent());
+//        ResultBean resultBean = new ResultBean();
+//
+//        resultBean.setTime(listcontents.get(row-1).get(0).getContent());
+//        resultBean.setDeviceType(listcontents.get(row-1).get(1).getContent());
+//        resultBean.setQualify(listcontents.get(row-1).get(2).getContent());
+//        resultBean.setIschecked(listcontents.get(row-1).get(3).getContent());
+//        resultBean.setUser(listcontents.get(row-1).get(4).getContent());
 
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable("result",resultBean);
+        bundle.putSerializable("tasks",tasks.get(row-1));
         FragmentTransaction transaction = panelFragment.getFragmentManager().beginTransaction();
         ShowSearchedResultFragment showSearchedResultFragment = new ShowSearchedResultFragment();
         showSearchedResultFragment.setArguments(bundle);

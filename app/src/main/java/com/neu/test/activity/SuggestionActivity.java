@@ -18,19 +18,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.adapter.SuggestionGridViewAdapter;
+import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.LocationService;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 
 import com.neu.test.util.BaseUrl;
@@ -71,6 +75,7 @@ public class SuggestionActivity extends AppCompatActivity {
     final int maxNum = 500;
     final int REQUEST_VIDEO = 99;
     final int REQUEST_TEST = 66;
+    public int position = 0;
 
     //测试多张图片显示，测试Gridview组件
     private GridView gridView;
@@ -84,17 +89,69 @@ public class SuggestionActivity extends AppCompatActivity {
     private   List<String> testpathlistOfPhoto = new ArrayList<>();
     private String testvideoPath = " ";
 
+    private Toolbar toolbar_suggestion;
     private String devclass;//接收从DetctionActivity传过来的DEVCLASS
     private String suggestion;//接收从DetctionActivity传过来的检查项
+    private String title;//接收从DetctionActivity传过来的标题
+    private String taskType;
+    private String Path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
+
+        init();
+
+
+
+
+
+        btn_submit_suggestion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //用来对没有选择图片或视频进行提醒 若没选 软件则会崩溃
+                if (pathlistOfPhoto.size() == 0) {
+                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！",Toast.LENGTH_LONG,true).show();
+
+                    postFiles(et_suggestion.getText().toString(),null);
+                }else {
+                    //提交数据   上传图片
+                    postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
+                }
+                //退出activity
+                //finish();
+            }
+        });
+
+
+        et_suggestion.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                tv_num.setText("剩余字数："+ (maxNum-s.length()));
+            }
+        });
+
+    }
+
+    private void init() {
         //定位
         tv_suggetion = findViewById(R.id.tv_suggetion);//显示不合格项
         //btn_get_gps = findViewById(R.id.btn_get_gps);//获取定位按钮
         btn_submit_suggestion = findViewById(R.id.btn_submit_suggestion);
+
+        toolbar_suggestion = findViewById(R.id.toolbar_suggestion);
 
         //获取drawble目录下的plus图片  但是好像获取的文件有问题， 设置一个空的String字符也可以 在Adapter设置图片显示的那里已经实现了
         Resources resources = getResources();
@@ -128,49 +185,22 @@ public class SuggestionActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         suggestion = intent.getStringExtra("suggestion");
-        devclass = intent.getStringExtra("DEVCLASS");
+        position = intent.getIntExtra("position",1);
+        Log.e("position",position+"-");
+        Path = intent.getStringExtra("path");//保存图片视频到服务器上的名
+        Log.e("position",Path+"-");
+        tv_suggetion.setText(suggestion);  //写下不合格的检查项
 //        tv_suggetion.setText(suggestion);  //写下不合格的检查项
 
-        String isHege = intent.getStringExtra("isHege");
-        tv_suggetion.setText(suggestion+"----"+isHege);  //写下不合格的检查项
+        //设置标题栏
+        title = intent.getStringExtra("title");
+        taskType = intent.getStringExtra("taskType");
+        Log.e(TAG,"获取title："+title);
+        Log.e(TAG,"获取taskType："+taskType);
+        toolbar_suggestion.setTitleTextColor(getResources().getColor(R.color.white));
+        toolbar_suggestion.setTitle(getResources().getString(R.string.app_name));
+        toolbar_suggestion.setSubtitle(title+"("+taskType+")");
 
-
-
-        btn_submit_suggestion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //用来对没有选择图片或视频进行提醒 若没选 软件则会崩溃
-                if (pathlistOfPhoto.size() == 0) {
-                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！",Toast.LENGTH_LONG,true).show();
-
-                    postFiles(et_suggestion.getText().toString(),null);
-                }else {
-                    //提交数据   上传图片
-                    postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
-                }
-                //退出activity
-                finish();
-            }
-        });
-
-
-        et_suggestion.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                tv_num.setText("剩余字数："+ (maxNum-s.length()));
-            }
-        });
 
     }
 
@@ -180,21 +210,22 @@ public class SuggestionActivity extends AppCompatActivity {
         Log.d(TAG,"POST url: "+url);
 
         Map<String,String> taskItem = new HashMap<String, String>();
-        taskItem.put("CHECKCONTENT",text);
-        taskItem.put("DEVCLASS",devclass);
-
-        Log.d(TAG,"taskItem: "+taskItem.toString());
-        JSONObject taskJson = new JSONObject(taskItem);
-        Log.d(TAG,"taskJson: "+taskJson.toString());
-
-        Map<String, String> resultMap = new HashMap<>();
-        resultMap.put("taskItem",taskJson.toString());
+        taskItem.put("path",Path+position);
+        //taskItem.put("CHECKCONTENT",text);
+//        taskItem.put("DEVCLASS",devclass);
+//
+//        Log.d(TAG,"taskItem: "+taskItem.toString());
+//        JSONObject taskJson = new JSONObject(taskItem);
+//        Log.d(TAG,"taskJson: "+taskJson.toString());
+//
+//        Map<String, String> resultMap = new HashMap<>();
+//        resultMap.put("taskItem",taskJson.toString());
 
 
 
         OkHttp okHttp = new OkHttp();
         //Log.e(TAG, " pathlistOfPhoto: "+ pathOfPhotos.size());
-        okHttp.postFilesByPost(url, resultMap, pathOfPhotos, new ListTaskCallBack() {
+        okHttp.postFilesByPost(url, taskItem, pathOfPhotos, new FileResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.getMessage());
@@ -202,15 +233,22 @@ public class SuggestionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(Result<List<Task>> response, int id) {
+            public void onResponse(FilePathResult response, int id) {
                 if (response.getMessage() != null){
                         Log.d(TAG," getMessage: "+response.getMessage());//文件长传成功
                     if (response.getMessage().equals("??????")) {//Result upload Success!
                         Log.d(TAG," 文件上传成功");//文件长传成功
                         Toasty.success(SuggestionActivity.this,"文件上传成功！",Toast.LENGTH_SHORT,true).show();
-                        if (response.getContent() == null){
-                            Log.d(TAG," 文件上传成功" + "但是数据为0");
-                        }
+
+                        Intent intent = getIntent();
+                        intent.putExtra("position",position);
+                        intent.putExtra("imageNumber",response.imageNumber);
+                        Log.e("imageNumber",response.imageNumber+"-");
+                        intent.putExtra("videoNumber",response.videoNumber);
+                        Log.e("position",response.videoNumber+"-");
+                        intent.putExtra("content",et_suggestion.getText().toString());
+                        setResult(RESULT_OK,intent);
+                        finish();
                     } else if (response.getMessage().equals("结果上传失败")){
                         Toasty.error(SuggestionActivity.this, "获取个人信息失败！", Toast.LENGTH_SHORT).show();
                     }
@@ -385,7 +423,7 @@ public class SuggestionActivity extends AppCompatActivity {
                         tv_mygps.post(new Runnable() {
                             @Override
                             public void run() {
-                                tv_mygps.setText(s);
+                                //tv_mygps.setText(s);
                             }
                         });
 

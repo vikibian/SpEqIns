@@ -45,11 +45,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.PhotoVideoActivity"></activity>
+        <activity android:name=".activity.SelectCompanyActivity"></activity>
+        <activity android:name=".activity.PhotoVideoActivity" />
         <activity android:name=".activity.TestActivity" />
         <activity
             android:name=".activity.CheckDetailsActivity"
-            android:theme="@style/NoBar" />
+            android:theme="@style/NoBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity android:name=".activity.PDFActivity" />
         <activity
             android:name=".activity.MeAboutActivity"
@@ -64,7 +66,9 @@
             android:name=".activity.MeInformActivity"
             android:theme="@style/NoBar" />
         <activity android:name=".activity.SignupActivity" />
-        <activity android:name=".activity.LoginActivity" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -91,15 +95,18 @@
             android:enabled="true"
             android:process=":remote" />
 
-        <activity android:name=".activity.SuggestionActivity" />
+        <activity
+            android:name=".activity.SuggestionActivity"
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.ResultActivity" />
         <activity
             android:name=".activity.DetctionActivity"
-            android:theme="@style/NoBar"></activity>
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.ViewPagerActivity" />
         <activity
             android:name=".activity.FragmentManagerActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:theme="@style/NoBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

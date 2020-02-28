@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionItem1;
+import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.Task;
 import com.neu.test.fragment.CheckDetailsPhotoFragment;
 import com.neu.test.fragment.CheckDetailsTextFragment;
 import com.neu.test.fragment.CheckDetailsVideoFragment;
@@ -14,14 +17,14 @@ import com.neu.test.util.ResultBean;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private DetectionItem detectionItem;
-    private ResultBean resultBean;
+    private DetectionResult detectionResult;
+    private Task task;
     private String[] mTitles = new String[]{"文字", "图片", "视频"};
 
-    public MyFragmentPagerAdapter(FragmentManager fm, DetectionItem detectionItem, ResultBean resultBean) {
+    public MyFragmentPagerAdapter(FragmentManager fm, DetectionResult detectionResult, Task task) {
         super(fm);
-        this.detectionItem = detectionItem;
-        this.resultBean = resultBean;
+        this.detectionResult = detectionResult;
+        this.task = task;
     }
 
 
@@ -29,13 +32,13 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 1) {
-            return new CheckDetailsPhotoFragment();
+            return new CheckDetailsPhotoFragment(detectionResult);
         } else if (position == 2) {
             return new CheckDetailsVideoFragment();
         }else if (position==3){
             return new TabFragment();
         }
-        return new CheckDetailsTextFragment(detectionItem,resultBean);
+        return new CheckDetailsTextFragment(detectionResult,task);
     }
 
     @Override

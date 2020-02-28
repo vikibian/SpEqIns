@@ -10,19 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/check_detail_photo_iv_show"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:visibility="gone"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/check_detail_photo_iv_show"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
 
-        <View
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"/>
+            <!--android:scaleType="centerInside"-->
+            <!--android:padding="4dp"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:paddingBottom="2dp"-->
+            <!--/>-->
+
+        <com.bm.library.PhotoView
+            android:id="@+id/photoview_img"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="300dp"
+            android:layout_height="500dp"
+            android:scaleType="centerInside"
+            android:paddingBottom="2dp"/>
+
+
 
     </LinearLayout>
 

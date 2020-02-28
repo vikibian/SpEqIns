@@ -28,6 +28,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.neu.test.R;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +40,7 @@ public class PDFActivity extends AppCompatActivity {
 
     private
 
-    List<DetectionItem> resultData;
+    List<DetectionResult> resultData;
     private com.github.barteksc.pdfviewer.PDFView pdfView;
     private Button btn_pdf;
 
@@ -51,7 +52,7 @@ public class PDFActivity extends AppCompatActivity {
         pdfView = findViewById(R.id.pdfView);
         btn_pdf = findViewById(R.id.btn_pdf);
 
-        resultData = (List<DetectionItem>) getIntent().getSerializableExtra("listData");
+        resultData = (List<DetectionResult>) getIntent().getSerializableExtra("listData");
         final int dataFlag = getIntent().getIntExtra("position",0);
         final int j = getIntent().getIntExtra("taskType",0);
         final int hegeFlag = getIntent().getIntExtra("hegeFlag",0);
@@ -95,10 +96,10 @@ public class PDFActivity extends AppCompatActivity {
             String text2 = null;
 
             //进行选项状态的判断 如果前一个界面没有点击是否合格的选项则设置为空
-            if (resultData.get(i).getResultStatus()==null){
+            if (resultData.get(i).getSTATUS()==null){
                 text2 = " ";
             }else {
-                text2 = resultData.get(i).getResultStatus();
+                text2 = resultData.get(i).getSTATUS();
             }
 
             titleBaseLine = titleBaseLine + 11;

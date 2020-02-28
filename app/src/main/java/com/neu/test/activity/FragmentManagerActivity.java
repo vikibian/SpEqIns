@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.neu.test.fragment.MeFragment;
 import com.neu.test.fragment.SearchFragment;
 import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
+import com.neu.test.layout.SimpleToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,8 @@ public class FragmentManagerActivity extends AppCompatActivity {
     private List<Task> randomTasks = new ArrayList<Task>();  //随机任务
     private List<Task> allTasks ;  //随机任务
     String userName;
+
+    private SimpleToolbar simpleToolbar;
 
 
 
@@ -87,6 +91,10 @@ public class FragmentManagerActivity extends AppCompatActivity {
         mFlContent = (FrameLayout) findViewById(R.id.fl_content);
 
         mBottomBarLayout = (BottomBarLayout) findViewById(R.id.bbl);
+        //绑定自定义的toolbar组件设置toolbar上面的文字
+        simpleToolbar = findViewById(R.id.simple_toolbar);
+        simpleToolbar.setLeftTitleText(getResources().getString(R.string.app_name));
+        simpleToolbar.setRightTitleText(LoginActivity.inputName);
 
     }
 
@@ -101,7 +109,7 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String[] taskType = {"自查","复查","上级","随机"};
+        String[] taskType = {"自查","复查","下派","随机"};
         allTasks = (List<Task>) intent.getSerializableExtra("userTask");
         userName = intent.getStringExtra("userName");
         for (int i=0; i<allTasks.size();i++){
@@ -111,7 +119,7 @@ public class FragmentManagerActivity extends AppCompatActivity {
             else if (allTasks.get(i).getTASKTYPE().equals("复查")){
                 reselfTasks.add(allTasks.get(i));
             }
-            else if (allTasks.get(i).getTASKTYPE().equals("上级")){
+            else if (allTasks.get(i).getTASKTYPE().equals("下派")){
                 kingTasks.add(allTasks.get(i));
             }else {
                 randomTasks.add(allTasks.get(i));

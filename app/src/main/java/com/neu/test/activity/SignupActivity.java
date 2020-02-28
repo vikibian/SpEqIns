@@ -1,6 +1,7 @@
 package com.neu.test.activity;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,10 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
@@ -40,6 +44,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private static int userId = 0;
     private static String result = " ";//Post请求返回的结果
 
+    final int selectFlag = 111;
+    private String company ="";
+
     public String signupName;
     public String signupEmail;
     public String signupMobile;
@@ -52,9 +59,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText signup_password;
     private EditText signup_repassword;
 
+
     private Button bt_signup;
     private LinearLayout linearLayout;
     private ProgressBar progressBar;
+    private TextView textView_company;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +95,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         signup_password = findViewById(R.id.signup_password);
         signup_repassword = findViewById(R.id.signup_rePassword);
         bt_signup = findViewById(R.id.bt_signup);
+        textView_company = findViewById(R.id.signup_company);
+
+
 
 
         bt_signup.setOnClickListener(this);
+        textView_company.setOnClickListener(this);
     }
 
     @Override
@@ -97,6 +110,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.bt_signup:
                 Log.d(TAG," onclick");
                 createAccount();
+                break;
+            case R.id.signup_company:
+                Intent intent = new Intent(SignupActivity.this,SelectCompanyActivity.class);
+                startActivityForResult(intent,selectFlag);
                 break;
         }
     }
@@ -277,4 +294,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == selectFlag){
+                company = data.getStringExtra("company");
+                Log.e(TAG,"得到数据："+company);
+                textView_company.setText(company);
+            }
+        }
+    }
 }

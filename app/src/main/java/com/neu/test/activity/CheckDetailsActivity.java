@@ -20,7 +20,11 @@ import com.google.android.material.tabs.TabLayout;
 import com.neu.test.R;
 import com.neu.test.adapter.MyFragmentPagerAdapter;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionItem1;
+import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.Task;
 import com.neu.test.util.ResultBean;
+import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
 
 public class CheckDetailsActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
@@ -32,11 +36,12 @@ public class CheckDetailsActivity extends AppCompatActivity {
     private TabLayout.Tab three;
     private TabLayout.Tab four;
 
-    private DetectionItem detectionItem;
+    private DetectionItem1 detectionItem;
+    private DetectionResult detectionResult;
 
     private TextView mTextView;
     private Toolbar mToolbar;
-    private ResultBean mResultBean;
+    private Task task;
 
 
 
@@ -48,13 +53,13 @@ public class CheckDetailsActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        detectionItem = (DetectionItem) intent.getSerializableExtra("result");
-        mResultBean = (ResultBean) intent.getSerializableExtra("result_resultBean");
+        detectionResult = (DetectionResult) intent.getSerializableExtra("detectionResult");
+        task = (Task) intent.getSerializableExtra("task");
 
         initToolbar();
         //初始化视图
         initViews();
-        mTextView.setText(mResultBean.getDeviceType()+" 检查详情");
+        //mTextView.setText(mResultBean.getDeviceType()+" 检查详情");
 
     }
 
@@ -73,7 +78,7 @@ public class CheckDetailsActivity extends AppCompatActivity {
 
         //使用适配器将ViewPager与Fragment绑定在一起
         mViewPager = findViewById(R.id.viewpager);
-        myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(),detectionItem,mResultBean);
+        myFragmentPagerAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager(),detectionResult,task);
         mViewPager.setAdapter(myFragmentPagerAdapter);
 
         //将TabLayout与ViewPager绑定在一起
@@ -107,5 +112,12 @@ public class CheckDetailsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //与视频播放界面相关
+    @Override
+    public void onBackPressed() {
+        if (NiceVideoPlayerManager.instance().onBackPressd()) return;
+        super.onBackPressed();
     }
 }

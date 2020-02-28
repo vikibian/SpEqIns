@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.neu.test.R;
 import com.neu.test.activity.PictureActivity;
 import com.neu.test.adapter.CheckPhotoListViewAdapter;
+import com.neu.test.entity.DetectionResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,15 +47,16 @@ public class CheckDetailsPhotoFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public CheckDetailsPhotoFragment(DetectionResult detectionResult) {
+        // Required empty public constructor
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_check_details_photo, container, false);
         initView(view);
-
-        PictureActivity pictureActivity = new PictureActivity();
-        photoPath = pictureActivity.checkdetailsPhoto;
 
         //真机上的图片位置
 //        photoPaths.add("/storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
@@ -63,11 +65,12 @@ public class CheckDetailsPhotoFragment extends Fragment {
         /**
          * 这是AndroidStudio模拟器上测试图片的位置
          */
-        photoPaths.add("/storage/emulated/0/DCIM/Camera/IMG_20200113_014453.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
-        photoPaths.add("/storage/emulated/0/DCIM/Camera/IMG_20200114_081231.jpg");
-        photoPaths.add("/storage/emulated/0/DCIM/Camera/IMG_20200114_081242.jpg");
-        photoPaths.add("/storage/emulated/0/DCIM/Camera/TIM20200114164635.jpg");
-        photoPaths.add("/storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg");
+        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image1.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
+        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image0.jpg");
+        //photoPaths.add("http://39.97.108.172:8080/pic/ 123456789102Image0.jpg");
+
+//        photoPaths.add("/storage/emulated/0/DCIM/Camera/TIM20200114164635.jpg");
+//        photoPaths.add("/storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg");
 
 
 
@@ -84,136 +87,11 @@ public class CheckDetailsPhotoFragment extends Fragment {
     }
 
     private void initView(View view) {
-        mImageView = view.findViewById(R.id.check_detail_photo_iv_show);
+       // mImageView = view.findViewById(R.id.check_detail_photo_iv_show);
 
         //对测试的ListView的id进行连接
         photoCheckListview = view.findViewById(R.id.listview_fragment_check_details_photo);
     }
-
-
-    //这个函数已经弃用
-    //无参的decodePhoto函数
-//    public void decodePhoto() {
-//        mImageView.setVisibility(View.VISIBLE);
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                mImageView.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                                //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Camera/1573743302500IMG.jpg");//photoPath
-//                                Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/1573743302500IMG.jpg");//photoPath
-//                                //Bitmap bitmap = BitmapFactory.decodeFile(photoPath);//photoPath
-//                                bitmap = adjustPhotoRotation(bitmap,90);
-//                                Log.d("path","  "+photoPath);
-//                                Log.d("bitmap","  bitmap.width: "+bitmap.getWidth()+"  bitmap.getheight: "+bitmap.getHeight());
-//
-//                                if (bitmap == null){
-//                                    Toast.makeText(getContext(),"图片加载失败",Toast.LENGTH_SHORT).show();
-//                                }
-//                                if(bitmap!= null){
-//                                    int[] scales;
-//                                    scales=getScreenWithandHeight();
-//                                    int scale = getProportion(bitmap.getWidth(),bitmap.getHeight(),scales[0],scales[1]);
-//                                    //Bitmap bitmap1 =PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-//                                    Log.d("screen","  screen.width: "+scales[0]+"  screen.height: "+scales[1]);
-//                                    Log.d("screen","  scale: "+(bitmap.getWidth()/scales[0])+"  "+(bitmap.getWidth()/scales[1]));
-//
-//                                    Bitmap bitmap1 =PicZoom(bitmap,scales[0],scales[1]);
-//                                    Log.d("bitmap1","  bitmap1.width: "+bitmap1.getWidth()+"  botmap1.height: "+bitmap1.getHeight());
-//
-//                                    mImageView.setImageBitmap(bitmap1);
-//                                    mImageView.setScaleType(ImageView.ScaleType.CENTER);
-//                                    //mImageView.setRotation(90);
-//                                    mImageView.setVisibility(View.VISIBLE);
-//                                }
-//                        }catch (Exception e){
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                });
-//            }
-//        }).start();
-//    }
-
-
-//    private int getProportion(int oldWidth, int oldHeight, int newWidth, int newHeight) {
-//        if ((oldHeight > newHeight && oldWidth > newWidth)
-//                || (oldHeight <= newHeight && oldWidth > newWidth)) {
-//            int be = (int) (oldWidth / (float) newWidth);
-//            if (be <= 1)
-//                be = 1;
-//            return be;
-//        } else if (oldHeight > newHeight && oldWidth <= newWidth) {
-//            int be = (int) (oldHeight / (float) newHeight);
-//            if (be <= 1)
-//                be = 1;
-//            return be;
-//        }
-//        return  1;
-//    }
-//
-//    private Bitmap PicZoom(Bitmap bitmap, int width, int height) {
-//        int bitmapWidth = bitmap.getWidth();
-//        int bitmapHeight = bitmap.getHeight();
-//        Log.d("bitmap-zoom","  bitmap.width: "+bitmap.getWidth()+"  bitmap.getheight: "+bitmap.getHeight());
-//
-//
-//        Matrix matrix = new Matrix();
-//        Log.d("Matrix","  width/bitmapHeight: "+(float)width/bitmapHeight+"  height/bitmapWidth: "+(float)height/bitmapWidth);
-//        matrix.setScale((float)width/bitmapWidth,(float)height/bitmapHeight);
-//
-//        return Bitmap.createBitmap(bitmap,0,0,(bitmapWidth),(bitmapHeight),matrix,true);
-//    }
-//
-//    private int[] getScreenWithandHeight(){
-//        int[] scale = new int[2];
-//        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-//        scale[0] = windowManager.getDefaultDisplay().getWidth();
-//        scale[1] = windowManager.getDefaultDisplay().getHeight();
-//
-//        return scale;
-//    }
-//
-//    private Bitmap adjustPhotoRotation(Bitmap bm, final int orientationDegree)
-//    {
-//
-//        Matrix m = new Matrix();
-//        m.setRotate(orientationDegree, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-//        float targetX, targetY;
-//        if (orientationDegree == 90) {
-//            targetX = bm.getHeight();
-//            targetY = 0;
-//        } else {
-//            targetX = bm.getHeight();
-//            targetY = bm.getWidth();
-//        }
-//
-//        final float[] values = new float[9];
-//        m.getValues(values);
-//
-//        float x1 = values[Matrix.MTRANS_X];
-//        float y1 = values[Matrix.MTRANS_Y];
-//        Log.d("x1: "," "+x1);
-//        Log.d("y1: "," "+y1);
-//        Log.d("targetX: "," "+targetX);
-//        Log.d("targetY: "," "+targetY);
-//
-//
-//        m.postTranslate(targetX - x1, targetY - y1);
-//
-//        Bitmap bm1 = Bitmap.createBitmap(bm.getHeight(), bm.getWidth(), Bitmap.Config.ARGB_8888);
-//
-//        Paint paint = new Paint();
-//        Canvas canvas = new Canvas(bm1);
-//        canvas.drawBitmap(bm, m, paint);
-//
-//
-//        return bm1;
-//    }
-
 
 
 }

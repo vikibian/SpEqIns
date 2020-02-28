@@ -49,7 +49,7 @@ public class PhotoVideoActivity extends AppCompatActivity {
             public void captureSuccess(Bitmap bitmap) {
                 //获取图片bitmap
                 Log.e("JCameraView", "bitmap = " + bitmap.getWidth());
-                File filePic = new File(Environment.getExternalStorageDirectory() +"/DCIM/Photo/"+ getDate()+"IMG.jpg");
+                File filePic = new File(Environment.getExternalStorageDirectory() +"/DCIM/Photo/"+ UUID.randomUUID().toString()+"IMG.jpg");
                 //bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.demo);
                 try {
 

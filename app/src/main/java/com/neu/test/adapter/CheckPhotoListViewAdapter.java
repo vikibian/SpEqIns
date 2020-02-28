@@ -16,6 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bm.library.PhotoView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.neu.test.R;
 
 import java.util.ArrayList;
@@ -55,73 +58,84 @@ public class CheckPhotoListViewAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_listview_photo_check,null);
             viewHolder = new ViewHolder(convertView);
 
-            decodePhoto(paths.get(position),viewHolder);
+
             convertView.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder)convertView.getTag();
         }
-
+        decodePhoto(paths.get(position),viewHolder);
 
         return convertView;
     }
 
     class ViewHolder{
         ImageView imageView;
+        PhotoView photoView;
 
         public ViewHolder(View convertView){
-            imageView = convertView.findViewById(R.id.check_detail_photo_iv_show);
-
+            //imageView = convertView.findViewById(R.id.check_detail_photo_iv_show);
+            photoView = convertView.findViewById(R.id.photoview_img);
+            photoView.enable();
         }
     }
 
 
     //有参的函数
     public void decodePhoto(final String path,final ViewHolder viewHolder) {
-        viewHolder.imageView.setVisibility(View.VISIBLE);
+        //viewHolder.imageView.setVisibility(View.VISIBLE);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                viewHolder.imageView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Camera/1573743302500IMG.jpg");//photoPath
-                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/1573743302500IMG.jpg");//photoPath
-                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/IMG_20191110_164646.jpg");//photoPath
-                            Bitmap bitmap = BitmapFactory.decodeFile(path);//photoPath
+        Glide
+                .with(context)
+                .load(path)
+                .centerCrop()
+                //.placeholder(R.drawable.loading)
+                .error(R.drawable.error)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(viewHolder.photoView);
 
-                            bitmap = adjustPhotoRotation(bitmap,90);
-                            Log.d("path","  "+path);
-                            Log.d("bitmap","  bitmap.width: "+bitmap.getWidth()+"  bitmap.getheight: "+bitmap.getHeight());
-
-                            if (bitmap == null){
-                                Toast.makeText(context,"图片加载失败",Toast.LENGTH_SHORT).show();
-                            }
-                            if(bitmap != null){
-                                int[] scales;
-                                scales = getScreenWithandHeight();
-                                int scale = getProportion(bitmap.getWidth(),bitmap.getHeight(),scales[0],scales[1]);
-                                //Bitmap bitmap1 =PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
-                                Log.d("screen","  screen.width: "+scales[0]+"  screen.height: "+scales[1]);
-                                Log.d("screen","  scale: "+(bitmap.getWidth()/scales[0])+"  "+(bitmap.getWidth()/scales[1]));
-
-                                Bitmap bitmap1 =PicZoom(bitmap,scales[0],scales[1]);
-                                Log.d("bitmap1","  bitmap1.width: "+bitmap1.getWidth()+"  botmap1.height: "+bitmap1.getHeight());
-
-                                viewHolder.imageView.setImageBitmap(bitmap1);
-                                viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER);
-                                //mImageView.setRotation(90);
-                                viewHolder.imageView.setVisibility(View.VISIBLE);
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                viewHolder.imageView.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/DCIM/Camera/1573743302500IMG.jpg");//photoPath
+//                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/1573743302500IMG.jpg");//photoPath
+//                            //Bitmap bitmap = BitmapFactory.decodeFile("/storage/emulated/0/Pictures/IMG_20191110_164646.jpg");//photoPath
+//                            Bitmap bitmap = BitmapFactory.decodeFile(path);//photoPath
+//
+//                            bitmap = adjustPhotoRotation(bitmap,90);
+//                            Log.d("path","  "+path);
+//                            Log.d("bitmap","  bitmap.width: "+bitmap.getWidth()+"  bitmap.getheight: "+bitmap.getHeight());
+//
+//                            if (bitmap == null){
+//                                Toast.makeText(context,"图片加载失败",Toast.LENGTH_SHORT).show();
+//                            }
+//                            if(bitmap != null){
+//                                int[] scales;
+//                                scales = getScreenWithandHeight();
+//                                int scale = getProportion(bitmap.getWidth(),bitmap.getHeight(),scales[0],scales[1]);
+//                                //Bitmap bitmap1 =PicZoom(bitmap,bitmap.getWidth()/scale,bitmap.getHeight()/scale);
+//                                Log.d("screen","  screen.width: "+scales[0]+"  screen.height: "+scales[1]);
+//                                Log.d("screen","  scale: "+(bitmap.getWidth()/scales[0])+"  "+(bitmap.getWidth()/scales[1]));
+//
+//                                Bitmap bitmap1 =PicZoom(bitmap,scales[0],scales[1]);
+//                                Log.d("bitmap1","  bitmap1.width: "+bitmap1.getWidth()+"  botmap1.height: "+bitmap1.getHeight());
+//
+//                                viewHolder.imageView.setImageBitmap(bitmap1);
+//                                viewHolder.imageView.setScaleType(ImageView.ScaleType.CENTER);
+//                                //mImageView.setRotation(90);
+//                                viewHolder.imageView.setVisibility(View.VISIBLE);
+//                            }
+//                        }catch (Exception e){
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//            }
+//        }).start();
     }
 
 

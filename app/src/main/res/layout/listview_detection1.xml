@@ -30,7 +30,7 @@
         android:id="@+id/rb_detection_1_1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-          android:background="@color/floralwhite"
+        android:background="@color/floralwhite"
         android:text="合格"
         android:textSize="15sp" />
 
@@ -38,7 +38,7 @@
         android:id="@+id/rb_detection_2_2"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-          android:background="@color/floralwhite"
+        android:background="@color/floralwhite"
         android:text="不合格"
         android:textSize="15sp" />
     </RadioGroup>
@@ -47,13 +47,15 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="horizontal"
-        android:background="@color/floralwhite"
+      android:background="@color/floralwhite"
       android:gravity="right">
       <Button
         android:id="@+id/btn_add_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-          android:background="@color/floralwhite"
+
+        android:background="@color/floralwhite"
+        android:enabled="true"
         android:text="详细"
         android:textSize="15sp" />
     </LinearLayout>

@@ -8,6 +8,10 @@
     <ImageView
         android:id="@+id/gridview_item_photo"
         android:scaleType="centerInside"
+        android:checked="false"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="125dp"
         android:layout_height="125dp" />
 

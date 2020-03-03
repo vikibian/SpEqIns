@@ -45,13 +45,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.SelectCompanyActivity"></activity>
+        <activity android:name=".activity.ReDetectionActivity"></activity>
+        <activity android:name=".activity.SelectCompanyActivity" />
         <activity android:name=".activity.PhotoVideoActivity" />
         <activity android:name=".activity.TestActivity" />
         <activity
             android:name=".activity.CheckDetailsActivity"
-            android:theme="@style/NoBar"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.PDFActivity" />
         <activity
             android:name=".activity.MeAboutActivity"

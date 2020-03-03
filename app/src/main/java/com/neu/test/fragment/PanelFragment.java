@@ -37,6 +37,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
+@Deprecated
 public class PanelFragment extends Fragment {
     private static String TAG = "PanelFragment";
     private List<Task> tasks;

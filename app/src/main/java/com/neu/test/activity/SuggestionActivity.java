@@ -1,5 +1,6 @@
 package com.neu.test.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,8 +10,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -38,6 +41,7 @@ import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SuggestionActivitySaveDataUtil;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -86,26 +90,58 @@ public class SuggestionActivity extends AppCompatActivity {
 
 
 
-    private   List<String> testpathlistOfPhoto = new ArrayList<>();
+    private  List<String> testpathlistOfPhoto = new ArrayList<>();
     private String testvideoPath = " ";
+    private int deleteIndex;
 
+    //设置toolbar
     private Toolbar toolbar_suggestion;
+    private TextView toolbar_title;
+    private TextView toolabr_subtitleLeft;
+    private TextView toolbar_subtitleRight;
+
+
     private String devclass;//接收从DetctionActivity传过来的DEVCLASS
     private String suggestion;//接收从DetctionActivity传过来的检查项
     private String title;//接收从DetctionActivity传过来的标题
     private String taskType;
     private String Path;
+    private String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
+        Log.e(TAG," oncreate");
 
+        deleteIndex = -1;
         init();
 
 
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    deleteIndex = position;
+                if (pathlistOfPhoto.size()==position){
+                    view.showContextMenu();
+                }else {
+                    view.showContextMenu();
+                }
 
+
+            }
+        });
+
+        gridView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                menu.add(0,1,0,"相册");
+                menu.add(0,2,0,"相机");
+                menu.add(0,3,0,"取消");
+                menu.add(0,4,0,"删除");
+            }
+        });
 
         btn_submit_suggestion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,11 +207,6 @@ public class SuggestionActivity extends AppCompatActivity {
         testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Camera/1581774131951IMG.jpg");
         testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Video/202021595650VIDEO.mp4");
 
-        //这是在使用一张图片时的代码
-//        iv_photo = findViewById(R.id.iv_photo);//显示拍摄图片
-//        iv_video = findViewById(R.id.iv_video);//显示视频第一帧
-//        iv_plus = findViewById(R.id.iv_plus);//显示视频第一帧
-
 
         tv_mygps = findViewById(R.id.tv_mygps);
         et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
@@ -195,11 +226,24 @@ public class SuggestionActivity extends AppCompatActivity {
         //设置标题栏
         title = intent.getStringExtra("title");
         taskType = intent.getStringExtra("taskType");
+        status = intent.getStringExtra("status");
         Log.e(TAG,"获取title："+title);
         Log.e(TAG,"获取taskType："+taskType);
-        toolbar_suggestion.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar_suggestion.setTitle(getResources().getString(R.string.app_name));
-        toolbar_suggestion.setSubtitle(title+"("+taskType+")");
+        Log.e(TAG,"获取status："+status);
+//        toolbar_suggestion.setTitleTextColor(getResources().getColor(R.color.white));
+//        toolbar_suggestion.setTitle(getResources().getString(R.string.app_name));
+//        toolbar_suggestion.setSubtitle(title+"("+taskType+")");
+//        toolbar_suggestion.setSubtitleTextColor(getResources().getColor(R.color.white));
+        toolbar_title = findViewById(R.id.toolbar_suggestion_title);
+        toolabr_subtitleLeft = findViewById(R.id.toolbar_suggestion_subtitle_left);
+        toolbar_subtitleRight = findViewById(R.id.toolbar_suggestion_subtitle_right);
+        toolbar_title.setTextSize(20);
+        toolabr_subtitleLeft.setTextSize(13);
+        toolbar_subtitleRight.setTextSize(13);
+        toolbar_title.setText(getResources().getString(R.string.app_name));
+        toolabr_subtitleLeft.setText(title);
+        toolbar_subtitleRight.setText(taskType);
+        toolbar_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
 
 
     }
@@ -211,15 +255,9 @@ public class SuggestionActivity extends AppCompatActivity {
 
         Map<String,String> taskItem = new HashMap<String, String>();
         taskItem.put("path",Path+position);
-        //taskItem.put("CHECKCONTENT",text);
+//        taskItem.put("CHECKCONTENT",text);
 //        taskItem.put("DEVCLASS",devclass);
-//
-//        Log.d(TAG,"taskItem: "+taskItem.toString());
-//        JSONObject taskJson = new JSONObject(taskItem);
-//        Log.d(TAG,"taskJson: "+taskJson.toString());
-//
-//        Map<String, String> resultMap = new HashMap<>();
-//        resultMap.put("taskItem",taskJson.toString());
+
 
 
 
@@ -259,7 +297,6 @@ public class SuggestionActivity extends AppCompatActivity {
 
     }
 
-
     /**
      * 虽然menu选项在SuggestionGridViewAdapter.java文件中但是一样可以使用这里的选择事件按钮
      * @param item
@@ -277,6 +314,16 @@ public class SuggestionActivity extends AppCompatActivity {
                 startActivityForResult(intentall,REQUEST_TEST);
                 break;
             case 3:
+                break;
+            case 4:
+                if (deleteIndex>=0&&deleteIndex<pathlistOfPhoto.size()){
+                    pathlistOfPhoto.remove(deleteIndex);
+                    suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
+                    gridView.setAdapter(suggestionGridViewAdapter);
+                }else {
+                    Toast.makeText(getApplicationContext(),"此图片不能删除",Toast.LENGTH_SHORT).show();
+                }
+                //pathlistOfPhoto
                 break;
 
 
@@ -333,35 +380,6 @@ public class SuggestionActivity extends AppCompatActivity {
 
             }
 
-//            if (requestCode == REQUEST_VIDEO) {
-//
-//                imgString = data.getStringExtra("imagePath");
-//                testvideoPath =data.getStringExtra("path");
-//                videoString =data.getStringExtra("path");
-//                Log.d(TAG," videopath: "+testvideoPath);
-//                //不需要旋转90度  需要在设置图片的时候进行判断
-//                videoPath = imgString;
-//                //在此处需要更新图片数组
-//                //pathlistOfPhoto.add(imgString);
-//
-//                pathlistOfPhoto.add(videoString);
-//
-//                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
-//                gridView.setAdapter(suggestionGridViewAdapter);
-//
-//
-//            }
-//            if (requestCode == RequestCor) {
-//                Log.e("ERROR","对接成功");
-//                imgString = data.getStringExtra("imagePath");
-//                Log.e("图片地址","  "+imgString);
-//                //在此处需要更新图片数组
-//                pathlistOfPhoto.add(imgString);
-//                Log.e("图片地址","  "+pathlistOfPhoto.get(0));
-//                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
-//                gridView.setAdapter(suggestionGridViewAdapter);
-//
-//            }
         }
 
         //Masstise返回的图片数据
@@ -444,12 +462,13 @@ public class SuggestionActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         locationService.unregisterListener(mListener); //注销掉监听
         locationService.stop(); //停止定位服务
-        Log.e("ERROR","Su onStop()");
+        Log.e(TAG,"Su onStop()");
         super.onStop();
     }
 
     @Override
     protected void onStart() {
+        Log.e(TAG," onStart");
         // TODO Auto-generated method stub
 
         super.onStart();
@@ -468,20 +487,6 @@ public class SuggestionActivity extends AppCompatActivity {
 
         locationService.start();// 定位SDK
 
-//        btn_get_gps.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                if (btn_get_gps.getText().toString().equals(getString(R.string.startlocation))) {
-//                    locationService.start();// 定位SDK
-//                    // start之后会默认发起一次定位请求，开发者无须判断isstart并主动调用request
-//                    btn_get_gps.setText(getString(R.string.stoplocation));
-//                } else {
-//                    locationService.stop();
-//                    btn_get_gps.setText(getString(R.string.startlocation));
-//                }
-//            }
-//        });
     }
 
 
@@ -586,4 +591,39 @@ public class SuggestionActivity extends AppCompatActivity {
 
     };
 
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG," onResume");
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG," onpause");
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG," onDestroy");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.e(TAG,"onSaveInstanceState");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.e(TAG,"onRestoreInstanceState");
+    }
 }

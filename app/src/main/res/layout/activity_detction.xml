@@ -20,14 +20,72 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:text="标题"-->
             <!--android:textSize="20sp"/>-->
-            <TextView
-                android:id="@+id/toolbar_title_detction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/toolbar_title_detction"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:singleLine="true"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textSize="20sp" />-->
+
+            <LinearLayout
+                android:layout_marginLeft="0dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_weight="3"
+                    android:id="@+id/toolbar_detction_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    android:textColor="@color/white" />
+
+                <LinearLayout
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:gravity="center_horizontal"
+                            android:id="@+id/toolbar_detction_subtitle_left"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:singleLine="true"
+                            android:textColor="@color/white" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_weight="3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:gravity="left"
+                            android:id="@+id/toolbar_detction_subtitle_right"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="left"
+                            android:singleLine="true"
+                            android:textColor="@color/white" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
@@ -54,6 +112,15 @@
             android:layout_marginRight="5dp"
             android:layout_gravity="left"
             android:text="添加"/>
+        <Button
+            android:id="@+id/btn_save_detection"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="left"
+            android:text="保存"/>
         <Button
             android:id="@+id/btn_sure_detection"
             android:layout_width="wrap_content"

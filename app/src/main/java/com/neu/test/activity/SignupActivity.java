@@ -48,13 +48,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private String company ="";
 
     public String signupName;
-    public String signupEmail;
+//    public String signupEmail;
+    public String signupLoginname;
     public String signupMobile;
     public String signupPassword;
-    public String signupRePassword;
+//    public String signupRePassword;
 
     private EditText signup_name;
-    private EditText signup_email;
+//    private EditText signup_email;
+    private EditText signup_loginname;
     private EditText signup_mobile;
     private EditText signup_password;
     private EditText signup_repassword;
@@ -81,19 +83,21 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private void getContent() {
         signupName = signup_name.getText().toString();
-        signupEmail = signup_email.getText().toString();
+//        signupEmail = signup_email.getText().toString();
+        signupLoginname = signup_loginname.getText().toString();
         signupMobile = signup_mobile.getText().toString();
         signupPassword = signup_password.getText().toString();
-        signupRePassword = signup_repassword.getText().toString();
+//        signupRePassword = signup_repassword.getText().toString();
 
     }
 
     private void init() {
         signup_name = findViewById(R.id.signup_name);
-        signup_email = findViewById(R.id.signup_email);
+//        signup_email = findViewById(R.id.signup_email);
+        signup_loginname = findViewById(R.id.signup_loginname);
         signup_mobile = findViewById(R.id.signup_mobile);
         signup_password = findViewById(R.id.signup_password);
-        signup_repassword = findViewById(R.id.signup_rePassword);
+//        signup_repassword = findViewById(R.id.signup_rePassword);
         bt_signup = findViewById(R.id.bt_signup);
         textView_company = findViewById(R.id.signup_company);
 
@@ -232,45 +236,59 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         boolean valid = true;
 
         String name = signup_name.getText().toString();
-        String email = signup_email.getText().toString();
+//        String email = signup_email.getText().toString();
+        String loginname = signup_loginname.getText().toString();
         String mobile = signup_mobile.getText().toString();
         String password = signup_password.getText().toString();
-        String repassword = signup_repassword.getText().toString();
+//        String repassword = signup_repassword.getText().toString();
 
         if (name.isEmpty() ) {
-            signup_name.setError("请输入用户名");
+            signup_name.setError("请输入姓名");
             valid = false;
         } else {
             signup_name.setError(null);
         }
 
-        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {//|| !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            signup_email.setError("请输入合法的用户邮箱");
+        if (loginname.isEmpty()){
+            Toast.makeText(getApplicationContext(),"请选择单位",Toast.LENGTH_SHORT).show();
             valid = false;
-        } else {
-            signup_email.setError(null);
         }
 
+        if (loginname.isEmpty() ) {
+            signup_loginname.setError("请输入用户名");
+            valid = false;
+        } else {
+            signup_loginname.setError(null);
+        }
+
+//
+//        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {//|| !Patterns.EMAIL_ADDRESS.matcher(email).matches()
+//            signup_email.setError("请输入合法的用户邮箱");
+//            valid = false;
+//        } else {
+//            signup_email.setError(null);
+//        }
+
         if (mobile.isEmpty() || mobile.length() != 11) {//|| mobile.length() != 11
-            signup_mobile.setError("请输入合法的电话号码");
+            signup_mobile.setError("请输入合法的手机号码");
             valid = false;
         } else {
             signup_mobile.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {//|| password.length() < 4 || password.length() > 10
-            signup_password.setError("between 4 and 10 alphanumeric characters");
+            signup_password.setError("请输入4到10位密码");
             valid = false;
         } else {
             signup_password.setError(null);
         }
 
-        if (repassword.isEmpty()|| repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))) {// || repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))
-            signup_repassword.setError("Password Do not match");
-            valid = false;
-        } else {
-            signup_repassword.setError(null);
-        }
+//        if (repassword.isEmpty()|| repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))) {// || repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))
+//            signup_repassword.setError("Password Do not match");
+//            valid = false;
+//        } else {
+//            signup_repassword.setError(null);
+//        }
 
         return valid;
     }

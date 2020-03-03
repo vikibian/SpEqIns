@@ -21,13 +21,16 @@ import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.activity.DetctionActivity;
 import com.neu.test.activity.LoginActivity;
+import com.neu.test.activity.ReDetectionActivity;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Device;
 import com.neu.test.entity.JianChaItem;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListItemCallBack;
 import com.neu.test.net.callback.ListItemsCallBack;
 import com.neu.test.util.BaseUrl;
@@ -40,9 +43,12 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
+import static android.app.Activity.RESULT_OK;
+
 public class CheckFragment extends Fragment {
 
     private static String TAG = "CheckFragment";
+    private int CHECKFRAGMENT =123;
 
     private ListView lv_check;
     CheckAdapter checkAdapter;
@@ -87,14 +93,23 @@ public class CheckFragment extends Fragment {
         lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Task test = tasks.get(position);
+                Task task = tasks.get(position);
                 Log.e("CheckFargment"," DEVID  "+tasks.get(position).getDEVID());
                 Log.e("CheckFargment"," TASKID  "+tasks.get(position).getTASKID());
                 Log.e("CheckFargment"," DEVCLASS  "+tasks.get(position).getDEVCLASS());
-                String s = test.getUSEUNITNAME();
-                String DEVCLASS = test.getDEVCLASS();
+                String s = task.getUSEUNITNAME();
+                String DEVCLASS = task.getDEVCLASS();
                 int taskPosition = position;
-                getDetctionData(DEVCLASS,s,test);
+//                getDetctionData(DEVCLASS,s,task);
+
+                if(task.getRESULT().equals("2")){
+                    getSaveData(task,position);
+                }
+                else if(taskType.equals("复查")){
+                    getReDetctionData(task,position);
+                }else{
+                    getDetctionData(DEVCLASS,s,task,position);
+                }
 
 //                Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
 //                Intent intent = new Intent(getActivity(), DetctionActivity.class);
@@ -120,7 +135,7 @@ public class CheckFragment extends Fragment {
         return view;
     }
 
-    private void getDetctionData(String devclass, final String title, final Task task) {
+    private void getDetctionData(String devclass, final String title, final Task task, final int position) {
         Map<String, String> map = new HashMap<>();
         map.put("DEVCLASS",devclass);
         map.put("UNITNAME",task.getUSEUNITNAME());
@@ -142,15 +157,83 @@ public class CheckFragment extends Fragment {
                     intent.putExtra("userName", task.getLOGINNAME());
                     intent.putExtra("task", task);
                     intent.putExtra("tasktype",taskType);
-
+                    intent.putExtra("position",position);
                     Log.e(TAG," "+task.getTASKID());
                     intent.putExtra("TITLE", title);
-                    startActivity(intent);
+//                    startActivity(intent);
+                    startActivityForResult(intent,CHECKFRAGMENT);
                 }
             }
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CHECKFRAGMENT) {
+                int position = data.getIntExtra("position", 0);
+                tasks.get(position).setRESULT("2");
+                lv_check.setAdapter(checkAdapter);
+            }
+        }
+    }
+
+    private void getReDetctionData(final Task task, final int position) {
+        Map<String, String> map = new HashMap<>();
+        map.put("taskID",task.getTASKID());
+        map.put("DEVID",task.getDEVID());
+        String url = BaseUrl.BaseUrl+"selectReItemResult";
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(Result<List<DetectionResult>> listResult, int i) {
+                if (listResult.getMessage().equals("获取成功")) {
+                    List<DetectionResult> list = listResult.getContent();
+                    Log.e("size",list.size()+"");
+                    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
+                    intent.putExtra("items", (Serializable) list);
+                    intent.putExtra("position",position);
+                    intent.putExtra("task", task);
+                    startActivityForResult(intent,CHECKFRAGMENT);
+                }
+            }
+        });
+    }
+
+
+    private void getSaveData(final Task task, final int position) {
+        Map<String, String> map = new HashMap<>();
+        map.put("taskID",task.getTASKID());
+        map.put("DEVID",task.getDEVID());
+        String url = BaseUrl.BaseUrl+"getSaveResult";
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(Result<List<DetectionResult>> listResult, int i) {
+                if (listResult.getMessage().equals("获取成功")) {
+                    List<DetectionResult> list = listResult.getContent();
+                    Log.e("size",list.size()+"");
+                    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
+                    intent.putExtra("items", (Serializable) list);
+                    intent.putExtra("position",position);
+                    intent.putExtra("task", task);
+
+                    startActivityForResult(intent,CHECKFRAGMENT);
+                }
+            }
+        });
+    }
 
     class CheckAdapter extends BaseAdapter{
 
@@ -198,7 +281,16 @@ public class CheckFragment extends Fragment {
             TextView tv_check_device = convertView.findViewById(R.id.tv_check_device);
             TextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
+            TextView tv_issave_device = convertView.findViewById(R.id.tv_issave_device);
             LinearLayout ll_check_bg = convertView.findViewById(R.id.ll_check_bg);
+
+            if(task.getRESULT().equals("2")){
+                tv_issave_device.setVisibility(View.VISIBLE);
+            }
+            else{
+                tv_issave_device.setVisibility(View.INVISIBLE);
+            }
+
             int color = 0xFFFFFF00;
             if(position>15){
                 color = 0xC606F600;

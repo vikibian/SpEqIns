@@ -69,6 +69,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <com.bin.david.form.core.SmartTable
+                        android:id="@+id/result_table"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        />
+
                 </FrameLayout>
 
                 <RelativeLayout

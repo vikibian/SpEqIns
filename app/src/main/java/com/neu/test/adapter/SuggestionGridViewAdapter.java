@@ -61,7 +61,7 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
             //Log.d ("photoList position"," "+photoList.get(i));
             photoList.add(pathlistOfPhoto.get(i).toString());
         }
-        Collections.reverse(photoList);
+//        Collections.reverse(photoList);
         //photoList.add("/storage/emulated/0/DCIM/Camera/1581774108382IMG.jpg");
         //获取drawble目录下的plus图片  但是好像获取的文件有问题
         Resources resources = context.getResources();
@@ -144,14 +144,14 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
         //Glide.with(context).load(R.drawable.plus).into(viewHolder.imageView);
 
-        viewHolder.imageView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.add(0,1,0,"相册");
-                menu.add(0,2,0,"相机");
-                menu.add(0,3,0,"取消");
-            }
-        });
+//        viewHolder.imageView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+//            @Override
+//            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//                menu.add(0,1,0,"相册");
+//                menu.add(0,2,0,"相机");
+//                menu.add(0,3,0,"取消");
+//            }
+//        });
 
 
         return convertView;

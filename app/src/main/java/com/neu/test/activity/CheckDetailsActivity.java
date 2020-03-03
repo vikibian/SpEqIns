@@ -65,8 +65,11 @@ public class CheckDetailsActivity extends AppCompatActivity {
 
     private void initToolbar() {
         mToolbar = findViewById(R.id.check_detail_toolbar);
+        mTextView = findViewById(R.id.check_detail_toolbar_textview);
         mToolbar.setTitle(" ");
         mToolbar.setTitleTextColor(Color.WHITE);
+
+        mTextView.setText(" ");
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//显示箭头

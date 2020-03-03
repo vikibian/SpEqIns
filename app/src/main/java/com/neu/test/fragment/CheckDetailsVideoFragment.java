@@ -45,6 +45,11 @@ public class CheckDetailsVideoFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public CheckDetailsVideoFragment(List<String> path) {
+        // Required empty public constructor
+//        this.path = path;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

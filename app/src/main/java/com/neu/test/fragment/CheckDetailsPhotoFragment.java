@@ -51,6 +51,11 @@ public class CheckDetailsPhotoFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public CheckDetailsPhotoFragment(List<String> photoPaths) {
+        // Required empty public constructor
+//        this.photoPaths = photoPaths;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

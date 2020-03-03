@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
+import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
@@ -137,23 +138,30 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private void getDataByPost() {
         String url = BaseUrl.BaseUrl +"registerServlet";
         Log.d(TAG,"POST url: "+url);
-        JSONObject jsonObject = null;
 
-        Map<String, String> map = new HashMap<>();
-        map.put("USERID",signup_name.getText().toString());
-        map.put("LOGINNAME",signup_name.getText().toString());
-        map.put("LOGINPWD",signup_password.getText().toString());
-        map.put("UNTITD","");
-        map.put("DEVCLASS","");
-        Log.e(TAG,"map: "+ map.toString());
+        User userentity = new User();
+        userentity.setLOGINNAME(signup_loginname.getText().toString());
+        userentity.setUSERNAME(signup_name.getText().toString());
+        userentity.setUSEUNITNAME(textView_company.getText().toString());
+        userentity.setPHONE(signup_mobile.getText().toString());
+        userentity.setLOGINPWD(signup_password.getText().toString());
+//        map.put("USERID",signup_name.getText().toString());
+//        map.put("LOGINNAME",signup_name.getText().toString());
+//        map.put("LOGINPWD",signup_password.getText().toString());
+//        map.put("UNTITD","");
+//        map.put("DEVCLASS","");
+//        Log.e(TAG,"map: "+ map.toString());
+        Map<String, User> map = new HashMap<>();
+        map.put("user",userentity);
         String user = new Gson().toJson(map);
+        Log.e(TAG,"map: "+ user.toString());
 
-        Map<String, String> usermap = new HashMap<>();
-        usermap.put("user",user);
+//        Map<String, String> usermap = new HashMap<>();
+//        usermap.put("user",user);
 
 
         OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, new Gson().toJson(usermap), new ListTaskCallBack() {
+        okHttp.postBypostString(url, new Gson().toJson(user), new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.getMessage());

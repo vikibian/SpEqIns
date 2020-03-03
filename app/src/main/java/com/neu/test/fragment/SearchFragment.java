@@ -37,9 +37,11 @@ import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SearchUtil;
 import com.neu.test.util.SidebarUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,6 +96,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     Column<String> tasktype;
     Column<String> danwei;
     Column<String> nextInsertTime;
+    private SearchUtil searchUtil = new SearchUtil();
+
+//    private String[] deviceType = {"锅炉","压力容器","电梯","起重机","专用机动车辆","大型游乐设施","压力管道","客车索道"};
+//    private String[] deviceQualify = {"合格","不合格"};
+//    private String[] taskType = {"自查","复查","下派","随机"};
+//    private String[] classofdev ={"1000","2000","3000","4000","5000","6000","7000","8000"};
+//    public Map<String,String> typeToDevclass = new HashMap<>();
 
 
 
@@ -146,26 +155,25 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initsidebar() {
-        String[] deviceType = {"电梯","起重机","压力容器"};
-        String[] deviceQualify = {"合格","不合格"};
-        String[] deviceChecked = {"已检查","未检查","待复查"};
-        String[] deviceUser = {"admin","operator"};
-        String[] taskType = {"自查","复查","下派","随机"};
 
-        adapterDeviceType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceType);
+//        String[] deviceChecked = {"已检查","未检查","待复查"};
+//        String[] deviceUser = {"admin","operator"};
+
+
+        adapterDeviceType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner, searchUtil.deviceType);
         adapterDeviceType.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_Type.setAdapter(adapterDeviceType);
-        MBsp_Type.setText(deviceType[0]);
+        MBsp_Type.setText(searchUtil.deviceType[0]);
 
-        adapterDeviceQualify = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceQualify);
+        adapterDeviceQualify = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.deviceQualify);
         adapterDeviceQualify.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_Qualify.setAdapter(adapterDeviceQualify);
-        MBsp_Qualify.setText(deviceQualify[0]);
+        MBsp_Qualify.setText(searchUtil.deviceQualify[0]);
 
-        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,taskType);
+        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.taskType);
         adapterTaskType.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_taskType.setAdapter(adapterTaskType);
-        MBsp_taskType.setText(taskType[0]);
+        MBsp_taskType.setText(searchUtil.taskType[0]);
 
 //        adapterDeviceChecked = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceChecked);
 //        adapterDeviceChecked.setDropDownViewResource(R.layout.my_spinner_item);
@@ -252,21 +260,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG," Type : "+MBsp_Type.getText());
         Log.e(TAG," Qualify : "+MBsp_Qualify.getText());
 
-        String hege = new String();
-        if (MBsp_Qualify.getText().equals("合格")){
-            hege = "1";
-        }else if(MBsp_Qualify.getText().equals("不合格")){
-            hege = "-1";
-        }else{
-            hege = "0";
-        }
+//        String hege = new String();
+//        if (MBsp_Qualify.getText().toString().equals("合格")){
+//            hege = "0";
+//        }else if(MBsp_Qualify.getText().toString().equals("不合格")){
+//            hege = "1";
+//        }
 
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
         searchmap.put("LOGINNAME",LoginActivity.inputName);
-        searchmap.put("DEVCLASS","3000");
-        searchmap.put("RESULT",hege);
+        searchmap.put("DEVCLASS",searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
+        searchmap.put("RESULT",searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
         searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
+        Log.e(TAG," loginname: "+LoginActivity.inputName);
+        Log.e(TAG," devclass: "+searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
+        Log.e(TAG," result: "+searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
+        Log.e(TAG," taskType: "+MBsp_taskType.getText().toString());
 //        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
 //        searchmap.put("DEVID","123456");
 
@@ -439,6 +449,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG,"发送数据显示："+tasks.get(position).getCHECKDATE());
         Log.e(TAG,"发送数据显示："+position);
         Log.e(TAG,"发送数据显示："+tasks.size());
+        Log.e(TAG,"发送数据显示  result："+tasks.get(position).getRESULT());
         bundle.putSerializable("tasks",tasks.get(position));
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         ShowSearchedResultFragment showSearchedResultFragment = new ShowSearchedResultFragment();

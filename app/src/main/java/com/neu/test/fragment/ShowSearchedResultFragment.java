@@ -38,6 +38,7 @@ import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.ListContent;
 import com.neu.test.util.ResultBean;
+import com.neu.test.util.SearchUtil;
 import com.yyydjk.library.DropDownMenu;
 
 import java.io.Serializable;
@@ -71,7 +72,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
     private DropDownMenu dropDownMenu;
     private String headers[] = {"选择过滤项"};
-    public String choose[] = {"全部","合格","不合格"};
+
     private DropDownMenuAdapter dropDownMenuAdapter;
     private List<View> popupViews = new ArrayList<>();
     private int posFlag=0;
@@ -82,7 +83,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     private List<DetectionResult> listResult;
     private String taskID;
     private String devID;
-
+    private SearchUtil searchUtil = new SearchUtil();
 
 //    private List<DetectionItem1> listDatas_qualified = new ArrayList<>();
 //    private List<DetectionItem1> listDatas_unqualified = new ArrayList<>();
@@ -120,7 +121,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         initView(view);
         getTaskList();
         initContent();
-        initDropDownMenu();
+//        initDropDownMenu();
 
 
 
@@ -161,9 +162,9 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
-        map.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
         Log.e(TAG,"map: "+ map.toString());
-        map.put("DEVID","123456");//123456  devID
+        map.put("DEVID",devID);//123456  devID
         Log.e(TAG,"map: "+ map.toString());
 
 
@@ -184,7 +185,10 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                         Log.e(TAG,"没有post数据");
                     }else {
                         //初始化listview应该在获取数据之后
-                        initListViewAdapter1();
+                        if (listResult.size()!=0){
+                            initListViewAdapter1();
+                            initDropDownMenu();
+                        }
                     }
                 }
             }
@@ -193,10 +197,10 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
     private void filiterResult() {
         for (int i=0;i<listResult.size();i++){
-            if (listResult.get(i).getSTATUS().equals("1")){
+            if (listResult.get(i).getSTATUS().equals("0")){
                 listDatas_qualified.add(listResult.get(i));
             }
-            if (listDatas.get(i).getResultStatus().equals("-1")){
+            if (listResult.get(i).getSTATUS().equals("1")){
                 listDatas_unqualified.add(listResult.get(i));
             }
         }
@@ -204,7 +208,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
     private void initDropDownMenu() {
         final ListView listView_dropdown = new ListView(getContext());
-        dropDownMenuAdapter = new DropDownMenuAdapter(getContext(), Arrays.asList(choose));
+        dropDownMenuAdapter = new DropDownMenuAdapter(getContext(), Arrays.asList(searchUtil.choose));
         listView_dropdown.setDividerHeight(0);
         listView_dropdown.setAdapter(dropDownMenuAdapter);
 
@@ -215,7 +219,9 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 dropDownMenuAdapter.setCheckItem(position);
-                dropDownMenu.setTabText(choose[position]);
+                dropDownMenu.setTabText(searchUtil.choose[position]);
+                Log.e(TAG," text: "+searchUtil.choose[position]);
+                Log.e(TAG," text position: "+position);
                 dropDownMenu.closeMenu();
                 posFlag = position;
 
@@ -225,10 +231,10 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                 List<DetectionResult> listQualifed = new ArrayList<>();
                 List<DetectionResult> listunQualifed = new ArrayList<>();
                 for(int i=0;i<listResult.size();i++){
-                    if(listResult.get(i).getSTATUS().equals("1")){
+                    if(listResult.get(i).getSTATUS().equals("0")){
                         listQualifed.add(listResult.get(i));
                     }
-                    else if(listResult.get(i).getSTATUS().equals("-1")){
+                    else if(listResult.get(i).getSTATUS().equals("1")){
                         listunQualifed.add(listResult.get(i));
                     }
                 }
@@ -242,7 +248,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
             }
         });
 
-        initDropDownMenuListView(listDatas);
+        initDropDownMenuListView(listResult);
     }
 
 
@@ -256,11 +262,12 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
             Log.e(TAG,"接收数据显示："+task.toString());
 
             //设备种类
-            textView_deviceType.setText(task.getDEVCLASS());
+            textView_deviceType.setText(searchUtil.getDevclassToType(task.getDEVCLASS()));
             textView_deviceType.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
             //合格情况
-            textView_qualify.setText(task.getRESULT());
+            textView_qualify.setText(searchUtil.getNumToQuality(task.getRESULT()));
+            Log.e(TAG," initContent: "+task.getRESULT());
             textView_qualify.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
             //是否已检查
@@ -280,7 +287,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     }
 
     private void refresh(List<DetectionResult> listRes) {
-        listViewAdapter1 = new ListViewAdapter1(getContext(),listRes,choose[posFlag]);
+        listViewAdapter1 = new ListViewAdapter1(getContext(),listRes,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
     }
 
@@ -289,16 +296,16 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         DetctionActivity detctionActivity = new DetctionActivity();
         detctionActivity.getData();
         //listViewAdapter1 = new ListViewAdapter1(getContext(),listDatas,choose[posFlag]);
-        listViewAdapter1 = new ListViewAdapter1(getContext(),listResult,choose[posFlag]);
+        listViewAdapter1 = new ListViewAdapter1(getContext(),listResult,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
 
     }
 
-    private void initDropDownMenuListView(List<DetectionItem1> listData) {
+    private void initDropDownMenuListView(List<DetectionResult> listResult) {
         ListView listView_1 = new ListView(getContext());
-        DetctionActivity detctionActivity = new DetctionActivity();
-        detctionActivity.getData();
-//        ListViewAdapter1 listViewAdapter2 = new ListViewAdapter1(getContext(),listData,choose[posFlag]);
+//        DetctionActivity detctionActivity = new DetctionActivity();
+//        detctionActivity.getData();
+//        ListViewAdapter1 listViewAdapter2 = new ListViewAdapter1(getContext(),listResult,searchUtil.choose[posFlag]);
 //        listView_1.setAdapter(listViewAdapter2);
         dropDownMenu.setDropDownMenu(Arrays.asList(headers),popupViews,listView_1);
     }

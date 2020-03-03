@@ -45,7 +45,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ReDetectionActivity"></activity>
+        <activity android:name=".activity.ReDetectionActivity"
+            android:theme="@style/NoBar"></activity>
         <activity android:name=".activity.SelectCompanyActivity" />
         <activity android:name=".activity.PhotoVideoActivity" />
         <activity android:name=".activity.TestActivity" />

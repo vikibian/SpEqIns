@@ -47,7 +47,7 @@ public class CheckDetailsVideoFragment extends Fragment {
 
     public CheckDetailsVideoFragment(List<String> path) {
         // Required empty public constructor
-//        this.path = path;
+        this.path = path;
     }
 
 

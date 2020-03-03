@@ -26,6 +26,9 @@ import com.neu.test.entity.Task;
 import com.neu.test.util.ResultBean;
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CheckDetailsActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -55,7 +58,6 @@ public class CheckDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         detectionResult = (DetectionResult) intent.getSerializableExtra("detectionResult");
         task = (Task) intent.getSerializableExtra("task");
-
         initToolbar();
         //初始化视图
         initViews();

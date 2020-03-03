@@ -23,7 +23,7 @@ public class ListViewAdapter1 extends BaseAdapter {
     private final String TAG ="ListViewAdapter1";
     private Context context;
     private List<DetectionItem1> listDatas;
-    private List<DetectionResult> listResult;
+    private List<DetectionResult> listResult = new ArrayList<>();
     private String stringFlag;
 
 
@@ -48,6 +48,7 @@ public class ListViewAdapter1 extends BaseAdapter {
         this.context = context;
         this.listResult = listResult;
         Log.d(TAG,"构造器");
+        Log.e(TAG,"listresult: "+listResult.toString());
         this.stringFlag = str;
     }
 
@@ -74,14 +75,14 @@ public class ListViewAdapter1 extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.show_searched_result_listview_item,null);
             viewHolder = new ViewHolder(convertView,position);
 
-            if (listResult.get(position).getSTATUS().equals("1")){
+            if (listResult.get(position).getSTATUS().equals("0")){
                 viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
                 //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
                 viewHolder.mTextView_status.setText("合格");
                 int color = Color.parseColor("#008000");
 //                viewHolder.circleImageView.setBackgroundColor(color);
                 viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_green);
-            }else if (listResult.get(position).getSTATUS().equals("-1")){
+            }else if (listResult.get(position).getSTATUS().equals("1")){
                 viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
                 //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
                 viewHolder.mTextView_status.setText("不合格");

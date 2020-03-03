@@ -26,7 +26,6 @@ import com.neu.test.R;
 import com.neu.test.activity.PictureActivity;
 import com.neu.test.activity.SuggestionActivity;
 import com.neu.test.activity.VideoActivity;
-import com.neu.test.util.ImageUtil;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -198,7 +197,7 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
             Log.e(TAG," 缩小后mask宽度： "+suoxiao.getWidth());
             Log.e(TAG," 缩小后mask高度度： "+suoxiao.getHeight());
 
-            bitmap = ImageUtil.createWaterMaskCenter(src,suoxiao);
+//            bitmap = ImageUtil.createWaterMaskCenter(src,suoxiao);
         } catch (Exception e){
             e.printStackTrace();
         }

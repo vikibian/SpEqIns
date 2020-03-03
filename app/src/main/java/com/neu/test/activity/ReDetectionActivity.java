@@ -1,10 +1,12 @@
 package com.neu.test.activity;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
@@ -61,6 +64,10 @@ public class ReDetectionActivity extends AppCompatActivity {
     private TextView toolbar_textView;
     private static boolean isSave = false;
 
+    private TextView toolbar_title;
+    private TextView toolbar_subtitleLeft;
+    private TextView toolabr_subtitleRight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +78,7 @@ public class ReDetectionActivity extends AppCompatActivity {
         title = task.getUSEUNITNAME();
         userName = task.getLOGINNAME();
         taskType =  task.getTASKTYPE();//getIntent().getStringExtra("tasktype");
-        //initToolbar();
+        initToolbar();
         //初始化
         lv_redetection = findViewById(R.id.lv_redetection);
         btn_add_redetection = findViewById(R.id.btn_add_redetection);
@@ -90,29 +97,61 @@ public class ReDetectionActivity extends AppCompatActivity {
         redetectionAdapter = new ReDetectionActivity.ReDetectionAdapter();
         lv_redetection.setAdapter(redetectionAdapter);
 
+//        btn_sure_redetection.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String string = new Gson().toJson(detectionResults);
+//                String url = BaseUrl.BaseUrl+"setItemResult";
+//                OkHttp okHttp = new OkHttp();
+//                okHttp.postBypostString(url, string, new FileResultCallBack() {
+//                    @Override
+//                    public void onError(Call call, Exception e, int i) {
+//                        Log.e("error",e.toString());
+//                    }
+//
+//                    @Override
+//                    public void onResponse(FilePathResult filePathResult, int i) {
+//                        Log.e("message",filePathResult.getMessage());
+//                        Intent intent = new Intent(ReDetectionActivity.this,PDFActivity.class);
+//                        intent.putExtra("listData",(Serializable)detectionResults);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+//                    }
+//                });
+//            }
+//        });
+
         btn_sure_redetection.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-                String string = new Gson().toJson(detectionResults);
-                String url = BaseUrl.BaseUrl+"setItemResult";
-                OkHttp okHttp = new OkHttp();
-                okHttp.postBypostString(url, string, new FileResultCallBack() {
-                    @Override
-                    public void onError(Call call, Exception e, int i) {
-                        Log.e("error",e.toString());
-                    }
 
-                    @Override
-                    public void onResponse(FilePathResult filePathResult, int i) {
-                        Log.e("message",filePathResult.getMessage());
-                        Intent intent = new Intent(ReDetectionActivity.this,PDFActivity.class);
-                        intent.putExtra("listData",(Serializable)detectionResults);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                });
+                List<DetectionResult> list = detectionResults.stream().filter(dete -> dete.getSTATUS().equals("2")).collect(Collectors.toList());
+                if (list.size() != 0) {
+                    Toasty.warning(ReDetectionActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
+                } else {
+                    String string = new Gson().toJson(detectionResults);
+                    String url = BaseUrl.BaseUrl+"setItemResult";
+                    OkHttp okHttp = new OkHttp();
+                    okHttp.postBypostString(url, string, new FileResultCallBack() {
+                        @Override
+                        public void onError(Call call, Exception e, int i) {
+                            Log.e("error", e.toString());
+                        }
+
+                        @Override
+                        public void onResponse(FilePathResult filePathResult, int i) {
+                            Log.e("message", filePathResult.getMessage());
+                            Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
+                            intent.putExtra("listData", (Serializable) detectionResults);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    });
+                }
             }
         });
+
         btn_save_redetection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,17 +184,22 @@ public class ReDetectionActivity extends AppCompatActivity {
      * @description : 设置toolbar让中间显示文字
      */
 
-//  public void initToolbar() {
-//    toolbar = (Toolbar) findViewById(R.id.toolbar_redetction);
-//    toolbar_textView = (TextView) findViewById(R.id.toolbar_title_redetction);
-//    toolbar.setSubtitle(title+"("+taskType+")");
-//    toolbar.setTitle(getResources().getString(R.string.app_name));
-//
-//    toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-//    toolbar_textView.setText(" ");
-//    //setSupportActionBar(toolbar);
-//
-//  }
+  public void initToolbar() {
+    toolbar = (Toolbar) findViewById(R.id.toolbar_re_detction);
+      toolbar_title = findViewById(R.id.toolbar_re_detction_title);
+      toolbar_subtitleLeft = findViewById(R.id.toolbar_re_detction_subtitle_left);
+      toolabr_subtitleRight = findViewById(R.id.toolbar_re_detction_subtitle_right);
+
+      toolbar_title.setTextSize(20);
+      toolbar_subtitleLeft.setTextSize(13);
+      toolabr_subtitleRight.setTextSize(13);
+
+      toolbar_title.setText(getResources().getString(R.string.app_name));
+      toolbar_subtitleLeft.setText(title);
+      toolabr_subtitleRight.setText(taskType);
+      toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
+
+  }
 
     private void getSelectedItemByPost(String TASKID, String DEVID, String HEGE) {
         url = BaseUrl.BaseUrl + "setTaskResultServlet";

@@ -8,7 +8,7 @@ public class DetectionResult implements Serializable {
   private String DEVCLASS = "";  //设备种类
   private String DEVID = "";  //设备名
   private String CHECKCONTENT;  //检测内容
-  private String STATUS;  //检查项合格情况
+  private String STATUS = "2";  //检查项合格情况
   private String REFJIM = "";  //图片地址
   private String REFJVI = "";  //视频地址
   private String TASKID;  //任务ID

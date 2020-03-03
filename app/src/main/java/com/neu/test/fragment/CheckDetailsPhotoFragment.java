@@ -53,7 +53,7 @@ public class CheckDetailsPhotoFragment extends Fragment {
 
     public CheckDetailsPhotoFragment(List<String> photoPaths) {
         // Required empty public constructor
-//        this.photoPaths = photoPaths;
+        this.photoPaths = photoPaths;
     }
 
 

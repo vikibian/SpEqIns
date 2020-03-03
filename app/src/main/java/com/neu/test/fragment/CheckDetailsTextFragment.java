@@ -5,22 +5,29 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Task;
 import com.neu.test.util.ResultBean;
+import com.neu.test.util.SearchUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CheckDetailsTextFragment extends Fragment {
+    private static String TAG = "CheckDetailsTextFragment";
 
     private String content;
     private TextView textView_inform;
@@ -33,6 +40,7 @@ public class CheckDetailsTextFragment extends Fragment {
     private TextView textView_checked;
     private TextView textView_user;
     private TextView textView_address;
+    private SearchUtil searchUtil = new SearchUtil();
 
 
     public CheckDetailsTextFragment() {
@@ -70,10 +78,19 @@ public class CheckDetailsTextFragment extends Fragment {
         textView_time.setText(task.getCHECKDATE());
 
         textView_deviceType = view.findViewById(R.id.check_detail_deviceType);
-        textView_deviceType.setText(task.getDEVCLASS());
+        Log.e(TAG," task.getDevclass: "+task.getDEVCLASS());
+        Log.e(TAG," searchUtil.getTypeToDevclass: "+searchUtil.getDevclassToType(task.getDEVCLASS().toString()));
+        Log.e(TAG," searchUtil: "+new Gson().toJson(searchUtil.typeToDevclass));
+        textView_deviceType.setText(searchUtil.getDevclassToType(task.getDEVCLASS().toString()));
 
         textView_qualify = view.findViewById(R.id.check_detail_qualify);
-        textView_qualify.setText(task.getRESULT());
+//        String result = " ";
+//        if (task.getRESULT().equals("0")){
+//            result = "合格";
+//        }else if (task.getRESULT().equals("1")){
+//            result = "不合格";
+//        }
+        textView_qualify.setText(searchUtil.getNumToQuality(task.getRESULT()));
 
 //        textView_checked = view.findViewById(R.id.check_detail_checked);
         //textView_checked.setText(resultBean.getIschecked());

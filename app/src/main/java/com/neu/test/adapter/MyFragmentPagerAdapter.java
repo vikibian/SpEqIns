@@ -16,16 +16,19 @@ import com.neu.test.fragment.CheckDetailsTextFragment;
 import com.neu.test.fragment.CheckDetailsVideoFragment;
 import com.neu.test.fragment.TabFragment;
 import com.neu.test.util.ResultBean;
+import com.neu.test.util.SearchUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     private static String TAG = "MyFragPageAdapter";
 
     private DetectionResult detectionResult;
     private Task task;
-    private String[] mTitles = new String[]{"文字", "图片", "视频"};
+    private SearchUtil searchUtil = new SearchUtil();
 
     public MyFragmentPagerAdapter(FragmentManager fm, DetectionResult detectionResult, Task task) {
         super(fm);
@@ -49,13 +52,13 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles.length;
+        return searchUtil.mTitles.length;
     }
 
     //ViewPager与TabLayout绑定后，这里获取到PageTitle就是Tab的Text
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return searchUtil.mTitles[position];
     }
 
     /**

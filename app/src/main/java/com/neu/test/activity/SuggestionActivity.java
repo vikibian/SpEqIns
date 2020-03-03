@@ -36,6 +36,7 @@ import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.LocationService;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
+import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
@@ -257,8 +258,6 @@ public class SuggestionActivity extends AppCompatActivity {
         taskItem.put("path",Path+position);
 //        taskItem.put("CHECKCONTENT",text);
 //        taskItem.put("DEVCLASS",devclass);
-
-
 
 
         OkHttp okHttp = new OkHttp();

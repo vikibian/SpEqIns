@@ -125,6 +125,7 @@ public class DetctionActivity extends AppCompatActivity {
             detectionResult.setCHECKCONTENT(listData.get(position).getXIANGMUMINGCHENG());//检查内容
 //            detectionResult.setSTATUS("1");//检查结果
             detectionResult.setTASKID(task.getTASKID());
+            detectionResult.setDEVID(task.getDEVID());
             detectionResult.setDEVCLASS(task.getDEVCLASS());
             detectionResults.add(detectionResult);
         }

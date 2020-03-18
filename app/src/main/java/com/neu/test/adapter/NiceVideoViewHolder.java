@@ -1,9 +1,11 @@
 package com.neu.test.adapter;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,6 +56,11 @@ public class NiceVideoViewHolder extends RecyclerView.ViewHolder{
 //                    .load(R.mipmap.test)
 //                    //.placeholder(R.drawable.img_default)
 //                    .into(mController.imageView());
-        mVideoPlayer.setUp(video, null);
+       try {
+            mVideoPlayer.setUp(video, null);
+       }catch (Exception e){
+           e.printStackTrace();
+           mVideoPlayer.setVisibility(View.INVISIBLE);
+       }
     }
 }

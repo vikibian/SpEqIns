@@ -20,7 +20,18 @@ public class SearchUtil {
     public Map<String,String> typeToDevclass = new HashMap<>();
     public Map<String,String> devclassToType = new HashMap<>();
     public String[] mTitles = new String[]{"文字", "图片", "视频"};
-    public String[] choose = {"全部","合格","不合格"};
+    public String[] choose = {"全部","合格","不合格","未定"};
+    public String hege = "0";
+    public String nohege = "1";
+    public String undecided = "2";
+    public String recifyQualify = "3";
+    public String hegeText = "合格";
+    public String nohegeText = "不合格";
+    public String undecidedText = "未定";
+    public String recifyQualifyText = "整改合格";
+
+    public String changed = "1";
+    public String unchanged = "0";
 
     public String getTypeToDevclass(String type){
         initTypeToDevclass();

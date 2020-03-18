@@ -54,6 +54,7 @@ public class CheckDetailsTextFragment extends Fragment {
     public CheckDetailsTextFragment(DetectionResult detectionResult, Task task) {
         this.detectionResult = detectionResult;
         this.task = task;
+        Log.e(TAG,"检验task："+task.toString());
     }
 
 
@@ -84,13 +85,8 @@ public class CheckDetailsTextFragment extends Fragment {
         textView_deviceType.setText(searchUtil.getDevclassToType(task.getDEVCLASS().toString()));
 
         textView_qualify = view.findViewById(R.id.check_detail_qualify);
-//        String result = " ";
-//        if (task.getRESULT().equals("0")){
-//            result = "合格";
-//        }else if (task.getRESULT().equals("1")){
-//            result = "不合格";
-//        }
-        textView_qualify.setText(searchUtil.getNumToQuality(task.getRESULT()));
+
+        textView_qualify.setText(task.getRESULT());
 
 //        textView_checked = view.findViewById(R.id.check_detail_checked);
         //textView_checked.setText(resultBean.getIschecked());

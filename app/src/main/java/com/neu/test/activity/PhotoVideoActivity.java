@@ -32,16 +32,21 @@ public class PhotoVideoActivity extends AppCompatActivity {
     private boolean granted = false;
     byte[] result;  //将bitmap转化的byte数组
     //Bitmap bitmap;
+    Intent intent;
+    private  String ImagePath = "";
+    private  String VideoPath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_video);
 
+        intent = getIntent();
+        String username = intent.getStringExtra("username");
         jCameraView = (JCameraView) findViewById(R.id.jcameraview);
 
         //设置视频保存路径
-        jCameraView.setSaveVideoPath(Environment.getExternalStorageDirectory() +"/DCIM/Video");
+        jCameraView.setSaveVideoPath(Environment.getExternalStorageDirectory() +"/DCIM/"+username+"/Video");
 
         //JCameraView监听
         jCameraView.setJCameraLisenter(new JCameraLisenter() {
@@ -49,7 +54,7 @@ public class PhotoVideoActivity extends AppCompatActivity {
             public void captureSuccess(Bitmap bitmap) {
                 //获取图片bitmap
                 Log.e("JCameraView", "bitmap = " + bitmap.getWidth());
-                File filePic = new File(Environment.getExternalStorageDirectory() +"/DCIM/Photo/"+ UUID.randomUUID().toString()+"IMG.jpg");
+                File filePic = new File(Environment.getExternalStorageDirectory() +"/DCIM/"+username+"/Photo/image_"+ getDate().toString()+".jpg");
                 //bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.demo);
                 try {
 
@@ -65,9 +70,13 @@ public class PhotoVideoActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                Intent intent = getIntent();
+//                Intent intent = getIntent();
                 Log.e(TAG,"path: "+filePic.getAbsolutePath());
-                intent.putExtra("path",filePic.getAbsolutePath());
+                ImagePath = filePic.getAbsolutePath();
+                String[] splitPath = ImagePath.split("/");
+                ImagePath = splitPath[splitPath.length-1];
+                intent.putExtra("ImagePath",ImagePath);
+                intent.putExtra("VideoPath",VideoPath);
                 setResult(RESULT_OK,intent);
                 finish();
             }
@@ -76,8 +85,12 @@ public class PhotoVideoActivity extends AppCompatActivity {
             public void recordSuccess(String url) {
                 //录像
                 Log.e("JCameraView", "String = " + url);
-                Intent intent = getIntent();
-                intent.putExtra("path",url);
+                VideoPath = url;
+                //Intent intent = getIntent();
+                String[] splitPath = VideoPath.split("/");
+                VideoPath = splitPath[splitPath.length-1];
+                intent.putExtra("ImagePath",ImagePath);
+                intent.putExtra("VideoPath",VideoPath);
                 setResult(RESULT_OK,intent);
                 finish();
             }

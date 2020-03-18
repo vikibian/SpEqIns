@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -126,12 +125,15 @@ public class FragmentManagerActivity extends AppCompatActivity {
             }
         }
 
+        //如果变换页面下的排列将下面的顺序重新排列一下即可
+
          CheckFragment checkFragment = new CheckFragment(selfTasks,mBottomBarLayout,taskType[0]);
          mFragmentList.add(checkFragment);
 
 
         CheckFragment reCheck = new CheckFragment(reselfTasks,mBottomBarLayout,taskType[1]);
         mFragmentList.add(reCheck);
+
 
         CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[2]);
         mFragmentList.add(taskFrag);
@@ -141,8 +143,6 @@ public class FragmentManagerActivity extends AppCompatActivity {
         mFragmentList.add(randomFrag);
 
         SearchFragment searchFragment = new SearchFragment();
-
-
         mFragmentList.add(searchFragment);
 
 

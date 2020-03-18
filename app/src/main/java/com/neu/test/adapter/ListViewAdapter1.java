@@ -1,7 +1,6 @@
 package com.neu.test.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +9,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.neu.test.R;
-import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
+import com.neu.test.util.SearchUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ public class ListViewAdapter1 extends BaseAdapter {
     private List<DetectionItem1> listDatas;
     private List<DetectionResult> listResult = new ArrayList<>();
     private String stringFlag;
+    private SearchUtil searchUtil = new SearchUtil();
 
 
 //
@@ -75,28 +75,31 @@ public class ListViewAdapter1 extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.show_searched_result_listview_item,null);
             viewHolder = new ViewHolder(convertView,position);
 
-            if (listResult.get(position).getSTATUS().equals("0")){
-                viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
-                //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
-                viewHolder.mTextView_status.setText("合格");
-                int color = Color.parseColor("#008000");
-//                viewHolder.circleImageView.setBackgroundColor(color);
-                viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_green);
-            }else if (listResult.get(position).getSTATUS().equals("1")){
-                viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
-                //viewHolder.mTextView_name.setText(listDatas.get(position).getCHECKCONTENT());
-                viewHolder.mTextView_status.setText("不合格");
-                int color = Color.parseColor("#ff3333");
-//                viewHolder.circleImageView.setBackgroundColor(color);
-                viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_red);
-            }else {
-                viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
-            }
-
             convertView.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        if (listResult.get(position).getSTATUS().equals(searchUtil.hege)
+                ||listResult.get(position).getSTATUS().equals(searchUtil.hegeText)){
+            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_status.setText(searchUtil.hegeText);
+            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_green);
+        }else if (listResult.get(position).getSTATUS().equals(searchUtil.nohege)
+                ||listResult.get(position).getSTATUS().equals(searchUtil.nohegeText)){
+            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_status.setText(searchUtil.nohegeText);
+            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_red);
+        }else if (listResult.get(position).getSTATUS().equals(searchUtil.undecided)
+                ||listResult.get(position).getSTATUS().equals(searchUtil.undecidedText)){
+            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_status.setText(searchUtil.undecidedText);
+            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_blue);
+        } else {
+            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_status.setText(" ");
         }
 
         return convertView;

@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
@@ -32,6 +33,7 @@ import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.adapter.SuggestionGridViewAdapter;
+import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.LocationService;
 import com.neu.test.entity.Result;
@@ -78,9 +80,13 @@ public class SuggestionActivity extends AppCompatActivity {
 
     final int RequestCor = 521;
     final int maxNum = 500;
-    final int REQUEST_VIDEO = 99;
     final int REQUEST_TEST = 66;
     public int position = 0;
+
+    private String ImagePath;
+    private String VideoPath;
+    private DetectionResult detectionResult;
+    private Intent intent;
 
     //测试多张图片显示，测试Gridview组件
     private GridView gridView;
@@ -137,7 +143,7 @@ public class SuggestionActivity extends AppCompatActivity {
         gridView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                menu.add(0,1,0,"相册");
+//                menu.add(0,1,0,"相册");
                 menu.add(0,2,0,"相机");
                 menu.add(0,3,0,"取消");
                 menu.add(0,4,0,"删除");
@@ -148,17 +154,29 @@ public class SuggestionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                //用来对没有选择图片或视频进行提醒 若没选 软件则会崩溃
+//                //用来对没有选择图片或视频进行提醒 若没选 软件则会崩溃
+//                if (pathlistOfPhoto.size() == 0) {
+//                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！",Toast.LENGTH_LONG,true).show();
+//
+//                    postFiles(et_suggestion.getText().toString(),null);
+//                }else {
+//                    //提交数据   上传图片
+//                    postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
+//                }
                 if (pathlistOfPhoto.size() == 0) {
-                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！",Toast.LENGTH_LONG,true).show();
-
-                    postFiles(et_suggestion.getText().toString(),null);
+                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
+                    intent.putExtra("position",position);
+                    intent.putExtra("imageNumber",0);
+                    intent.putExtra("videoNumber",0);
+                    intent.putExtra("status",status);
+                    Log.e("status7",status);
+                    intent.putExtra("content",et_suggestion.getText().toString());
+                    setResult(RESULT_OK,intent);
+                    finish();
                 }else {
                     //提交数据   上传图片
                     postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
                 }
-                //退出activity
-                //finish();
             }
         });
 
@@ -179,6 +197,11 @@ public class SuggestionActivity extends AppCompatActivity {
                 tv_num.setText("剩余字数："+ (maxNum-s.length()));
             }
         });
+
+        if(pathlistOfPhoto.size()>0){
+            suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
+            gridView.setAdapter(suggestionGridViewAdapter);
+        }
 
     }
 
@@ -202,27 +225,49 @@ public class SuggestionActivity extends AppCompatActivity {
         gridView.setAdapter(suggestionGridViewAdapter);
         //Collections.reverse(pathlistOfPhoto);
 
-        //测试上传文件
-        testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Camera/1581774108382IMG.jpg");
-        testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Camera/1581774121524IMG.jpg");
-        testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Camera/1581774131951IMG.jpg");
-        testpathlistOfPhoto.add("/storage/emulated/0/DCIM/Video/202021595650VIDEO.mp4");
 
 
         tv_mygps = findViewById(R.id.tv_mygps);
         et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
         tv_num = findViewById(R.id.tv_num);//计算字数框
-        tv_mygps.setMovementMethod(ScrollingMovementMethod.getInstance());//显示定位  里面的参数给TextView添加滚动条  设置滚动方式
+//        tv_mygps.setMovementMethod(ScrollingMovementMethod.getInstance());//显示定位  里面的参数给TextView添加滚动条  设置滚动方式
         Log.e("ERROR","Suggesion crate");
 
-        Intent intent = getIntent();
-        suggestion = intent.getStringExtra("suggestion");
-        position = intent.getIntExtra("position",1);
-        Log.e("position",position+"-");
-        Path = intent.getStringExtra("path");//保存图片视频到服务器上的名
-        Log.e("position",Path+"-");
-        tv_suggetion.setText(suggestion);  //写下不合格的检查项
-//        tv_suggetion.setText(suggestion);  //写下不合格的检查项
+        intent = getIntent();
+        position = intent.getIntExtra("position",0);
+        status = intent.getStringExtra("status");
+        Log.e("status2",status);
+        detectionResult = (DetectionResult) intent.getSerializableExtra("detectionResult");
+        ImagePath = detectionResult.getREFJIM();
+        VideoPath = detectionResult.getREFJVI();
+        et_suggestion.setText(detectionResult.getSUGGESTION());
+
+        if(!(ImagePath.equals(""))){
+            String[] imgSplit = ImagePath.split(",");
+            Log.e("lenth",imgSplit.length+"");
+            for (int i=0;i<imgSplit.length;i++){
+                String imgPath = Environment.getExternalStorageDirectory() +"/DCIM/"+detectionResult.getLOGINNAME()+"/Photo/"+imgSplit[i];
+                File file = new File(imgPath);
+                //本地有，从本地读取
+                if(file.exists()){
+                    pathlistOfPhoto.add(imgPath);
+                }
+                //若本地没有，从服务器获取
+            }
+        }
+        if(!(VideoPath.equals(""))){
+            String[] vdoSplit = VideoPath.split(",");
+            for (int i=0;i<vdoSplit.length;i++){
+                String vdoPath = Environment.getExternalStorageDirectory() +"/DCIM/"+detectionResult.getLOGINNAME()+"/Video/"+vdoSplit[i];
+                File file = new File(vdoPath);
+                //本地有，从本地读取
+                if(file.exists()){
+                    pathlistOfPhoto.add(vdoPath);
+                }
+            }
+        }
+
+        tv_suggetion.setText(detectionResult.getJIANCHAXIANGTITLE());  //写下不合格的检查项
 
         //设置标题栏
         title = intent.getStringExtra("title");
@@ -255,7 +300,7 @@ public class SuggestionActivity extends AppCompatActivity {
         Log.d(TAG,"POST url: "+url);
 
         Map<String,String> taskItem = new HashMap<String, String>();
-        taskItem.put("path",Path+position);
+        taskItem.put("path",detectionResult.getLOGINNAME());
 //        taskItem.put("CHECKCONTENT",text);
 //        taskItem.put("DEVCLASS",devclass);
 
@@ -277,13 +322,14 @@ public class SuggestionActivity extends AppCompatActivity {
                         Log.d(TAG," 文件上传成功");//文件长传成功
                         Toasty.success(SuggestionActivity.this,"文件上传成功！",Toast.LENGTH_SHORT,true).show();
 
-                        Intent intent = getIntent();
                         intent.putExtra("position",position);
                         intent.putExtra("imageNumber",response.imageNumber);
-                        Log.e("imageNumber",response.imageNumber+"-");
                         intent.putExtra("videoNumber",response.videoNumber);
-                        Log.e("position",response.videoNumber+"-");
                         intent.putExtra("content",et_suggestion.getText().toString());
+                        intent.putExtra("ImagePath",ImagePath);
+                        intent.putExtra("VideoPath",VideoPath);
+                        intent.putExtra("status",status);
+                        Log.e("status3",status);
                         setResult(RESULT_OK,intent);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
@@ -310,6 +356,7 @@ public class SuggestionActivity extends AppCompatActivity {
                 break;
             case 2:
                 Intent intentall = new Intent(SuggestionActivity.this,PhotoVideoActivity.class);
+                intentall.putExtra("username",detectionResult.getLOGINNAME());
                 startActivityForResult(intentall,REQUEST_TEST);
                 break;
             case 3:
@@ -363,39 +410,46 @@ public class SuggestionActivity extends AppCompatActivity {
 
             if (requestCode == REQUEST_TEST) {
 
-                //imgString = data.getStringExtra("imagePath");
-                testvideoPath =data.getStringExtra("path");
-                videoString =data.getStringExtra("path");
-                Log.d(TAG," videopath: "+testvideoPath);
+                imgString = data.getStringExtra("ImagePath");
+                testvideoPath = data.getStringExtra("VideoPath");
+                videoString = data.getStringExtra("VideoPath");
                 //不需要旋转90度  需要在设置图片的时候进行判断
-                videoPath = imgString;
+
                 //在此处需要更新图片数组
-                //pathlistOfPhoto.add(imgString);
-
-                pathlistOfPhoto.add(videoString);
-
-                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
+                if (!(imgString.equals(""))) {
+                    ImagePath += imgString + ",";
+                    imgString = Environment.getExternalStorageDirectory() + "/DCIM/" + detectionResult.getLOGINNAME() + "/Photo/" + imgString;
+                    pathlistOfPhoto.add(imgString);
+                }
+                if (!(testvideoPath.equals(""))) {
+                    VideoPath += videoString + ",";
+                    videoString = Environment.getExternalStorageDirectory() + "/DCIM/" + detectionResult.getLOGINNAME() + "/Video/" + videoString;
+                    pathlistOfPhoto.add(videoString);
+                }
+                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto, 1);
                 gridView.setAdapter(suggestionGridViewAdapter);
 
             }
 
-        }
+            //Masstise返回的图片数据
+            if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+                Log.d("Matisse", "Uris: " + Matisse.obtainResult(data));
+                Log.d("Matisse", "Paths: " + Matisse.obtainPathResult(data));
+                Log.e("Matisse", "Use the selected photos with original: "+String.valueOf(Matisse.obtainOriginalState(data)));
+                for (int i = 0;i<Matisse.obtainPathResult(data).size();i++){
+                    pathlistOfPhoto.add(Matisse.obtainPathResult(data).get(i));
+                }
 
-        //Masstise返回的图片数据
-        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-            Log.d("Matisse", "Uris: " + Matisse.obtainResult(data));
-            Log.d("Matisse", "Paths: " + Matisse.obtainPathResult(data));
-            Log.e("Matisse", "Use the selected photos with original: "+String.valueOf(Matisse.obtainOriginalState(data)));
-            for (int i = 0;i<Matisse.obtainPathResult(data).size();i++){
-                pathlistOfPhoto.add(Matisse.obtainPathResult(data).get(i));
+                suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
+                gridView.setAdapter(suggestionGridViewAdapter);
+    //            List<Uri> result = Matisse.obtainResult(data);
+    //            textView.setText(result.toString());
             }
-
-            suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
-            gridView.setAdapter(suggestionGridViewAdapter);
-//            List<Uri> result = Matisse.obtainResult(data);
-//            textView.setText(result.toString());
         }
+
     }
+
+
     public  Bitmap PicZoom(Bitmap bitmap,int width,int height){
         int bmpWidth = bitmap.getWidth();
         int bmpHeight = bitmap.getHeight();

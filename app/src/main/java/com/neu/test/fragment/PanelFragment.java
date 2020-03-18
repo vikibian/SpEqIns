@@ -23,15 +23,9 @@ import com.bin.david.form.data.format.bg.BaseCellBackgroundFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.listener.OnColumnItemClickListener;
-import com.kelin.scrollablepanel.library.ScrollablePanel;
 import com.neu.test.R;
 import com.neu.test.entity.Task;
-import com.neu.test.util.ListContent;
-import com.neu.test.util.ListName;
-import com.neu.test.adapter.ScrollablePanel1Adapter;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

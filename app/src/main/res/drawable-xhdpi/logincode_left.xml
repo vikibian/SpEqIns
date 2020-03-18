@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
+    <!--&lt;!&ndash;<item android:state_pressed="true">&ndash;&gt;-->
+    <!--&lt;!&ndash;<shape >&ndash;&gt;-->
+    <!--&lt;!&ndash;<solid android:color="#5069ff"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<stroke android:width="1dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:color="#F1F3FF"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<corners android:bottomRightRadius="20dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:topRightRadius="20dp"/>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;</shape>&ndash;&gt;-->
+    <!--&lt;!&ndash;</item>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<item android:state_checked="true">&ndash;&gt;-->
+    <!--&lt;!&ndash;<shape >&ndash;&gt;-->
+    <!--&lt;!&ndash;<solid android:color="#5069ff"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<stroke android:width="1dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:color="#F1F3FF"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;<corners android:bottomRightRadius="20dp"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:topRightRadius="20dp"/>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;</shape>&ndash;&gt;-->
+    <!--&lt;!&ndash;</item>&ndash;&gt;-->
+
+    <!--<item android:state_pressed="false">-->
+        <!--<shape>-->
+            <!--<stroke android:width="1dp"-->
+                <!--android:color="#F1F3FF"/>-->
+            <!--<corners android:bottomLeftRadius="25dp"-->
+                <!--android:topLeftRadius="25dp"/>-->
+        <!--</shape>-->
+    <!--</item>-->
+<!--</selector>-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 设置背景填充色 -->
+    <!--<solid android:color="#5069ff" />-->
+    <!-- 设置边框宽度为1dp，边框颜色 -->
+    <stroke
+        android:width="1dp"
+        android:color="#F1F3FF" />
+    <!-- 设置按钮圆角半径为25dp -->
+    <corners android:bottomLeftRadius="25dp"
+        android:topLeftRadius="25dp"/>
+
+</shape>

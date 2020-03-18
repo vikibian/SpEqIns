@@ -38,4 +38,12 @@
         <item name="android:textSize">@dimen/textsize</item>
     </style>
 
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+
+        <item name="colorControlNormal">@color/white</item>
+
+        <item name="colorControlActivated">@color/skyblue</item>
+
+    </style>
+
 </resources>

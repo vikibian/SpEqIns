@@ -305,6 +305,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     if(response.getContent().size()==0){
                         Toast.makeText(getContext(),"无数据",Toast.LENGTH_LONG).show();
                         Log.e("TAG"," response.getContent: "+"无数据");
+                        Task task = new Task();
+                        task.setCHECKDATE("12");
+                        task.setDEADLINE("12");
+                        task.setRESULT("1");
+                        task.setDEVCLASS("3000");
+                        tasks.add(task);
+                        initTable(tasks);
+                        Log.e("TAG"," Content: "+tasks.toString());
+                        Log.e("TAG"," 接收task: "+tasks.size());
 
                     }else {
                         Log.e("TAG"," response.getContent: "+"有数据");
@@ -329,6 +338,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initTable( List<Task> tasksList) {
+        for (int i=0;i<tasksList.size();i++){
+            if (tasksList.get(i).getRESULT().equals(searchUtil.hege)){
+                tasksList.get(i).setRESULT(searchUtil.hegeText);
+            }
+        }
+
+
         checkdate = new Column<String>("检查日期","CHECKDATE");
         checkdate.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override

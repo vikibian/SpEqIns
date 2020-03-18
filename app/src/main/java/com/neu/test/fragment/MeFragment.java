@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.allen.library.SuperTextView;
 import com.neu.test.R;
+import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.MeAboutActivity;
 import com.neu.test.activity.MeAccountAndSafeActivity;
 import com.neu.test.activity.MeFeedbackActivity;
@@ -24,11 +25,13 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public static final int REQUEST_CODE_ACCOUNTANDSAFE = 1;
     public static final int REQUEST_CODE_FEEDBACK = 2;
     public static final int REQUEST_CODE_ABOUT = 3;
+    public static final int REQUEST_CODE_LAW= 4;
 
     private SuperTextView STVinform;
     private SuperTextView STVaccount;
     private SuperTextView STVfeedback;
     private SuperTextView STVabout;
+    private SuperTextView STVlaw;
 
     int me;
 
@@ -52,12 +55,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         STVaccount = view.findViewById(R.id.STV_account);
         STVfeedback = view.findViewById(R.id.STV_feedback);
         STVabout = view.findViewById(R.id.STV_about);
+        STVlaw = view.findViewById(R.id.STV_law);
 
 
         STVinform.setOnClickListener(this);
         STVaccount.setOnClickListener(this);
         STVfeedback.setOnClickListener(this);
         STVabout.setOnClickListener(this);
+        STVlaw.setOnClickListener(this);
     }
 
     @Override
@@ -72,6 +77,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
             case R.id.STV_account:
                 intent = new Intent(getActivity(), MeAccountAndSafeActivity.class);
                 getActivity().startActivityForResult(intent,REQUEST_CODE_ACCOUNTANDSAFE);
+                break;
+            case R.id.STV_law:
+                intent = new Intent(getActivity(), LawLearningActivity.class);
+                getActivity().startActivityForResult(intent,REQUEST_CODE_LAW);
                 break;
             case R.id.STV_feedback:
                 intent = new Intent(getActivity(), MeFeedbackActivity.class);

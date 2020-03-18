@@ -4,12 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.CheckFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/sp_devid"
+            style="@android:style/Widget.Spinner"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/sp_devclass"
+            style="@android:style/Widget.Spinner"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/check_noitem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:orientation="vertical">
+        <TextView
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="额，暂无数据"/>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/lv_check"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </ListView>
-
+    </LinearLayout>
 
 </FrameLayout>

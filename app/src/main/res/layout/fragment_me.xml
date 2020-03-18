@@ -57,6 +57,19 @@
                         stv:sRightIconRes="@drawable/arrow_right_red"
                         android:layout_height="50dp" />
 
+                    <com.allen.library.SuperTextView
+                        android:id="@+id/STV_law"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        stv:sShapeCornersRadius="5dp"
+                        android:layout_margin="5dp"
+                        stv:sLeftTextSize="20dp"
+                        stv:sLeftTextColor="@color/black"
+                        stv:sBackgroundDrawableRes="@drawable/me_button"
+                        stv:sDividerLineType="both"
+                        stv:sLeftTextString="法律法规学习"
+                        stv:sRightIconRes="@drawable/arrow_right_red" />
+
                     <!--<com.allen.library.SuperTextView-->
                     <!--android:layout_width="match_parent"-->
                     <!--android:layout_height="50dp"-->

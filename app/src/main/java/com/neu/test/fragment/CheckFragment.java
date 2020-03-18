@@ -17,28 +17,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.neu.test.R;
 import com.neu.test.activity.DetctionActivity;
-import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.ReDetectionActivity;
+import com.neu.test.activity.RectifyResultActivity;
+import com.neu.test.entity.DetailTask;
 import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionResult;
-import com.neu.test.entity.Device;
-import com.neu.test.entity.JianChaItem;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
-import com.neu.test.net.callback.ListItemCallBack;
+import com.neu.test.net.callback.ListIDetailTaskCallBack;
 import com.neu.test.net.callback.ListItemsCallBack;
 import com.neu.test.util.BaseUrl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
@@ -51,12 +55,22 @@ public class CheckFragment extends Fragment {
     private int CHECKFRAGMENT =123;
 
     private ListView lv_check;
+    private LinearLayout check_noitem;
+    private Map<String,String> map_devclass;
     CheckAdapter checkAdapter;
-    List<Task> tasks;
+    List<Task> tasks = new ArrayList<Task>();
     BottomBarLayout mBottomBarLayout;
     private String taskType;
 
+    private MaterialSpinner sp_devid;
+    private MaterialSpinner sp_devclass;
+
+    private List<String> devclassList;
+    private List<String> devidList;
+
     public List<DetectionItem> testItem;
+
+    private List<Task> devclassTasks;
 
     public CheckFragment(){
 
@@ -86,10 +100,70 @@ public class CheckFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_check, null);
         lv_check = view.findViewById(R.id.lv_check);
+        sp_devid = view.findViewById(R.id.sp_devid);
+        sp_devclass = view.findViewById(R.id.sp_devclass);
+        check_noitem = view.findViewById(R.id.check_noitem);
+
+        devclassList = new ArrayList<>();
+        devidList = new ArrayList<>();
+        map_devclass = new HashMap<>();
+        devclassTasks = new ArrayList<>();
         //准备BaseAdapter
         checkAdapter = new CheckAdapter();
+        devclassTasks.addAll(tasks);
+        devclassList.add("全部");
+        devclassList.add("测试");
+        devidList.add("设备类别");
+        map_devclass.put("3000","电梯");
+        map_devclass.put("8000","压力管道");
         //设置Adapter显示列表
         lv_check.setAdapter(checkAdapter);
+
+        if(devclassTasks.size() == 0){
+            check_noitem.setVisibility(View.VISIBLE);
+            lv_check.setVisibility(View.GONE);
+        }else{
+            check_noitem.setVisibility(View.GONE);
+            lv_check.setVisibility(View.VISIBLE);
+        }
+
+        for(int i=0;i<tasks.size();i++){
+            if(!(devclassList.contains(map_devclass.get(tasks.get(i).getDEVCLASS())))){
+                devclassList.add(map_devclass.get(tasks.get(i).getDEVCLASS()));
+            }
+        }
+
+        sp_devclass.setItems(devclassList);
+        sp_devid.setItems(devidList);
+
+
+        sp_devclass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                Snackbar.make(view, "position:"+position +"id:"+id+"item:"+ item, Snackbar.LENGTH_LONG).show();
+                if(item.equals("全部")){
+                    devclassTasks.clear();
+                    devclassTasks.addAll(tasks);
+                }else{
+                    devclassTasks.clear();
+                    for(int i=0;i<tasks.size();i++){
+                        if(tasks.get(i).getDEVCLASS().equals(getKeyByValue(map_devclass,item.toString()))){
+                            devclassTasks.add(tasks.get(i));
+                        }
+                    }
+                }
+                if(devclassTasks.size() == 0){
+                    check_noitem.setVisibility(View.VISIBLE);
+                    lv_check.setVisibility(View.GONE);
+                }else{
+                    check_noitem.setVisibility(View.GONE);
+                    lv_check.setVisibility(View.VISIBLE);
+                    lv_check.setAdapter(checkAdapter);
+                }
+            }
+        });
+
+
         lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -97,6 +171,7 @@ public class CheckFragment extends Fragment {
                 Log.e("CheckFargment"," DEVID  "+tasks.get(position).getDEVID());
                 Log.e("CheckFargment"," TASKID  "+tasks.get(position).getTASKID());
                 Log.e("CheckFargment"," DEVCLASS  "+tasks.get(position).getDEVCLASS());
+                Log.e("CheckFargment"," taskType  "+taskType);
                 String s = task.getUSEUNITNAME();
                 String DEVCLASS = task.getDEVCLASS();
                 int taskPosition = position;
@@ -135,23 +210,38 @@ public class CheckFragment extends Fragment {
         return view;
     }
 
+    private String getKeyByValue(Map map,String value){
+        Set set = map.entrySet(); //通过entrySet()方法把map中的每个键值对变成对应成Set集合中的一个对象
+        Iterator<Map.Entry<Object, Object>> iterator = set.iterator();
+        while(iterator.hasNext()){
+            //Map.Entry是一种类型，指向map中的一个键值对组成的对象
+            Map.Entry<Object, Object> entry = iterator.next();
+            if(entry.getValue().equals(value)){
+                return entry.getKey().toString();
+            }
+        }
+        return "";
+    }
+
     private void getDetctionData(String devclass, final String title, final Task task, final int position) {
         Map<String, String> map = new HashMap<>();
-        map.put("DEVCLASS",devclass);
-        map.put("UNITNAME",task.getUSEUNITNAME());
-        map.put("TASKTYPE",task.getTASKTYPE());
-        String url = BaseUrl.BaseUrl+"getCheckItems";
+        map.put("username",task.getLOGINNAME());
+        map.put("TASKID",task.getTASKID());
+        map.put("DEVID",task.getDEVID());
+        String url = BaseUrl.BaseUrl+"getTaskDetail";
+        Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
-        okHttp.postBypostString(url, new Gson().toJson(map), new ListItemsCallBack() {
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListIDetailTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
-            public void onResponse(Result<List<JianChaItem>> response, int id) {
-                if(response.getMessage().equals("获取检查项成功")) {
-                    List<JianChaItem> items = response.getContent();
+            public void onResponse(Result<List<DetailTask>> response, int id) {
+                if(response.getMessage().equals("获取成功")) {
+                    List<DetailTask> items = response.getContent();
+                    Log.e(TAG,"items: "+items.size());
                     Intent intent = new Intent(getActivity(), DetctionActivity.class);
                     intent.putExtra("items", (Serializable) items);
                     intent.putExtra("userName", task.getLOGINNAME());
@@ -183,7 +273,10 @@ public class CheckFragment extends Fragment {
         Map<String, String> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
+        map.put("RUNWATERNUMBER",task.getLASTRUNWATERNUMBER());
+        map.put("USERNAME",task.getLOGINNAME());
         String url = BaseUrl.BaseUrl+"selectReItemResult";
+        Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
             @Override
@@ -197,10 +290,15 @@ public class CheckFragment extends Fragment {
                     List<DetectionResult> list = listResult.getContent();
                     Log.e("size",list.size()+"");
                     Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
-                    intent.putExtra("items", (Serializable) list);
-                    intent.putExtra("position",position);
-                    intent.putExtra("task", task);
-                    startActivityForResult(intent,CHECKFRAGMENT);
+                    for (DetectionResult d:list) {
+                        d.setRUNWATERNUM(task.getRUNWATERNUM());
+                    }
+                    if(list.get(0).getRUNWATERNUM().equals(task.getRUNWATERNUM())){
+                        intent.putExtra("items", (Serializable) list);
+                        intent.putExtra("position",position);
+                        intent.putExtra("task", task);
+                        startActivityForResult(intent,CHECKFRAGMENT);
+                    }
                 }
             }
         });
@@ -211,11 +309,14 @@ public class CheckFragment extends Fragment {
         Map<String, String> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
+        map.put("USERNAME",task.getLOGINNAME());
         String url = BaseUrl.BaseUrl+"getSaveResult";
+        Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
+                Log.e(TAG,"onError: "+e.toString());
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
@@ -241,13 +342,13 @@ public class CheckFragment extends Fragment {
         //返回集合数据数量
         @Override
         public int getCount() {
-            return tasks.size();
+            return devclassTasks.size();
         }
 
         //返回指定下标的数据对象
         @Override
         public Object getItem(int position) {
-            return tasks.get(position);
+            return devclassTasks.get(position);
         }
 
         @Override
@@ -277,7 +378,7 @@ public class CheckFragment extends Fragment {
 
             //根据position设置对应数据
             //获得当前数据对象
-            Task task = tasks.get(position);
+            Task task = devclassTasks.get(position);
             TextView tv_check_device = convertView.findViewById(R.id.tv_check_device);
             TextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);

@@ -3,7 +3,9 @@ package com.neu.test.activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -35,7 +37,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
@@ -53,7 +59,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     public String signupLoginname;
     public String signupMobile;
     public String signupPassword;
-//    public String signupRePassword;
+    public String signupRePassword;
 
     private EditText signup_name;
 //    private EditText signup_email;
@@ -67,20 +73,55 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private LinearLayout linearLayout;
     private ProgressBar progressBar;
     private TextView textView_company;
+    private EditText ed_validatenum;
+    private Button bt_getvalidatenum;
+    private EventHandler eh; //事件接收器
+    private TimeCount mTimeCount;
+    private boolean isGetValidatenum = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        if (savedInstanceState != null) {
-            Log.d(TAG,"userID "+userId);
-            userId = savedInstanceState.getInt(TAG);
-        }
-
         init();
         getContent();
+        initSms();
     }
+
+    private void initSms() {
+        eh = new EventHandler(){
+            @Override
+            public void afterEvent(int event, int result, Object data) {
+                if (result == SMSSDK.RESULT_COMPLETE) { //回调完成
+                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) { //提交验证码成功
+                        Log.e(TAG," 提交验证码成功");
+//                        if (isGetValidatenum){
+//                            createAccount();
+//                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                createAccount();
+                            }
+                        });
+//                        createAccount();
+                    }else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){ //获取验证码成功
+                        Log.e(TAG," 获取验证码成功");
+                    }else if (event ==SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES){ //返回支持发送验证码的国家列表
+
+                    }
+                }else{
+                    ((Throwable)data).printStackTrace();
+                }
+            }
+
+        };
+
+
+        SMSSDK.registerEventHandler(eh); //注册短信回调
+    }
+
 
     private void getContent() {
         signupName = signup_name.getText().toString();
@@ -88,7 +129,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         signupLoginname = signup_loginname.getText().toString();
         signupMobile = signup_mobile.getText().toString();
         signupPassword = signup_password.getText().toString();
-//        signupRePassword = signup_repassword.getText().toString();
+        signupRePassword = signup_repassword.getText().toString();
 
     }
 
@@ -98,41 +139,74 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         signup_loginname = findViewById(R.id.signup_loginname);
         signup_mobile = findViewById(R.id.signup_mobile);
         signup_password = findViewById(R.id.signup_password);
-//        signup_repassword = findViewById(R.id.signup_rePassword);
+        signup_repassword = findViewById(R.id.signup_repassword);
         bt_signup = findViewById(R.id.bt_signup);
         textView_company = findViewById(R.id.signup_company);
-
-
+        ed_validatenum = findViewById(R.id.signup_validateNum);
+        bt_getvalidatenum = findViewById(R.id.signup_getvalidateNum);
+        mTimeCount = new TimeCount(60000, 1000);
 
 
         bt_signup.setOnClickListener(this);
         textView_company.setOnClickListener(this);
+        bt_getvalidatenum.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bt_signup:
+                if (!signup_mobile.getText().toString().trim().equals("")
+                        &&checkTel(signup_mobile.getText().toString().trim())) {
+                    Log.e(TAG," 手机号码合格");
+                    if (!ed_validatenum.getText().toString().trim().equals("")) {//checkTel(signup_mobile.getText().toString().trim())
+//                            SMSSDK.submitVerificationCode("+86",signup_mobile.getText().toString().trim(),ed_validatenum.getText().toString().trim());//提交验证
+                        Log.e(TAG,"验证码合格");
+                        if (isValidate()) {
+                            Log.e(TAG, " 其他合格");
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.e(TAG," 核验验证码和手机号");
+                                    SMSSDK.submitVerificationCode("+86",signup_mobile.getText().toString(),ed_validatenum.getText().toString());//提交验证
+                                }
+                            }).start();
+                        }
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "请输入验证码", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"手机号输入不正确",Toast.LENGTH_SHORT).show();
+                }
                 Log.d(TAG," onclick");
-                createAccount();
+
                 break;
             case R.id.signup_company:
                 Intent intent = new Intent(SignupActivity.this,SelectCompanyActivity.class);
                 startActivityForResult(intent,selectFlag);
                 break;
+            case R.id.signup_getvalidateNum:
+                SMSSDK.getSupportedCountries();//获取短信目前支持的国家列表
+                if(!signup_mobile.getText().toString().trim().equals("")){
+                    if (checkTel(signup_mobile.getText().toString().trim())) {
+                        SMSSDK.getVerificationCode("+86",signup_mobile.getText().toString());//获取验证码
+                        mTimeCount.start();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "请输入正确的手机号码", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "请输入手机号码", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
     private void createAccount() {
-        if(isValidate()){
-            //上传数据
-            getDataByPost();
-
-
-        }else{
-            signupFailed();
-            return;
-        }
+        getDataByPost();
     }
 
     private void getDataByPost() {
@@ -156,12 +230,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         String user = new Gson().toJson(map);
         Log.e(TAG,"map: "+ user.toString());
 
-//        Map<String, String> usermap = new HashMap<>();
-//        usermap.put("user",user);
 
 
         OkHttp okHttp = new OkHttp();
-        okHttp.postBypostString(url, new Gson().toJson(user), new ListTaskCallBack() {
+        okHttp.postBypostString(url, user, new ListTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.getMessage());
@@ -175,12 +247,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 if(response.getMessage().equals("注册成功")){
 //                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
                     Toasty.success(SignupActivity.this,"注册成功!",Toast.LENGTH_LONG,true).show();
-
-                    if(response.getContent().size()==0){
-                        Toast.makeText(SignupActivity.this,"无数据",Toast.LENGTH_LONG).show();
-                        Log.e("TAG"," response.getContent: "+"无数据");
-
-                    }
                     successCreated();
                     Toasty.success(getBaseContext(),"注册成功！",Toast.LENGTH_SHORT,true).show();
                 } else if (response.getMessage().equals("用户名已注册")){
@@ -198,21 +264,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private void signupFailed() {
         Toasty.warning(getBaseContext(), "用户信息填写不全，创建失败！", Toast.LENGTH_LONG,true).show();
-
         bt_signup.setEnabled(true);
     }
 
     private void successCreated() {
         bt_signup.setEnabled(false);
-
-        //设置加载的dialog
-//        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-//                R.style.Widget_AppCompat_ProgressBar_Horizontal);
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setMessage("Creating Account...");
-
-
-        //progressDialog.show();
 
         //设置加载的bar
         LinearLayout signupLinear = findViewById(R.id.signup_lin);
@@ -232,9 +288,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                         // On complete call either onSignupSuccess or onSignupFailed
                         // depending on success
                         onSignupSuccess();
-
-                        //progressDialog.dismiss();
-
                         login();
                     }
                 }, 300);
@@ -248,7 +301,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         String loginname = signup_loginname.getText().toString();
         String mobile = signup_mobile.getText().toString();
         String password = signup_password.getText().toString();
-//        String repassword = signup_repassword.getText().toString();
+        String repassword = signup_repassword.getText().toString();
 
         if (name.isEmpty() ) {
             signup_name.setError("请输入姓名");
@@ -269,15 +322,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             signup_loginname.setError(null);
         }
 
-//
-//        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {//|| !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-//            signup_email.setError("请输入合法的用户邮箱");
-//            valid = false;
-//        } else {
-//            signup_email.setError(null);
-//        }
 
-        if (mobile.isEmpty() || mobile.length() != 11) {//|| mobile.length() != 11
+        if (mobile.isEmpty() || mobile.length() != 11||!checkTel(mobile.trim())) {//|| mobile.length() != 11
             signup_mobile.setError("请输入合法的手机号码");
             valid = false;
         } else {
@@ -291,12 +337,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             signup_password.setError(null);
         }
 
-//        if (repassword.isEmpty()|| repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))) {// || repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))
-//            signup_repassword.setError("Password Do not match");
-//            valid = false;
-//        } else {
-//            signup_repassword.setError(null);
-//        }
+        if (repassword.isEmpty()|| repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))) {// || repassword.length() < 4 || repassword.length() > 10 || !(repassword.equals(password))
+            signup_repassword.setError("两次密码不匹配");
+            valid = false;
+        } else {
+            signup_repassword.setError(null);
+        }
 
         return valid;
     }
@@ -314,9 +360,20 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
 
+    /**
+     * 正则匹配手机号码
+     * @param tel
+     * @return
+     */
+    public boolean checkTel(String tel){
+        Pattern p = Pattern.compile("^[1][3,4,5,7,8][0-9]{9}$");
+        Matcher matcher = p.matcher(tel);
+        return matcher.matches();
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(TAG, userId);
+//        outState.putInt(TAG, userId);
         super.onSaveInstanceState(outState);
     }
 
@@ -329,6 +386,34 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG,"得到数据："+company);
                 textView_company.setText(company);
             }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SMSSDK.unregisterEventHandler(eh);
+    }
+
+    /**
+     * 计时器
+     */
+    class TimeCount extends CountDownTimer {
+
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long l) {
+            bt_getvalidatenum.setClickable(false);
+            bt_getvalidatenum.setText("重新获取("+l/1000 +")");
+        }
+
+        @Override
+        public void onFinish() {
+            bt_getvalidatenum.setClickable(true);
+            bt_getvalidatenum.setText("获取验证码");
         }
     }
 }

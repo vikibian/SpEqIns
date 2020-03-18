@@ -57,14 +57,12 @@ public class CheckDetailsVideoFragment extends Fragment {
         View view;
 //        videoPath = VideoActivity.checkDetailsVideoPath;
 //        Log.d("checkDetailsVideo","  videoPath: "+videoPath);
-        path.add("http://39.97.108.172:8080/pic/1234567880VIDEO0.mp4");
-        path.add("http://39.97.108.172:8080/pic/123456789100VIDEO0.mp4");
+//        path.add("http://39.97.108.172:8080/pic/1234567880VIDEO0.mp4");
+//        path.add("http://39.97.108.172:8080/pic/123456789100VIDEO0.mp4");
         if (path!=null){
-
             view = inflater.inflate(R.layout.fragment_check_details_video, container, false);
 
             init(view);
-
 //            view = inflater.inflate(R.layout.fragment_check_details_video, container, false);
 //            initView(view);
 //            mSurfaceHolder = mSurfView.getHolder();

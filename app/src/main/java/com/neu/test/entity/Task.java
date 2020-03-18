@@ -12,6 +12,108 @@ public class Task implements Serializable {
     private String NEXT_INSSEIFTIME;  //下次检测时间
     private String DEADLINE;  //截止时间
 
+    private String FANGANBIANHAO; //方案编号
+    private String JIANCHARENYUANDANWEI; //检查人员单位
+    private String JIANCHADANWEIZUZHIDAIMA; //检查单位组册代码
+
+    private String LASTRUNWATERNUMBER;
+
+    public String getLASTRUNWATERNUMBER() {
+        return LASTRUNWATERNUMBER;
+    }
+
+    public void setLASTRUNWATERNUMBER(String LASTRUNWATERNUMBER) {
+        this.LASTRUNWATERNUMBER = LASTRUNWATERNUMBER;
+    }
+
+    public String getFANGANBIANHAO() {
+        return FANGANBIANHAO;
+    }
+
+    public void setFANGANBIANHAO(String FANGANBIANHAO) {
+        this.FANGANBIANHAO = FANGANBIANHAO;
+    }
+
+    public String getJIANCHARENYUANDANWEI() {
+        return JIANCHARENYUANDANWEI;
+    }
+
+    public void setJIANCHARENYUANDANWEI(String JIANCHARENYUANDANWEI) {
+        this.JIANCHARENYUANDANWEI = JIANCHARENYUANDANWEI;
+    }
+
+    public String getJIANCHADANWEIZUZHIDAIMA() {
+        return JIANCHADANWEIZUZHIDAIMA;
+    }
+
+    public void setJIANCHADANWEIZUZHIDAIMA(String JIANCHADANWEIZUZHIDAIMA) {
+        this.JIANCHADANWEIZUZHIDAIMA = JIANCHADANWEIZUZHIDAIMA;
+    }
+
+    public String getDEVZHUCEMA() {
+        return DEVZHUCEMA;
+    }
+
+    public void setDEVZHUCEMA(String DEVZHUCEMA) {
+        this.DEVZHUCEMA = DEVZHUCEMA;
+    }
+
+    public String getDANWEIZUZHIJIGOUDAIMA() {
+        return DANWEIZUZHIJIGOUDAIMA;
+    }
+
+    public void setDANWEIZUZHIJIGOUDAIMA(String DANWEIZUZHIJIGOUDAIMA) {
+        this.DANWEIZUZHIJIGOUDAIMA = DANWEIZUZHIJIGOUDAIMA;
+    }
+
+    public String getSHENHERENYUAN() {
+        return SHENHERENYUAN;
+    }
+
+    public void setSHENHERENYUAN(String SHENHERENYUAN) {
+        this.SHENHERENYUAN = SHENHERENYUAN;
+    }
+
+    public String getSHENHERIQI() {
+        return SHENHERIQI;
+    }
+
+    public void setSHENHERIQI(String SHENHERIQI) {
+        this.SHENHERIQI = SHENHERIQI;
+    }
+
+    public String getJIANCHARESULTSTATE() {
+        return JIANCHARESULTSTATE;
+    }
+
+    public void setJIANCHARESULTSTATE(String JIANCHARESULTSTATE) {
+        this.JIANCHARESULTSTATE = JIANCHARESULTSTATE;
+    }
+
+    public String getJIANCHARENYUANNAME() {
+        return JIANCHARENYUANNAME;
+    }
+
+    public void setJIANCHARENYUANNAME(String JIANCHARENYUANNAME) {
+        this.JIANCHARENYUANNAME = JIANCHARENYUANNAME;
+    }
+
+    public String getRUNWATERNUM() {
+        return RUNWATERNUM;
+    }
+
+    public void setRUNWATERNUM(String RUNWATERNUMBER) {
+        this.RUNWATERNUM = RUNWATERNUMBER;
+    }
+
+    private String DEVZHUCEMA; //设备注册码
+    private String DANWEIZUZHIJIGOUDAIMA; //单位组织机构代码
+    private String SHENHERENYUAN; //审核人员
+    private String SHENHERIQI; //审核日期
+    private String JIANCHARESULTSTATE; //检查结果状态
+    private String JIANCHARENYUANNAME; //检察人员姓名
+    private String RUNWATERNUM; //流水号
+
     public String getTASKID() {
         return TASKID;
     }

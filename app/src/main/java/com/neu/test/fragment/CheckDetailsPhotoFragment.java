@@ -70,8 +70,8 @@ public class CheckDetailsPhotoFragment extends Fragment {
         /**
          * 这是AndroidStudio模拟器上测试图片的位置
          */
-        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image1.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
-        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image0.jpg");
+//        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image1.jpg");///storage/emulated/0/DCIM/Camera/1578984512676IMG.jpg
+//        photoPaths.add("http://39.97.108.172:8080/pic/123456789103Image0.jpg");
         //photoPaths.add("http://39.97.108.172:8080/pic/ 123456789102Image0.jpg");
 
 //        photoPaths.add("/storage/emulated/0/DCIM/Camera/TIM20200114164635.jpg");

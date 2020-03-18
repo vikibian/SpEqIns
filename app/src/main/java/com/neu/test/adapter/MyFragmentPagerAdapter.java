@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
@@ -15,9 +16,11 @@ import com.neu.test.fragment.CheckDetailsPhotoFragment;
 import com.neu.test.fragment.CheckDetailsTextFragment;
 import com.neu.test.fragment.CheckDetailsVideoFragment;
 import com.neu.test.fragment.TabFragment;
+import com.neu.test.util.BaseUrl;
 import com.neu.test.util.ResultBean;
 import com.neu.test.util.SearchUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +37,7 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.detectionResult = detectionResult;
         this.task = task;
+        Log.e(TAG,"检验task："+task.toString());
     }
 
 
@@ -72,24 +76,15 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         //detectionResult.setREFJIM("123456789100-0");//123456789100-1  1234567872-1
         List<String> photoPath = new ArrayList<>();
         String path = detectionResult.getREFJIM();
-        Log.e(TAG," path: "+path);
-        if (path!=" "&&path!=null){
-            String[] splitpath = path.split("-");
+        Log.e(TAG," photo path: "+path);
+        if ((!path.equals(""))&&(!path.equals(null))){
+            String[] splitpath = path.split(",");
             Log.e(TAG,"splitpath.size:"+splitpath.length);
-            if (splitpath.length == 2){
-                Log.e(TAG," 1: "+splitpath[0]);
-                Log.e(TAG," 2: "+splitpath[1]);
-                int photoNum = Integer.valueOf(splitpath[1]);
-                Log.e(TAG," photoNum: "+photoNum);
-                if (photoNum!=0){
-                    for (int i=0;i<photoNum;i++){
-                        String httpPath = "http://39.97.108.172:8080/pic/"+splitpath[0]+"Image"+i+".jpg";
-                        Log.e(TAG,"httppath: "+httpPath);
-                        photoPath.add(httpPath);
-                    }
-                }else {
-                    Log.e(TAG,"没有图片");
-                }
+
+            for (int i=0;i<splitpath.length;i++){
+                Log.e(TAG,"  splitpath: "+splitpath[i]);
+                String httppath = BaseUrl.pathOfPhotoAndVideo+ LoginActivity.inputName+"/"+splitpath[i];
+                photoPath.add(httppath);
             }
         }
         return photoPath;
@@ -100,22 +95,11 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
         List<String> videoPath = new ArrayList<>();
         String path = detectionResult.getREFJVI();
         Log.e(TAG," path: "+path);
-        if (path!=null&&path!=" "){
-            String[] splitpath = path.split("-");
-            if (splitpath.length == 2){
-                Log.e(TAG," 1: "+splitpath[0]);
-                Log.e(TAG," 2: "+splitpath[1]);
-                int videoNum = Integer.valueOf(splitpath[1]);
-                Log.e(TAG," videoNum: "+videoNum);
-                if (videoNum!=0){
-                    for (int i=0;i<videoNum;i++){
-                        String httpPath = "http://39.97.108.172:8080/pic/"+splitpath[0]+"VIDEO"+i+".mp4";
-                        Log.e(TAG,"httppath: "+httpPath);
-                        videoPath.add(httpPath);
-                    }
-                }else {
-                    Log.e(TAG,"没有视频");
-                }
+        if ((!path.equals(null))&&(!path.equals(""))){
+            String[] splitpath = path.split(",");
+            for (int i=0;i<splitpath.length;i++){
+                String httppath = BaseUrl.pathOfPhotoAndVideo+LoginActivity.inputName+"/"+splitpath[i];
+                videoPath.add(httppath);
             }
         }
         return videoPath;

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/list_law_item_title"
+            android:text="title"
+            android:textSize="15dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/list_law_item_subtitle"
+                android:text="subtitle"
+                android:layout_gravity="center_vertical|left"
+                android:textSize="12dp"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="10dp"
+                android:textColor="@color/black"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/list_law_item_publishtime"
+                android:text="subtitle"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical|right"
+                android:textSize="12dp"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

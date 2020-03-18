@@ -56,14 +56,14 @@ public class OkHttp {
     /**
      * 使用okhttp-utils的post请求网络文本数据 使用post函数
      */
-    public void postBypost(String url, JSONObject jsonObject, StringCallback stringCallback) {
+    public void postByget(String url, Callback Callback) {
         OkHttpUtils
-                .post()
+                .get()
                 .url(url)
                 .id(100)
                 .build()
-                .execute(stringCallback);
-        Log.d(TAG,"Okhttp: --> post");
+                .execute(Callback);
+        Log.d(TAG,"Okhttp: --> get");
 
     }
 
@@ -106,6 +106,20 @@ public class OkHttp {
                 .build()
                 .execute(Callback);
 
+    }
+
+
+    /**
+     * 使用okhttp-utils下载大文件
+     */
+    public void downloadFile(String url,Callback callback)
+    {
+//        String url = "http://vfx.mtime.cn/Video/2016/07/24/mp4/160724055620533327_480.mp4";
+        OkHttpUtils//
+                .get()//
+                .url(url)//
+                .build()//
+                .execute(callback);
     }
 
 

@@ -1,9 +1,11 @@
 package com.neu.test.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,16 +25,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.entity.DetailTask;
+import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
-import com.neu.test.entity.JianChaItem;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.SlideLayout;
@@ -53,15 +61,16 @@ import okhttp3.Call;
 public class DetctionActivity extends AppCompatActivity {
     private static String TAG = "DetctionActivity";
 
+    private LinearLayout detection_nocontent;
+    private LinearLayout detection_hascontent;
     private ListView lv_detection;
     private Button btn_add_detection;
     private Button btn_save_detection;
     private Button btn_sure_detection;
-    private DetectionAdapter detectionAdapter;
+    private TextView tv_totalitem;
     private DetectionAdapter1 detectionAdapter1;
-    //public List<DetectionItem> listData ;; //检测项数据
 
-    public List<JianChaItem> listData  = new ArrayList<JianChaItem>();; //检测项数据
+    public List<DetailTask> listData  = new ArrayList<DetailTask>();; //检测项数据
     public List<DetectionResult> detectionResults = new ArrayList<DetectionResult>();//检查结果list
 
     private String userName;
@@ -70,6 +79,7 @@ public class DetctionActivity extends AppCompatActivity {
     private String taskType;
     private String title;
     final int RequestCor = 521;
+    final int RectifyCode = 600;
     private int pposition;
 
     //private  String  isHege="合格";
@@ -92,10 +102,6 @@ public class DetctionActivity extends AppCompatActivity {
 
 
         intent1 = getIntent();
-//        title = getIntent().getStringExtra("TITLE");
-//        userName = getIntent().getStringExtra("userName");
-//        task = (Task) getIntent().getSerializableExtra("task");
-//        taskType = getIntent().getStringExtra("tasktype");
         task = (Task) getIntent().getSerializableExtra("task");
         title = task.getUSEUNITNAME();
         userName = task.getLOGINNAME();
@@ -114,25 +120,39 @@ public class DetctionActivity extends AppCompatActivity {
         btn_add_detection = findViewById(R.id.btn_add_detection);
         btn_sure_detection = findViewById(R.id.btn_sure_detection);
         btn_save_detection = findViewById(R.id.btn_save_detection);
+        tv_totalitem = findViewById(R.id.tv_totalitem);
+        detection_nocontent = findViewById(R.id.detection_nocontent);
+        detection_hascontent = findViewById(R.id.detection_hascontent);
 
 
         //String position = "position";
-        listData = (List<JianChaItem>) getIntent().getSerializableExtra("items");
+        listData = (List<DetailTask>) getIntent().getSerializableExtra("items");
         Log.e(TAG," listData: "+listData.size());
 
-        for (int position=0;position<listData.size();position++){
-            DetectionResult detectionResult = new DetectionResult();
-            detectionResult.setCHECKCONTENT(listData.get(position).getXIANGMUMINGCHENG());//检查内容
-//            detectionResult.setSTATUS("1");//检查结果
-            detectionResult.setTASKID(task.getTASKID());
-            detectionResult.setDEVID(task.getDEVID());
-            detectionResult.setDEVCLASS(task.getDEVCLASS());
-            detectionResults.add(detectionResult);
+        int size = listData.size();
+        if(size == 0){
+            detection_nocontent.setVisibility(View.VISIBLE);
+            detection_hascontent.setVisibility(View.GONE);
+        }else{
+            detection_nocontent.setVisibility(View.GONE);
+            detection_hascontent.setVisibility(View.VISIBLE);
+            for (int position=0;position<size;position++){
+                DetectionResult detectionResult = new DetectionResult();
+                detectionResult.setCHECKCONTENT(listData.get(position).getJIANCHAXIANGCONTENT());//检查内容
+                detectionResult.setJIANCHAXIANGBIANHAO(listData.get(position).getJIANCHAXIANGID());//检查编号
+                Log.e("编号",listData.get(position).getJIANCHAXIANGID());
+                detectionResult.setLOGINNAME(listData.get(position).getLOGINNAME());//检查人员
+                detectionResult.setTASKID(task.getTASKID());
+                detectionResult.setDEVID(task.getDEVID());
+                detectionResult.setDEVCLASS(task.getDEVCLASS());
+                detectionResult.setJIANCHAXIANGTITLE(listData.get(position).getJIANCHAXIANGTITLE());
+                detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
+                detectionResult.setLAW(listData.get(position).getLAW());
+                detectionResults.add(detectionResult);
+            }
+
+            tv_totalitem.setText("------------共"+size+"项------------");
         }
-
-        detectionAdapter = new DetectionAdapter();
-        lv_detection.setAdapter(detectionAdapter);
-
         detectionAdapter1 = new DetectionAdapter1();
         lv_detection.setAdapter(detectionAdapter1);
 
@@ -143,7 +163,7 @@ public class DetctionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Log.e(TAG," 保存");
-
+//                jumpToRectifyResultActivity(0);
                 LayoutInflater layoutInflater = LayoutInflater.from(DetctionActivity.this);
                 final View textEntryView = layoutInflater.inflate(R.layout.detection_dialog, null);
                 AlertDialog dlg = new AlertDialog.Builder(DetctionActivity.this)
@@ -154,11 +174,19 @@ public class DetctionActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
                                 itemString = item.getText().toString();
-                                JianChaItem testItem = new JianChaItem();
-                                testItem.setXIANGMUMINGCHENG(itemString);
-                                listData.add(testItem);
+                                DetectionResult detectionResult = new DetectionResult();
+                                detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
+                                detectionResult.setJIANCHAXIANGTITLE(itemString);
+                                detectionResult.setTASKID(detectionResults.get(0).getTASKID());
+                                detectionResult.setDEVID(detectionResults.get(0).getDEVID());
+                                detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
+                                detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
+//                                DetectionItem testItem = new DetectionItem();
+//                                testItem.setCHECKCONTENT(itemString);
+//                                listData.add(testItem);
+                                detectionResults.add(detectionResult);
                                 //更新
-                                detectionAdapter.notifyDataSetChanged();
+                                detectionAdapter1.notifyDataSetChanged();
                                 lv_detection.invalidate();
 
                                 //postTaskAndGetResult();
@@ -175,8 +203,10 @@ public class DetctionActivity extends AppCompatActivity {
             }
         });
 
+
+
         btn_sure_detection.setOnClickListener(new View.OnClickListener() {
-//            @Override
+            //            @Override
 //            public void onClick(View view) {
 //                String string = new Gson().toJson(detectionResults);
 //                String url = BaseUrl.BaseUrl+"setItemResult";
@@ -227,6 +257,8 @@ public class DetctionActivity extends AppCompatActivity {
             }
         });
 
+
+
         //暂存
         btn_save_detection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,45 +289,7 @@ public class DetctionActivity extends AppCompatActivity {
         });
 
 
-//        btn_sure_detection.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                boolean clickFlag = true;
-//                //对是否全选全部标记是否合格进行判断
-//                Log.e(TAG," 测试合格情况没有选择 listData "+listData.size());
-//                for (int j=0;j<listData.size();j++){
-//                    Log.e(TAG," 测试合格情况没有选择 listData的内容 "+listData.get(j).getResultStatus());
-//                    if (listData.isEmpty()|| listData.get(j).getResultStatus() == null){
-//                        clickFlag = false;
-//                    }
-//                }
-//                //如果合格情况都已经选择了则进行跳转操作
-//                if (clickFlag){
-//                    Intent intent = new Intent(DetctionActivity.this,PDFActivity.class);
-//                    intent.putExtra("listData",(Serializable)listData);
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(intent);
-//                    Log.e(TAG, "  "+task.toString());
-//
-//                    boolean flag = true;
-//                    for (int i=0;i<listData.size();i++){
-//                        if (listData.get(i).getResultStatus() == "不合格"){
-//                            flag = false;
-//                        }
-//                    }
-//                    if (flag){
-//                        getSelectedItemByPost(task.getTASKID(),task.getDEVID(),"1");
-//                    }else {
-//                        getSelectedItemByPost(task.getTASKID(),task.getDEVID(),"-1");
-//                    }
-//                } else {
-//                    Toasty.warning(DetctionActivity.this,"请选择合格情况！",Toast.LENGTH_SHORT).show();
-//                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-//                    vibrator.vibrate(100);
-//                }
-//
-//            }
-//        });
+
 
     }
     /**
@@ -427,85 +421,103 @@ public class DetctionActivity extends AppCompatActivity {
 //    }
 
     public void getData(){
-        listData = new ArrayList<JianChaItem>();
+//        listData = new ArrayList<DetectionItem>();
 
     }
 
 
-    class DetectionAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            Log.d(TAG,"listData adapter: "+listData.size());
-            return listData.size();
-        }
-        @Override
-        public Object getItem(int position) {
-            return listData.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder=null;
-            //如果没有复用的
-            if(convertView == null){
-                //加载item的布局
-                convertView = View.inflate(DetctionActivity.this, R.layout.listview_detection, null);
-                viewHolder = new ViewHolder();
-                viewHolder.contentView= (TextView) convertView.findViewById(R.id.tv_detection_item);
-                viewHolder.menuView = (TextView) convertView.findViewById(R.id.tv_detection_menu);
-                //viewHolder.rg_detection = convertView.findViewById(R.id.rg_detection);
-                viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1);
-                viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2);
-                convertView.setTag(viewHolder);
-            }
-            else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            viewHolder.contentView.setText(listData.get(position).getXIANGMUMINGCHENG());
-            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
-                @Override
-
-                public void onClick(View v) {
-                    jumpToSuggesstionActivity(position);
-                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //listData.get(position).setResultStatus("不合格");
-                }
-            });
-
-            viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //listData.get(position).setResultStatus("合格");
-                }
-            });
-            viewHolder.menuView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-
-                public void onClick(View v) {
-
-                    listData.remove(position);
-                    detectionAdapter.notifyDataSetChanged();
-                    lv_detection.invalidate();
-                }
-            });
-            SlideLayout slideLayout = (SlideLayout) convertView;
-            slideLayout.setOnStateChangeListener(new MyOnStateChangeListener());
-            return convertView;
-        }
-    }
+//    class DetectionAdapter extends BaseAdapter{
+//
+//        @Override
+//        public int getCount() {
+//            Log.d(TAG,"listData adapter: "+listData.size());
+//            return listData.size();
+//        }
+//
+//        @Override
+//        public Object getItem(int position) {
+//            return listData.get(position);
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(final int position, View convertView, ViewGroup parent) {
+//            ViewHolder viewHolder=null;
+//            //如果没有复用的
+//            if(convertView == null){
+//                //加载item的布局
+//                convertView = View.inflate(DetctionActivity.this, R.layout.listview_detection, null);
+//                viewHolder = new ViewHolder();
+//                viewHolder.contentView= (TextView) convertView.findViewById(R.id.tv_detection_item);
+//                viewHolder.menuView = (TextView) convertView.findViewById(R.id.tv_detection_menu);
+//                //viewHolder.rg_detection = convertView.findViewById(R.id.rg_detection);
+//                viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1);
+//                viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2);
+//                convertView.setTag(viewHolder);
+//            }
+//            else {
+//                viewHolder = (ViewHolder) convertView.getTag();
+//
+//            }
+//
+//            viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
+//
+//            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//
+//                public void onClick(View v) {
+//                    jumpToSuggesstionActivity(position);
+//                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//
+//            });
+//
+//
+//
+//            viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    listData.get(position).setResultStatus("不合格");
+//
+//
+//                }
+//            });
+//
+//            viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    listData.get(position).setResultStatus("合格");
+//                }
+//            });
+//
+//
+//
+//            viewHolder.menuView.setOnClickListener(new View.OnClickListener() {
+//
+//                @Override
+//
+//                public void onClick(View v) {
+//
+//                    listData.remove(position);
+//                    detectionAdapter.notifyDataSetChanged();
+//                    lv_detection.invalidate();
+//
+//                }
+//
+//            });
+//
+//            SlideLayout slideLayout = (SlideLayout) convertView;
+//            slideLayout.setOnStateChangeListener(new MyOnStateChangeListener());
+//
+//            return convertView;
+//        }
+//    }
 
     class DetectionAdapter1 extends BaseAdapter{
 
@@ -530,112 +542,220 @@ public class DetctionActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             view1 = convertView;
             //加载item的布局
-            convertView = View.inflate(DetctionActivity.this, R.layout.listview_detection1, null);
+            convertView = View.inflate(DetctionActivity.this, R.layout.test_list_item2, null);
             viewHolder = new ViewHolder();
-            viewHolder.contentView= (TextView) convertView.findViewById(R.id.tv_detection_item1);
-            viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1_1);
-            viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2_2);
-            viewHolder.btn_add_content = convertView.findViewById(R.id.btn_add_content);
-            viewHolder.rg_detection_group = convertView.findViewById(R.id.rb_detection_group);
+            viewHolder.detction_item_text_leftnum= (TextView) convertView.findViewById(R.id.detction_item_text_leftnum_2);
+            viewHolder.detction_item_text_context= (TextView) convertView.findViewById(R.id.detction_item_text_context_2);
+            viewHolder.rectify_item_status_rectified = convertView.findViewById(R.id.rectify_item_status_rectified_2);
+            viewHolder.rectify_item_status_rectifyliving = convertView.findViewById(R.id.rectify_item_status_rectifyliving_2);
+            viewHolder.rectify_item_status_unrectify = convertView.findViewById(R.id.rectify_item_status_unrectify_2);
+            viewHolder.detction_item_image_right = convertView.findViewById(R.id.detction_item_image_right_2);
+            viewHolder.ll_test = convertView.findViewById(R.id.ll_ttt);
             convertView.setTag(viewHolder);
+            //检查项标题
+            viewHolder.detction_item_text_context.setText(detectionResults.get(position).getJIANCHAXIANGTITLE());
 
-            viewHolder.rg_detection_group.setTag(position);//给RadioGroup  弄个tag标记
-            if(hashMap.containsKey(position))
-            {
-                viewHolder.rg_detection_group.check(hashMap.get(position));
+            //检查任务的number设置
+            viewHolder.detction_item_text_leftnum.setText(position+1+"");
+
+            //详细按钮的显示问题
+            if(detectionResults.get(position).getISHAVEDETAIL().equals("1")){
+                viewHolder.detction_item_image_right.setVisibility(View.VISIBLE);
             }
-            else
-            {
-                viewHolder.rg_detection_group.clearCheck();
+            else{
+                viewHolder.detction_item_image_right.setVisibility(View.INVISIBLE);
             }
 
-            viewHolder.rg_detection_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    if ((Integer)group.getTag() == position){
-                        boolean b = false;
-                        if (checkedId  == R.id.rb_detection_1_1){
-                            b = true;
-                            hashMap.put((Integer) group.getTag(),R.id.rb_detection_1_1);
-                        }else if (checkedId == R.id.rb_detection_2_2){
-                            b = true;
-                            hashMap.put((Integer) group.getTag(),R.id.rb_detection_2_2);
-                        }
 
-                    }
-                }
-            });
-
-            viewHolder.contentView.setText(listData.get(position).getXIANGMUMINGCHENG());
             //未选择是否合格
-            if(!(viewHolder.rb_detection_1.isChecked()||viewHolder.rb_detection_2.isChecked())){
+            if(detectionResults.get(position).getSTATUS().equals("2")){
                 //需要取证显示 取证按钮
-                if(listData.get(position).isSHIFOUHEGEQUZHENG()){
+                if(listData.get(position).getSHIFOUHEGEQUZHENG().equals("1")){
                     //viewHolder.btn_add_content.setVisibility(View.VISIBLE);
                 }else {//合格不取证
                     detectionResults.get(position).setSTATUS("0");
-                    viewHolder.rb_detection_1.setChecked(true);
+                    viewHolder.rectify_item_status_unrectify.setChecked(true);
                 }
             }
-            if(detectionResults.get(position).isHaveDetail()){
-                viewHolder.btn_add_content.setVisibility(View.VISIBLE);
-            }else{
-                viewHolder.btn_add_content.setVisibility(View.INVISIBLE);
+
+
+            //初始化选择状态
+            if(detectionResults.get(position).getSTATUS().equals("0")){
+                viewHolder.rectify_item_status_unrectify.setChecked(true);
+                viewHolder.rectify_item_status_rectified.setChecked(false);
+                viewHolder.rectify_item_status_rectifyliving.setChecked(false);
             }
 
-            final ViewHolder finalViewHolder = viewHolder;
+            else if(detectionResults.get(position).getSTATUS().equals("1")){
+                viewHolder.rectify_item_status_unrectify.setChecked(false);
+                viewHolder.rectify_item_status_rectified.setChecked(true);
+                viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+            }
+            else if (detectionResults.get(position).getSTATUS().equals("3")){
+                viewHolder.rectify_item_status_unrectify.setChecked(false);
+                viewHolder.rectify_item_status_rectified.setChecked(false);
+                viewHolder.rectify_item_status_rectifyliving.setChecked(true);
+            }
 
-            viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
+            viewHolder.rectify_item_status_unrectify.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    detectionResults.get(position).setSTATUS("0");
-                    if(listData.get(position).isSHIFOUHEGEQUZHENG()){
-                        jumpToSuggesstionActivity(position);
+                public void onClick(View v) {
+//          viewHolder.rectify_item_status_unrectify.setChecked(true);
+//          viewHolder.rectify_item_status_rectified.setChecked(false);
+//          viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+                    if(detectionResults.get(position).getSTATUS().equals("0")){
+                        viewHolder.rectify_item_status_unrectify.setChecked(true);
+                        viewHolder.rectify_item_status_rectified.setChecked(false);
+                        viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+                        //Toasty.warning(DetctionActivity.this,"已选择，无法重复操作");
+                        Log.e("ttttquzheng",listData.get(position).getSHIFOUHEGEQUZHENG());
+                        lv_detection.setAdapter(detectionAdapter1);
+                    }else{
+                        Log.e("ttttquzheng",listData.get(position).getSHIFOUHEGEQUZHENG());
+                        if(listData.get(position).getSHIFOUHEGEQUZHENG().equals("1")){
+                            //页面跳转
+                            //detectionResults.get(position).setSTATUS("0");
+                            jumpToSuggesstionActivity(position,"0");
+                        }
+                        else{
+                            lv_detection.setAdapter(detectionAdapter1);
+                        }
                     }
                 }
             });
 
 
-            viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
+            viewHolder.rectify_item_status_rectified.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    detectionResults.get(position).setSTATUS("1");
-                    jumpToSuggesstionActivity(position);
+                public void onClick(View v) {
+                    if(detectionResults.get(position).getSTATUS().equals("1")){
+                        viewHolder.rectify_item_status_unrectify.setChecked(false);
+                        viewHolder.rectify_item_status_rectified.setChecked(true);
+                        viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+                        Toasty.warning(DetctionActivity.this,"已选择，无法重复操作");
+                        lv_detection.setAdapter(detectionAdapter1);
+                    }else{
+                        //页面跳转
+                        //detectionResults.get(position).setSTATUS("1");
+                        jumpToSuggesstionActivity(position,"1");
+                    }
                 }
             });
-            final ViewHolder finalViewHolder1 = viewHolder;
-            viewHolder.btn_add_content.setOnClickListener(new View.OnClickListener() {
+
+            viewHolder.rectify_item_status_rectifyliving.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    if(detectionResults.get(position).isHaveDetail()){
-                        Toast.makeText(DetctionActivity.this,"有证据",Toast.LENGTH_LONG).show();
+                public void onClick(View v) {
+//          viewHolder.rectify_item_status_unrectify.setChecked(false);
+//          viewHolder.rectify_item_status_rectified.setChecked(false);
+//          viewHolder.rectify_item_status_rectifyliving.setChecked(true);
+                    if(detectionResults.get(position).getSTATUS().equals("3")){
+                        viewHolder.rectify_item_status_unrectify.setChecked(false);
+                        viewHolder.rectify_item_status_rectified.setChecked(false);
+                        viewHolder.rectify_item_status_rectifyliving.setChecked(true);
+                        Toasty.warning(DetctionActivity.this,"已选择，无法重复操作").show();
+                        lv_detection.setAdapter(detectionAdapter1);
+                    }else{
+                        //页面跳转  现场整改
+                        //detectionResults.get(position).setSTATUS("3");
+                        //Toasty.warning(DetctionActivity.this,"跳转至整改合格界面").show();
+                        jumpToRectifyResultActivity(position);
+
+
                     }
-                    else
-                        Toast.makeText(DetctionActivity.this,"暂无详细信息",Toast.LENGTH_LONG).show();
-                    //jumpToSuggesstionActivity(position);
+                }
+            });
+            //跳转至 已操作界面
+            viewHolder.detction_item_image_right.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                }
+            });
+
+            viewHolder.detction_item_text_context.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+//          AlertDialog.Builder builder=new AlertDialog.Builder(DetctionActivity.this);
+//          builder.setTitle("排查要求&法律法规");
+//          builder.setMessage(detectionResults.get(position).getCHECKCONTENT()+"/n"+detectionResults.get(position).getLAW());
+////          builder.setPositiveButton("我知道了",
+////            new DialogInterface.OnClickListener() {
+////            @Override
+////            public void onClick(DialogInterface dialogInterface, int i) {
+////
+////            }
+////          });
+//          AlertDialog dialog=builder.create();
+//          dialog.show();
+
+
+                    new MaterialStyledDialog.Builder(DetctionActivity.this)
+                            .setTitle("排查要求&法律法规")
+                            .setDescription("排查要求：\n"+detectionResults.get(position).getCHECKCONTENT()+
+                                    "\n"+"法律法规：\n"+detectionResults.get(position).getLAW())
+                            .setStyle(Style.HEADER_WITH_TITLE)
+                            .setScrollable(true,20)
+                            .setPositiveText("我知道了")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Log.d("MaterialStyledDialogs", "Do something!");
+                                }
+                            })
+                            .show();
+                    return true;
                 }
             });
             return convertView;
         }
     }
 
+    private void jumpToRectifyResultActivity(int position) {
+        Intent intent = new Intent(DetctionActivity.this,RectifyResultActivity.class);
+        DetectionResult test = new DetectionResult();
+//        test.setJIANCHAXIANGTITLE("测试");//测试代码
+//        test.setLOGINNAME(LoginActivity.inputName);//测试代码
+//        detectionResults.add(test);
+        intent.putExtra("detectionResult",  detectionResults.get(position));
+        intent.putExtra("position",position);
+        intent.putExtra("toolbarTitle",title);
+        intent.putExtra("toolbarTaskType",taskType);
+        startActivityForResult(intent,RectifyCode);
+    }
 
-    private void jumpToSuggesstionActivity(int position) {
+//    private void jumpToSuggesstionActivity(int position) {
+//        //listData.get(position).setResultStatus(status);
+//        String noItem = listData.get(position).getCHECKCONTENT();
+//        String devclass = listData.get(position).getDEVCLASS();
+//        Intent intent = new Intent(DetctionActivity.this, SuggestionActivity.class);
+//        intent.putExtra("suggestion",noItem);
+//        intent.putExtra("DEVCLASS",devclass);
+//        startActivity(intent);
+//    }
+
+    private void jumpToSuggesstionActivity(int position,String status) {
         //listData.get(position).setResultStatus(status);
         // String isHege = listData.get(position).getResultStatus();
-        String noItem = listData.get(position).getXIANGMUMINGCHENG();
+        //String noItem = listData.get(position).getJIANCHAXIANGCONTENT();
         //String devclass = listData.get(position).getDEVCLASS();
         Intent intent = new Intent(DetctionActivity.this, SuggestionActivity.class);
-        intent.putExtra("suggestion",noItem);
-        intent.putExtra("path",task.getTASKID());
+        intent.putExtra("detectionResult",detectionResults.get(position));
+        //intent.putExtra("suggestion",noItem);
+        //intent.putExtra("path",task.getTASKID());
         intent.putExtra("position",position);
         intent.putExtra("title",title);//需要传递status
         intent.putExtra("taskType",taskType);
-        intent.putExtra("status",detectionResults.get(position).getSTATUS());
+        intent.putExtra("status",status);
+        Log.e("status1",status);
         //intent.putExtra("isHege",isHege);
         startActivityForResult(intent,RequestCor);
     }
-
 
     //接收图片视频的结果
     @Override
@@ -651,13 +771,49 @@ public class DetctionActivity extends AppCompatActivity {
                 Log.e("videoNumber",videoNumber+"-");
                 String content = data.getStringExtra("content");
                 Log.e("content",content+"-");
-                detectionResults.get(position).setREFJIM(task.getTASKID()+position+"-"+imageNumber);
-                detectionResults.get(position).setREFJVI(task.getTASKID()+position+"-"+videoNumber);
+                String status = data.getStringExtra("status");
+
+                String imagePath = data.getStringExtra("ImagePath");
+                String videoPath = data.getStringExtra("VideoPath");
+                if(imageNumber > 0){
+                    //detectionResults.get(position).setREFJIM(task.getTASKID() + position + "-" + imageNumber);
+                    detectionResults.get(position).setREFJIM(imagePath);
+                    detectionResults.get(position).setISHAVEDETAIL("1");
+                }
+                if(videoNumber > 0){
+                    //detectionResults.get(position).setREFJVI(task.getTASKID() + position + "-" + videoNumber);
+                    detectionResults.get(position).setREFJVI(videoPath);
+                    detectionResults.get(position).setISHAVEDETAIL("1");
+                }
+                //if(!(content.trim().toString().equals(""))){
                 detectionResults.get(position).setSUGGESTION(content);
-                detectionResults.get(position).setHaveDetail(true);
+                detectionResults.get(position).setISHAVEDETAIL("1");
+                Log.e("status5",status);
+                detectionResults.get(position).setSTATUS(status);
+                Log.e("status6",detectionResults.get(position).getSTATUS());
+                //}
+                lv_detection.setAdapter(detectionAdapter1);
+            }
+
+            if (requestCode == RectifyCode){
+                int pos = data.getIntExtra("position",-1);
+                DetectionResult getdata = (DetectionResult) data.getSerializableExtra("detectionResult");
+                detectionResults.set(pos,getdata);
+                Log.e(TAG," way: "+detectionResults.get(pos).getCHANGEDWAY());
+                Log.e(TAG," action: "+detectionResults.get(pos).getCHANGEDACTION());
+                Log.e(TAG," finish time: "+detectionResults.get(pos).getCHANGEDFINISHTIME());
+                Log.e(TAG," result: "+detectionResults.get(pos).getCHANGEDRESULT());
+                Log.e(TAG,"imagepath: "+detectionResults.get(pos).getCHANGEDIMAGE());
+                Log.e(TAG,"videopath: "+detectionResults.get(pos).getCHANGEDVIDEO());
+
+                lv_detection.setAdapter(detectionAdapter1);
+
             }
         }
     }
+
+
+
 
     public SlideLayout slideLayout = null;
     class MyOnStateChangeListener implements SlideLayout.OnStateChangeListener {
@@ -682,19 +838,31 @@ public class DetctionActivity extends AppCompatActivity {
         }
     }
 
-
-
-    static class ViewHolder
-    {
-        public TextView contentView;
-        public TextView menuView;
-        public RadioButton rb_detection_1;
-        public RadioButton rb_detection_2;
-        public RadioGroup rg_detection_group;
-
-        public Button btn_add_content;
-        public CheckBox checkBox;
+    static class ViewHolder{
+        public TextView detction_item_text_context;
+        public TextView detction_item_text_leftnum;
+        public CheckBox rectify_item_status_unrectify;
+        public CheckBox rectify_item_status_rectified;
+        public CheckBox rectify_item_status_rectifyliving;
+        public ImageView detction_item_image_right;
+        public LinearLayout ll_test;
     }
+
+
+//    static class ViewHolder
+//
+//    {
+//
+//        public TextView contentView;
+//
+//        public TextView menuView;
+//
+//        public RadioButton rb_detection_1;
+//        public RadioButton rb_detection_2;
+//        // public RadioButton rg_detection;
+//
+//
+//    }
 
     @Override
     protected void onStart() {
@@ -711,6 +879,7 @@ public class DetctionActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        lv_detection.setAdapter(detectionAdapter1);
         Log.e(TAG," onResume");
     }
 

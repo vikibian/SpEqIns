@@ -89,6 +89,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 //    private List<DetectionItem1> listDatas_unqualified = new ArrayList<>();
     private List<DetectionResult> listDatas_qualified = new ArrayList<>();
     private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
+    private List<DetectionResult> listDatas_undecied = new ArrayList<>();
 
 
     public ShowSearchedResultFragment() {
@@ -144,6 +145,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                     detectionResult = listDatas_unqualified.get(i);
                 }else if(posFlag == 0){
                     detectionResult = listResult.get(i);
+                }else if (posFlag == 3){
+                    detectionResult = listDatas_undecied.get(i);
                 }
 
                 intent.putExtra("detectionResult",detectionResult);
@@ -162,9 +165,11 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
-        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        map.put("taskID","123456785");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+//        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
         Log.e(TAG,"map: "+ map.toString());
-        map.put("DEVID",devID);//123456  devID
+        map.put("DEVID","五号电梯");//123456  devID
+//        map.put("DEVID",devID);//123456  devID
         Log.e(TAG,"map: "+ map.toString());
 
 
@@ -186,6 +191,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                     }else {
                         //初始化listview应该在获取数据之后
                         if (listResult.size()!=0){
+                            Log.e(TAG,"返回list的大小："+listResult.size());
                             initListViewAdapter1();
                             initDropDownMenu();
                         }
@@ -197,11 +203,17 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
     private void filiterResult() {
         for (int i=0;i<listResult.size();i++){
-            if (listResult.get(i).getSTATUS().equals("0")){
+            if (listResult.get(i).getSTATUS().equals(searchUtil.hegeText)
+            ||listResult.get(i).getSTATUS().equals(searchUtil.hege)){
                 listDatas_qualified.add(listResult.get(i));
             }
-            if (listResult.get(i).getSTATUS().equals("1")){
+            if (listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)
+            ||listResult.get(i).getSTATUS().equals(searchUtil.nohege)){
                 listDatas_unqualified.add(listResult.get(i));
+            }
+            if (listResult.get(i).getSTATUS().equals(searchUtil.undecidedText)
+            ||listResult.get(i).getSTATUS().equals(searchUtil.undecided)){
+                listDatas_undecied.add(listResult.get(i));
             }
         }
     }
@@ -230,12 +242,18 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 //                List<DetectionItem1> listunQualifed = new ArrayList<>();
                 List<DetectionResult> listQualifed = new ArrayList<>();
                 List<DetectionResult> listunQualifed = new ArrayList<>();
+                List<DetectionResult> listundecied = new ArrayList<>();
                 for(int i=0;i<listResult.size();i++){
-                    if(listResult.get(i).getSTATUS().equals("0")){
+                    if(listResult.get(i).getSTATUS().equals(searchUtil.hegeText)
+                    ||listResult.get(i).getSTATUS().equals(searchUtil.hege)){
                         listQualifed.add(listResult.get(i));
                     }
-                    else if(listResult.get(i).getSTATUS().equals("1")){
+                    else if(listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)
+                    ||listResult.get(i).getSTATUS().equals(searchUtil.nohege)){
                         listunQualifed.add(listResult.get(i));
+                    }else if (listResult.get(i).getSTATUS().equals(searchUtil.undecidedText)
+                    ||listResult.get(i).getSTATUS().equals(searchUtil.undecided)){
+                        listundecied.add(listResult.get(i));
                     }
                 }
                 if(position==0){
@@ -244,6 +262,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                     refresh(listQualifed);
                 }else if (position==2){
                     refresh(listunQualifed);
+                }else if (position == 3){
+                    refresh(listundecied);
                 }
             }
         });
@@ -266,7 +286,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
             textView_deviceType.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
             //合格情况
-            textView_qualify.setText(searchUtil.getNumToQuality(task.getRESULT()));
+            textView_qualify.setText(task.getRESULT());
             Log.e(TAG," initContent: "+task.getRESULT());
             textView_qualify.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
@@ -293,8 +313,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 
     //对ListViewAdapter1进行适配
     private void initListViewAdapter1() {
-        DetctionActivity detctionActivity = new DetctionActivity();
-        detctionActivity.getData();
+//        DetctionActivity detctionActivity = new DetctionActivity();
+//        detctionActivity.getData();
         //listViewAdapter1 = new ListViewAdapter1(getContext(),listDatas,choose[posFlag]);
         listViewAdapter1 = new ListViewAdapter1(getContext(),listResult,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);

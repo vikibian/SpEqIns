@@ -45,8 +45,21 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ReDetectionActivity"
-            android:theme="@style/NoBar"></activity>
+        <activity android:name=".activity.AnswerListActivity"></activity>
+        <activity
+            android:name=".activity.RectifyResultActivity"
+            android:theme="@style/NoBar" />
+        <activity android:name=".activity.RectifyActivity" />
+        <activity android:name=".activity.NewSuggestActivity" />
+        <activity android:name=".activity.DetectionTActivity" />
+        <activity android:name=".activity.RectifyItemActivity" />
+        <activity android:name=".activity.FileReadActivity" />
+        <activity
+            android:name=".activity.LawLearningActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.ReDetectionActivity"
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.SelectCompanyActivity" />
         <activity android:name=".activity.PhotoVideoActivity" />
         <activity android:name=".activity.TestActivity" />

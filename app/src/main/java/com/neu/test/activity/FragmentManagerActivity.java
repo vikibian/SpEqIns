@@ -108,14 +108,14 @@ public class FragmentManagerActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String[] taskType = {"自查","复查","下派","随机"};
+        String[] taskType = {"自查","整改","下派","临时"};
         allTasks = (List<Task>) intent.getSerializableExtra("userTask");
         userName = intent.getStringExtra("userName");
         for (int i=0; i<allTasks.size();i++){
             if (allTasks.get(i).getTASKTYPE().equals("自查")){
                 selfTasks.add(allTasks.get(i));
             }
-            else if (allTasks.get(i).getTASKTYPE().equals("复查")){
+            else if (allTasks.get(i).getTASKTYPE().equals("整改")){
                 reselfTasks.add(allTasks.get(i));
             }
             else if (allTasks.get(i).getTASKTYPE().equals("下派")){

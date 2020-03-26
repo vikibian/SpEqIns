@@ -1,14 +1,28 @@
 package com.neu.test.activity;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
@@ -17,6 +31,7 @@ import com.neu.test.entity.Task;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.net.OkHttp;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SuggestionActivitySaveDataUtil;
 
 import org.json.JSONObject;
 
@@ -29,9 +44,10 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,
+        OnRequestPermissionsResultCallback {
     private static String TAG = "LoginActivity";
-
+    public final static int REQUEST_READ_PHONE_STATE = 1;
     public static String inputName;
     public static String inputPassword ;//修改密码界面会用到  先为该参数赋值 方便后面的测试
     public static int userid ;//在修改密码界面会用的到
@@ -46,15 +62,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button bt_signin; //注册
     String url;  //登录的接口网址
 
+    private SharedPreferences sharedPreferences;
+
     private boolean isSuccess ;
-
-
+    private SuggestionActivitySaveDataUtil saveDataUtil ;
+    public static String phoneNumber ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        saveDataUtil = new SuggestionActivitySaveDataUtil(getApplicationContext());
         init();
     }
 
@@ -64,7 +82,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         bt_login = (Button)findViewById(R.id.bt_login);
         bt_signin = findViewById(R.id.bt_signin);
 
-        bt_login.setOnClickListener(this);
+      //缓存
+        sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+      String name = sharedPreferences.getString("name","");
+      String password = sharedPreferences.getString("password","");
+      if(name != ""|| password != ""){
+        input_name.setText(name);
+        input_password.setText(password);
+      }
+
+
+      bt_login.setOnClickListener(this);
         bt_signin.setOnClickListener(this);
     }
 
@@ -125,7 +153,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(Result<List<Task>> response, int id) {
                 if(response.getMessage().equals("登录成功")){
+
+                  SharedPreferences.Editor edit = sharedPreferences.edit();
+                  edit.putString("name",inputName);
+                  edit.putString("password",inputPassword);
+                  edit.commit();
 //                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
+                    phoneNumber = saveDataUtil.load(inputName);
                     Toasty.success(LoginActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
                     List<Task> tasks = response.getContent();
                     if(response.getContent().size()==0){
@@ -135,6 +169,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     Toast.makeText(LoginActivity.this,"成功",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
+//                    Intent intent = new Intent(LoginActivity.this,SuggestionActivity.class);
+//                    Intent intent = new Intent(LoginActivity.this,RectifyResultActivity.class);
                     intent.putExtra("userTask", (Serializable) tasks);
                     Log.e("TAG"," tasks: "+tasks.size());
                     intent.putExtra("userName",inputName);

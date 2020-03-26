@@ -104,6 +104,19 @@
                         stv:sLeftTextString="关于软件"
                         stv:sRightIconRes="@drawable/arrow_right_red" />
 
+                    <com.allen.library.SuperTextView
+                        android:id="@+id/STV_clearCache"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        stv:sDividerLineType="both"
+                        stv:sShapeCornersRadius="5dp"
+                        android:layout_margin="3dp"
+                        stv:sLeftTextSize="20dp"
+                        stv:sLeftTextColor="@color/black"
+                        stv:sBackgroundDrawableRes="@drawable/me_button"
+                        stv:sLeftTextString="清空缓存"
+                        stv:sRightIconRes="@drawable/arrow_right_red" />
+
                     <!--<top.androidman.SuperButton-->
                         <!--android:id="@+id/SB_logout"-->
                         <!--android:layout_height="40dp"-->

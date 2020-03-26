@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.github.barteksc.pdfviewer.PDFView;
@@ -24,6 +25,7 @@ public class FileReadActivity extends AppCompatActivity {
     private PDFView pdfView;
     private String fileName;
     private String uri;
+    private TextView loading_name;
 
     private NumberProgressBar numberProgressBar;
     private LinearLayout linearLayout;
@@ -39,6 +41,8 @@ public class FileReadActivity extends AppCompatActivity {
         pdfView = findViewById(R.id.pdfView);
         numberProgressBar = findViewById(R.id.fileread_number_progress_bar);
         linearLayout = findViewById(R.id.linearlayout_fileread);
+        loading_name = findViewById(R.id.file_read_loading_name);
+        loading_name.setText(fileName);
         uri = BaseUrl.lawFilePath+fileName;
 
 //        if (!fileUrl.equals(null)){
@@ -47,7 +51,7 @@ public class FileReadActivity extends AppCompatActivity {
 //                    .load();
 //        }
 
-        String folderPath = BaseUrl.absolutePath+"/自查/File";
+        String folderPath = BaseUrl.absolutePath+"/DCIM/"+LoginActivity.inputName+"/PDFDownloads";
         File folder = new File(folderPath);
 
         if (folder.exists()){
@@ -69,9 +73,9 @@ public class FileReadActivity extends AppCompatActivity {
 
     }
 
-    private void downloadAndRead(String uri, String folderPath, String fileName) {
+    private void downloadAndRead(String uri, String folderPath, String name) {
         OkHttp okHttp = new OkHttp();
-        okHttp.downloadFile(uri, new FileCallBack(folderPath,fileName) {
+        okHttp.downloadFile(uri, new FileCallBack(folderPath,name) {
 
             @Override
             public void inProgress(float progress, long total, int id) {

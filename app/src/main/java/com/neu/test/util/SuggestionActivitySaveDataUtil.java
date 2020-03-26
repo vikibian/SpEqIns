@@ -3,12 +3,15 @@ package com.neu.test.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.neu.test.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * created by Viki on 2020/3/1
@@ -17,6 +20,7 @@ import java.util.List;
  * email : 710256138@qq.com
  */
 public class SuggestionActivitySaveDataUtil {
+    private static final String TAG = "SuggestionActivitySaveD";
     private Context context;
     private String taskid;
     private List<String> photolist = new ArrayList<>();
@@ -26,42 +30,38 @@ public class SuggestionActivitySaveDataUtil {
 
     }
 
-    public void save(String taskid, int position, String status, String suggestion, String editSugg, List<String> photolist){
-        String name = context.getResources().getString(R.string.sharepreference);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(name,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        String key = getDate()+"$"+taskid+"$"+String.valueOf(position);
-        String value = status+"#"+suggestion+"#"+editSugg+"#";
-        for (int i=0;i<photolist.size();i++){
-            if (i != photolist.size()-1){
-                value = value+photolist.get(i)+"&";
-            }else {
-                value = value+photolist.get(i);
-            }
-        }
-        editor.putString(key,value);
-        editor.apply();
-//        Log.e("SuggestionActivity","  "+load(taskid,position));
-//        load(taskid,position);
+    public void save(String name,String phone){
+        /**
+         * SharedPreferences将用户的数据存储到该包下的shared_prefs/config.xml文件中，
+         * 并且设置该文件的读取方式为私有，即只有该软件自身可以访问该文件
+         */
+        SharedPreferences sPreferences = context.getSharedPreferences(name, MODE_PRIVATE);
+        SharedPreferences.Editor editor=sPreferences.edit();
+        //当然sharepreference会对一些特殊的字符进行转义，使得读取的时候更加准确
+        editor.putString("phonenumber", phone);
+
+//        PhotoActivity.phonenumber = phone;
+        editor.commit();
+
     }
 
-    public String load(String taskid,int position){
-        String name = context.getResources().getString(R.string.sharepreference);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(name,Context.MODE_PRIVATE);
-        String key = getDate()+"$"+taskid+"$"+String.valueOf(position);
-        String result = sharedPreferences.getString(key,"not");
+    public String load(String name){
+        //已登录软件便获取手机号
+        //显示用户此前录入的数据
+        String phonenumber ="";
+        SharedPreferences sPreferences = context.getSharedPreferences(name, MODE_PRIVATE);
+        Log.e(TAG," "+String.valueOf(sPreferences.equals(null)));
+        if (!sPreferences.equals(null)){
+            String num = sPreferences.getString("phonenumber", "");
+            Log.e(TAG," "+num.equals(""));
+            Log.e(TAG," "+num.equals(null));
+//            if (!num.equals("")){
+//                 phonenumber = num;
+//            }
+            phonenumber = num;
+        }
 
-//        String[] resultSet = result.split(String.valueOf('#'));
-//
-//        for (int j=0;j<resultSet.length;j++){
-//            Log.e("SuggestionActivity"," resultSet"+resultSet[j]);
-//        }
-//        String[] pathSet = resultSet[resultSet.length-1].split(String.valueOf('&'));
-//        for (int j=0;j<pathSet.length;j++){
-//            Log.e("SuggestionActivity"," pathSet"+pathSet[j]);
-//            Log.e("SuggestionActivity"," pathSet"+pathSet[j].equals(" "));
-//        }
-        return result;
+        return phonenumber;
     }
 
 

@@ -89,113 +89,256 @@
 
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shap"
-        android:orientation="vertical">
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/tv_suggetion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|left" />
+       <LinearLayout
+           android:orientation="vertical"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/et_suggestion"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:gravity="left|top"
-            android:background="@null" />
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@drawable/shap"
+               android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="剩余字数：500"/>
-    </LinearLayout>
+               <TextView
+                   android:id="@+id/tv_suggetion"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="top|left" />
 
-    <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+               <EditText
+                   android:id="@+id/et_suggestion"
+                   android:layout_width="match_parent"
+                   android:layout_height="120dp"
+                   android:gravity="left|top"
+                   android:background="@null" />
 
-        <GridView
-            android:id="@+id/suggestion_gridview"
-            android:numColumns="3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+               <TextView
+                   android:id="@+id/tv_num"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="剩余字数：500"/>
+           </LinearLayout>
 
-        </GridView>
+           <LinearLayout
+               android:layout_weight="1"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal">
 
-    </LinearLayout>
+               <com.neu.test.layout.MyGridView
+                   android:id="@+id/suggestion_gridview"
+                   android:numColumns="3"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+               </com.neu.test.layout.MyGridView>
+
+           </LinearLayout>
 
 
-    <View
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/gray"
-        android:layout_width="match_parent"
-        android:layout_height="2dp">
+           <View
+               android:layout_marginLeft="10dp"
+               android:layout_marginRight="10dp"
+               android:background="@color/gray"
+               android:layout_width="match_parent"
+               android:layout_height="2dp">
 
-    </View>
+           </View>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/stroke"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_get_gps"-->
-            <!--android:layout_marginLeft="5dp"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="bottom|left"-->
-            <!--android:text="开始定位"/>-->
+               <!--<Button-->
+               <!--android:id="@+id/btn_get_gps"-->
+               <!--android:layout_marginLeft="5dp"-->
+               <!--android:layout_width="wrap_content"-->
+               <!--android:layout_height="wrap_content"-->
+               <!--android:layout_gravity="bottom|left"-->
+               <!--android:text="开始定位"/>-->
 
-        <TextView
-            android:layout_marginLeft="10dp"
-            android:id="@+id/tv_mygps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:text=""/>
+               <!--<TextView-->
+                   <!--android:layout_marginLeft="10dp"-->
+                   <!--android:id="@+id/tv_mygps"-->
+                   <!--android:layout_width="wrap_content"-->
+                   <!--android:layout_height="wrap_content"-->
+                   <!--android:layout_gravity="center"-->
+                   <!--android:gravity="center_horizontal"-->
+                   <!--android:text=""/>-->
 
-    </LinearLayout>
+               <TextView
+                   android:layout_gravity="center_vertical"
+                   android:layout_marginTop="2dp"
+                   android:paddingTop="3dp"
+                   android:paddingBottom="3dp"
+                   android:padding="3dp"
+                   android:textStyle="bold"
+                   android:textSize="15dp"
+                   android:textColor="@color/black"
+                   android:text="操作人员手机号："
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content" />
 
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
+                <TextView
+                    android:text=" "
+                    android:layout_marginTop="3dp"
+                    android:paddingTop="3dp"
+                    android:padding="3dp"
+                    android:layout_gravity="center_vertical"
+                    android:drawableRight="@drawable/ic_phone_blue_a400_24dp"
+                    android:textColor="@color/black"
+                    android:id="@+id/suggestion_phonenumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <!--<TextView-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:id="@+id/tv_mygps"-->
-            <!--android:layout_weight="9"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center|bottom"-->
-            <!--android:text=""/>-->
 
-        <!--<Button-->
-            <!--android:layout_weight="1"-->
-            <!--android:id="@+id/btn_submit_suggestion"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="right|bottom"-->
-            <!--android:text="确定"/>-->
+           </LinearLayout>
 
-    <!--</LinearLayout>-->
+           <LinearLayout
+               android:id="@+id/suggestion_dangerandrecify"
+               android:visibility="visible"
+               android:orientation="vertical"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_submit_suggestion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
-        android:text="确定"/>
+               <TextView
+                   android:layout_marginTop="3dp"
+                   android:paddingBottom="3dp"
+                   android:textStyle="bold"
+                   android:textSize="15dp"
+                   android:textColor="@color/black"
+                   android:text="隐患等级："
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content" />
 
+               <LinearLayout
+                   android:background="@drawable/stroke"
+                   android:layout_marginTop="3dp"
+                   android:padding="8dp"
+                   android:orientation="horizontal"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+                   <CheckBox
+                       android:layout_gravity="center_horizontal"
+                       android:text="重大隐患"
+                       android:id="@+id/suggestion_danger_great"
+                       android:layout_weight="1"
+                       android:textSize="10dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent" />
+
+                   <CheckBox
+                       android:text="一般隐患"
+                       android:id="@+id/suggestion_danger_normal"
+                       android:layout_weight="1"
+                       android:textSize="10dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="match_parent" />
+
+               </LinearLayout>
+
+               <TextView
+                   android:layout_marginTop="3dp"
+                   android:textStyle="bold"
+                   android:textSize="15dp"
+                   android:textColor="@color/black"
+                   android:text="整改方式："
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content" />
+
+               <RelativeLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <LinearLayout
+                       android:id="@+id/suggestion_recify_checkbox_lin"
+                       android:background="@drawable/stroke"
+                       android:padding="5dp"
+                       android:orientation="horizontal"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+                       <CheckBox
+                           android:layout_gravity="center_horizontal"
+                           android:text="立即整改"
+                           android:id="@+id/suggestion_rectify_way_now"
+                           android:layout_weight="1"
+                           android:textSize="10dp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="match_parent" />
+
+                       <CheckBox
+                           android:text="限期整改"
+                           android:id="@+id/suggestion_rectify_way_limit"
+                           android:layout_weight="1"
+                           android:textSize="10dp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="match_parent" />
+
+                       <CheckBox
+                           android:text="停产整改"
+                           android:id="@+id/suggestion_rectify_way_stop"
+                           android:layout_weight="1"
+                           android:textSize="10dp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="match_parent" />
+
+
+
+                   </LinearLayout>
+
+
+
+               </RelativeLayout>
+
+           </LinearLayout>
+
+
+
+           <!--<LinearLayout-->
+           <!--android:orientation="horizontal"-->
+           <!--android:layout_width="match_parent"-->
+           <!--android:layout_height="wrap_content">-->
+
+           <!--<TextView-->
+           <!--android:layout_marginLeft="10dp"-->
+           <!--android:id="@+id/tv_mygps"-->
+           <!--android:layout_weight="9"-->
+           <!--android:layout_width="wrap_content"-->
+           <!--android:layout_height="wrap_content"-->
+           <!--android:layout_gravity="center|bottom"-->
+           <!--android:text=""/>-->
+
+           <!--<Button-->
+           <!--android:layout_weight="1"-->
+           <!--android:id="@+id/btn_submit_suggestion"-->
+           <!--android:layout_width="wrap_content"-->
+           <!--android:layout_height="wrap_content"-->
+           <!--android:layout_gravity="right|bottom"-->
+           <!--android:text="确定"/>-->
+
+           <!--</LinearLayout>-->
+
+           <Button
+               android:layout_marginTop="5dp"
+               android:id="@+id/btn_submit_suggestion"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_gravity="right|bottom"
+               android:text="确定"/>
+
+
+       </LinearLayout>
+
+   </ScrollView>
 
 
 </LinearLayout>

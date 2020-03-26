@@ -166,7 +166,7 @@
 
             app:iconSelected="@mipmap/tab_task_selected"
 
-            app:itemText="下派"
+            app:itemText="@string/tab_task"
 
             app:textColorNormal="@color/tab_normal_color"
 
@@ -194,7 +194,7 @@
 
             app:iconSelected="@mipmap/tab_random_selected"
 
-            app:itemText="随机"
+            app:itemText="@string/tab_random"
 
             app:textColorNormal="@color/tab_normal_color"
 

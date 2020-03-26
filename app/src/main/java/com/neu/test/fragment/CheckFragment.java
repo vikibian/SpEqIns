@@ -1,6 +1,8 @@
 package com.neu.test.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,10 +23,12 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.neu.test.R;
 import com.neu.test.activity.DetctionActivity;
 import com.neu.test.activity.ReDetectionActivity;
+import com.neu.test.activity.RectifyListActivity;
 import com.neu.test.activity.RectifyResultActivity;
 import com.neu.test.entity.DetailTask;
 import com.neu.test.entity.DetectionItem;
@@ -30,13 +36,16 @@ import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
+import com.neu.test.layout.CircleRelativeLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListIDetailTaskCallBack;
 import com.neu.test.net.callback.ListItemsCallBack;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SearchUtil;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,7 +65,7 @@ public class CheckFragment extends Fragment {
 
     private ListView lv_check;
     private LinearLayout check_noitem;
-    private Map<String,String> map_devclass;
+//    private Map<String,String> map_devclass;
     CheckAdapter checkAdapter;
     List<Task> tasks = new ArrayList<Task>();
     BottomBarLayout mBottomBarLayout;
@@ -71,6 +80,10 @@ public class CheckFragment extends Fragment {
     public List<DetectionItem> testItem;
 
     private List<Task> devclassTasks;
+    private SearchUtil searchUtil = new SearchUtil();
+
+    private SharedPreferences sharedPreferences;
+    private String data;//保存 缓存的字段名
 
     public CheckFragment(){
 
@@ -100,22 +113,22 @@ public class CheckFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_check, null);
         lv_check = view.findViewById(R.id.lv_check);
-        sp_devid = view.findViewById(R.id.sp_devid);
+//        sp_devid = view.findViewById(R.id.sp_devid);
         sp_devclass = view.findViewById(R.id.sp_devclass);
         check_noitem = view.findViewById(R.id.check_noitem);
 
         devclassList = new ArrayList<>();
         devidList = new ArrayList<>();
-        map_devclass = new HashMap<>();
+//        map_devclass = new HashMap<>();
         devclassTasks = new ArrayList<>();
         //准备BaseAdapter
         checkAdapter = new CheckAdapter();
         devclassTasks.addAll(tasks);
         devclassList.add("全部");
-        devclassList.add("测试");
+//        devclassList.add("测试");
         devidList.add("设备类别");
-        map_devclass.put("3000","电梯");
-        map_devclass.put("8000","压力管道");
+//        map_devclass.put("3000","电梯");
+//        map_devclass.put("8000","压力管道");
         //设置Adapter显示列表
         lv_check.setAdapter(checkAdapter);
 
@@ -128,26 +141,26 @@ public class CheckFragment extends Fragment {
         }
 
         for(int i=0;i<tasks.size();i++){
-            if(!(devclassList.contains(map_devclass.get(tasks.get(i).getDEVCLASS())))){
-                devclassList.add(map_devclass.get(tasks.get(i).getDEVCLASS()));
+            if(!(devclassList.contains(searchUtil.getMapdevclass().get(tasks.get(i).getDEVCLASS())))){
+                devclassList.add(searchUtil.getMapdevclass().get(tasks.get(i).getDEVCLASS()));
             }
         }
 
         sp_devclass.setItems(devclassList);
-        sp_devid.setItems(devidList);
+//        sp_devid.setItems(devidList);
 
 
         sp_devclass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                Snackbar.make(view, "position:"+position +"id:"+id+"item:"+ item, Snackbar.LENGTH_LONG).show();
+
                 if(item.equals("全部")){
                     devclassTasks.clear();
                     devclassTasks.addAll(tasks);
                 }else{
                     devclassTasks.clear();
                     for(int i=0;i<tasks.size();i++){
-                        if(tasks.get(i).getDEVCLASS().equals(getKeyByValue(map_devclass,item.toString()))){
+                        if(tasks.get(i).getDEVCLASS().equals(getKeyByValue(searchUtil.getMapdevclass(),item.toString()))){
                             devclassTasks.add(tasks.get(i));
                         }
                     }
@@ -164,51 +177,116 @@ public class CheckFragment extends Fragment {
         });
 
 
-        lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Task task = tasks.get(position);
-                Log.e("CheckFargment"," DEVID  "+tasks.get(position).getDEVID());
-                Log.e("CheckFargment"," TASKID  "+tasks.get(position).getTASKID());
-                Log.e("CheckFargment"," DEVCLASS  "+tasks.get(position).getDEVCLASS());
-                Log.e("CheckFargment"," taskType  "+taskType);
-                String s = task.getUSEUNITNAME();
-                String DEVCLASS = task.getDEVCLASS();
-                int taskPosition = position;
-//                getDetctionData(DEVCLASS,s,task);
+      lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+          Task task = tasks.get(position);
+          String s = task.getUSEUNITNAME();
+          String DEVCLASS = task.getDEVCLASS();
 
-                if(task.getRESULT().equals("2")){
-                    getSaveData(task,position);
-                }
-                else if(taskType.equals("复查")){
-                    getReDetctionData(task,position);
-                }else{
-                    getDetctionData(DEVCLASS,s,task,position);
-                }
-
-//                Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(getActivity(), DetctionActivity.class);
-//                intent.putExtra("TITLE",s);
-//                intent.putExtra("position",taskPosition);
-//                intent.putExtra("taskType",taskType);
-//                startActivity(intent);
-
+          data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+          sharedPreferences = getActivity().getSharedPreferences(data, Context.MODE_PRIVATE);
+          if(task.getRESULT().equals("2")){
+            String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
+            if(detectionResultList == null){
+              getSaveData(task,position);
+            }else{
+              goNextActivity(detectionResultList,position,task);
             }
-        });
+          }
+          else if(taskType.equals("整改")){
+            getReDetctionData(task,position);
+            Log.e(TAG," 整改："+"getReDetctionData");
+          }else{
+            String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
+            if(detectionResultList == null){
+              String listDetailTask = sharedPreferences.getString("listDetailTask",null);
+              if(listDetailTask == null){
+                getDetctionData(DEVCLASS,s,task,position);
+              }else{
+                List<DetailTask> list = getList(new ArrayList<DetailTask>(),listDetailTask);
+                List<DetectionResult> detectionResults = creatDetectionResultList(list,task);
+                editorSharedPreferences(detectionResults,"detectionResultList");
+                goReDetectionActivity(detectionResults,position,task);
+              }
+            }else{
+              goNextActivity(detectionResultList,position,task);
+            }
+          }
 
-//
-//        lv_check.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-//            @Override
-//            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//                menu.setHeaderTitle("确定删除该检查项吗");
-//                menu.add(0, 0, 0, "删除此项");
-//                menu.add(0, 1, 0, "取消删除");
-//            }
-//        });
+        }
+      });
 
 
         return view;
     }
+
+//    private void judgeAdapterAndSet(){
+//        if (taskType.equals(searchUtil.recify)){
+//            lv_check.setAdapter(checkAdapterForRecify);
+//        }else {
+//            lv_check.setAdapter(checkAdapter);
+//        }
+//    }
+
+
+  public void goNextActivity(String detectionResultList,int position,Task task){
+    Gson gson = new Gson();
+    Type type = new TypeToken<List<DetectionResult>>(){}.getType();
+    List<DetectionResult> list = gson.fromJson(detectionResultList,type);
+    goReDetectionActivity(list,position,task);
+  }
+
+  public void goReDetectionActivity(List<DetectionResult> list ,int position,Task task){
+    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
+    intent.putExtra("items", (Serializable) list);
+    intent.putExtra("position",position);
+    intent.putExtra("task", task);
+    startActivityForResult(intent,CHECKFRAGMENT);
+  }
+
+    public void goRectifyListActivity(List<DetectionResult> list ,int position,Task task){
+        Intent intent = new Intent(getActivity(), RectifyListActivity.class);
+        intent.putExtra("items", (Serializable) list);
+        intent.putExtra("position",position);
+        intent.putExtra("task", task);
+        startActivity(intent);
+//        startActivityForResult(intent,CHECKFRAGMENT);
+    }
+
+  public List<DetectionResult> creatDetectionResultList(List<DetailTask> items,Task task){
+    List<DetectionResult> detectionResults = new ArrayList<>();
+    for (int position=0;position<items.size();position++){
+      DetectionResult detectionResult = new DetectionResult();
+      detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
+      detectionResult.setJIANCHAXIANGBIANHAO(items.get(position).getJIANCHAXIANGID());//检查编号
+      Log.e("编号",items.get(position).getJIANCHAXIANGID());
+      detectionResult.setLOGINNAME(items.get(position).getLOGINNAME());//检查人员
+      detectionResult.setTASKID(task.getTASKID());
+      detectionResult.setDEVID(task.getDEVID());
+      detectionResult.setDEVCLASS(task.getDEVCLASS());
+      detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
+      detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
+      detectionResult.setLAW(items.get(position).getLAW());
+      detectionResults.add(detectionResult);
+    }
+    return  detectionResults;
+  }
+
+  public <T> void editorSharedPreferences(T value,String key){
+    String json2 = new Gson().toJson(value);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    editor.putString(key,json2);
+    editor.commit();
+  }
+
+  public <T> T getList(T content,String key){
+
+    Gson gson = new Gson();
+    Type type = content.getClass();
+    T list = gson.fromJson(key,type);
+    return list;
+  }
 
     private String getKeyByValue(Map map,String value){
         Set set = map.entrySet(); //通过entrySet()方法把map中的每个键值对变成对应成Set集合中的一个对象
@@ -228,6 +306,7 @@ public class CheckFragment extends Fragment {
         map.put("username",task.getLOGINNAME());
         map.put("TASKID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
+        map.put("DEVCLASS",task.getDEVCLASS());
         String url = BaseUrl.BaseUrl+"getTaskDetail";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
@@ -241,17 +320,10 @@ public class CheckFragment extends Fragment {
             public void onResponse(Result<List<DetailTask>> response, int id) {
                 if(response.getMessage().equals("获取成功")) {
                     List<DetailTask> items = response.getContent();
-                    Log.e(TAG,"items: "+items.size());
-                    Intent intent = new Intent(getActivity(), DetctionActivity.class);
-                    intent.putExtra("items", (Serializable) items);
-                    intent.putExtra("userName", task.getLOGINNAME());
-                    intent.putExtra("task", task);
-                    intent.putExtra("tasktype",taskType);
-                    intent.putExtra("position",position);
-                    Log.e(TAG," "+task.getTASKID());
-                    intent.putExtra("TITLE", title);
-//                    startActivity(intent);
-                    startActivityForResult(intent,CHECKFRAGMENT);
+                    List<DetectionResult> detectionResults = creatDetectionResultList(items,task);
+                    editorSharedPreferences(items,"listDetailTask");
+                    editorSharedPreferences(detectionResults,"detectionResultList");
+                    goReDetectionActivity(detectionResults,position,task);
                 }
             }
         });
@@ -261,11 +333,18 @@ public class CheckFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == CHECKFRAGMENT) {
-                int position = data.getIntExtra("position", 0);
-                tasks.get(position).setRESULT("2");
-                lv_check.setAdapter(checkAdapter);
+          if (requestCode == CHECKFRAGMENT) {
+            int position = data.getIntExtra("position", 0);
+            boolean isDoing = data.getBooleanExtra("isDoing",false);
+            String where = data.getStringExtra("where");
+            if(where.equals("back")){
+              if(isDoing){
+              }
+            }else{
+              tasks.get(position).setRESULT("2");
             }
+              lv_check.setAdapter(checkAdapter);
+          }
         }
     }
 
@@ -289,15 +368,13 @@ public class CheckFragment extends Fragment {
                 if (listResult.getMessage().equals("获取成功")) {
                     List<DetectionResult> list = listResult.getContent();
                     Log.e("size",list.size()+"");
-                    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
+//                    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
                     for (DetectionResult d:list) {
                         d.setRUNWATERNUM(task.getRUNWATERNUM());
                     }
                     if(list.get(0).getRUNWATERNUM().equals(task.getRUNWATERNUM())){
-                        intent.putExtra("items", (Serializable) list);
-                        intent.putExtra("position",position);
-                        intent.putExtra("task", task);
-                        startActivityForResult(intent,CHECKFRAGMENT);
+                      editorSharedPreferences(list,"detectionResultList");
+                      goRectifyListActivity(list,position,task);
                     }
                 }
             }
@@ -355,9 +432,6 @@ public class CheckFragment extends Fragment {
         public long getItemId(int position) {
             return 0;
         }
-    //        "UNTITD":"",
-    //                "DEVCLASS":""
-    //
 
         /**
          * 返回指定下表对应的item的View对象
@@ -372,7 +446,7 @@ public class CheckFragment extends Fragment {
             //如果没有复用的
             if(convertView == null){
                 //加载item的布局
-                convertView = View.inflate(getActivity(), R.layout.fragment_listview_check, null);
+                convertView = View.inflate(getActivity(), R.layout.fragment_listview_check_new, null);
 
             }
 
@@ -383,6 +457,7 @@ public class CheckFragment extends Fragment {
             TextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
             TextView tv_issave_device = convertView.findViewById(R.id.tv_issave_device);
+            CircleRelativeLayout circleRelativeLayout = convertView.findViewById(R.id.check_list_imagebutton);
             LinearLayout ll_check_bg = convertView.findViewById(R.id.ll_check_bg);
 
             if(task.getRESULT().equals("2")){
@@ -400,10 +475,11 @@ public class CheckFragment extends Fragment {
                 color = 0xC6F00000-(0x000F0000-0x00000F00)*position;
 
             }
+            circleRelativeLayout.setColor(color);
             //ll_check_bg.setBackgroundColor(color);
-            tv_check_device.setTextColor(color);
-            tv_check_address.setTextColor(color);
-            tv_check_endtime.setTextColor(color);
+//            tv_check_device.setTextColor(color);
+//            tv_check_address.setTextColor(color);
+//            tv_check_endtime.setTextColor(color);
 
             tv_check_device.setText(task.getDEVID());
             tv_check_address.setText(task.getPLACE());
@@ -411,6 +487,5 @@ public class CheckFragment extends Fragment {
             return convertView;
         }
     }
-
 
 }

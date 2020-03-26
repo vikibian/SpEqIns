@@ -7,8 +7,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,8 +42,10 @@ import com.neu.test.entity.Task;
 import com.neu.test.layout.SlideLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SearchUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,6 +66,7 @@ public class ReDetectionActivity extends AppCompatActivity {
     private Button btn_save_detection;
     private Button btn_sure_detection;
     private TextView tv_totalitem;
+    private boolean isDoing = false;
     private ReDetectionActivity.ReDetectionAdapter detectionAdapter;
 
     public List<DetectionResult> detectionResults = new ArrayList<DetectionResult>();//检查结果list
@@ -87,6 +92,10 @@ public class ReDetectionActivity extends AppCompatActivity {
     private TextView toolbar_subtitleLeft;
     private TextView toolabr_subtitleRight;
     private  Intent intent1;
+    private SearchUtil searchUtil = new SearchUtil();
+
+    String data ;
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +115,8 @@ public class ReDetectionActivity extends AppCompatActivity {
         btn_sure_detection = findViewById(R.id.btn_sure_detection);
         btn_save_detection = findViewById(R.id.btn_save_detection);
         tv_totalitem = findViewById(R.id.tv_totalitem);
+        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+        sp = getSharedPreferences(data, Context.MODE_PRIVATE);
 
         detectionResults = (List<DetectionResult>) getIntent().getSerializableExtra("items");
 //        for(int i=0;i<detectionResults.size();i++){
@@ -145,9 +156,11 @@ public class ReDetectionActivity extends AppCompatActivity {
                                 detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
                                 detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
                                 detectionResults.add(detectionResult);
+                                tv_totalitem.setText("------------共"+detectionResults.size()+"项------------");
                                 //更新
                                 detectionAdapter.notifyDataSetChanged();
-                                lv_detection.invalidate();
+
+//                                lv_detection.setAdapter(detectionAdapter);
 
                                 //postTaskAndGetResult();
                             }
@@ -184,6 +197,8 @@ public class ReDetectionActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(FilePathResult filePathResult, int i) {
                             Log.e("message", filePathResult.getMessage());
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.clear();
                             Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
                             intent.putExtra("listData", (Serializable) detectionResults);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -209,7 +224,10 @@ public class ReDetectionActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(FilePathResult filePathResult, int i) {
                         Log.e("message",filePathResult.getMessage());
-                        intent1.putExtra("position",pposition);
+                      editorSave();
+                      intent1.putExtra("position",pposition);
+                      intent1.putExtra("isDoing",isDoing);
+                      intent1.putExtra("where","finish");
                         setResult(RESULT_OK,intent1);
                         finish();
                     }
@@ -226,7 +244,7 @@ public class ReDetectionActivity extends AppCompatActivity {
      */
 
   public void initToolbar() {
-    toolbar = (Toolbar) findViewById(R.id.toolbar_detction);
+      toolbar = (Toolbar) findViewById(R.id.toolbar_detction);
       toolbar_title = findViewById(R.id.toolbar_detction_title);
       toolbar_subtitleLeft = findViewById(R.id.toolbar_detction_subtitle_left);
       toolabr_subtitleRight = findViewById(R.id.toolbar_detction_subtitle_right);
@@ -291,7 +309,7 @@ public class ReDetectionActivity extends AppCompatActivity {
                 viewHolder.detction_item_image_right.setVisibility(View.INVISIBLE);
             }
 
-
+            Log.e(TAG,"检测添加选项 re："+detectionResults.get(position).getJIANCHAXIANGTITLE());
 
             //初始化选择状态
             if(detectionResults.get(position).getSTATUS().equals("0")){
@@ -374,7 +392,13 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.detction_item_image_right.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                    //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
+                    if ((detectionResults.get(position).getISCHANGED().equals(searchUtil.changed))
+                    && detectionResults.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
+                        jumpToRectifyResultActivity(position);
+                    }else {
+                        jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                    }
                 }
             });
 
@@ -387,20 +411,6 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-//          AlertDialog.Builder builder=new AlertDialog.Builder(DetctionActivity.this);
-//          builder.setTitle("排查要求&法律法规");
-//          builder.setMessage(detectionResults.get(position).getCHECKCONTENT()+"/n"+detectionResults.get(position).getLAW());
-////          builder.setPositiveButton("我知道了",
-////            new DialogInterface.OnClickListener() {
-////            @Override
-////            public void onClick(DialogInterface dialogInterface, int i) {
-////
-////            }
-////          });
-//          AlertDialog dialog=builder.create();
-//          dialog.show();
-
-
                     new MaterialStyledDialog.Builder(ReDetectionActivity.this)
                             .setTitle("排查要求&法律法规")
                             .setDescription("排查要求：\n"+detectionResults.get(position).getCHECKCONTENT()+
@@ -461,6 +471,7 @@ public class ReDetectionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+          isDoing = true;
             if(requestCode == RequestCor){
                 int position = data.getIntExtra("position",0);
                 Log.e("position",position+"-");
@@ -489,7 +500,14 @@ public class ReDetectionActivity extends AppCompatActivity {
                 detectionResults.get(position).setISHAVEDETAIL("1");
                 detectionResults.get(position).setSTATUS(status);
                 Log.e("status6",detectionResults.get(position).getSTATUS());
-                //}
+                //设置整改的属性为空
+                detectionResults.get(position).setCHANGEDWAY("");
+                detectionResults.get(position).setCHANGEDACTION("");
+                detectionResults.get(position).setCHANGEDFINISHTIME("");
+                detectionResults.get(position).setCHANGEDRESULT("");
+                detectionResults.get(position).setCHANGEDIMAGE("");
+                detectionResults.get(position).setCHANGEDVIDEO("");
+
                 lv_detection.setAdapter(detectionAdapter);
             }
 
@@ -554,4 +572,60 @@ public class ReDetectionActivity extends AppCompatActivity {
         lv_detection.setAdapter(detectionAdapter);
         Log.e(TAG," onResume");
     }
+
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    editorSave();
+    intent1.putExtra("position",pposition);
+    intent1.putExtra("isDoing",isDoing);
+    intent1.putExtra("where","back");
+    setResult(RESULT_OK,intent1);
+    finish();
+    Log.e(TAG,"onback");
+
+  }
+
+  public void editorSave(){
+    Gson gson = new Gson();
+    String json = gson.toJson(detectionResults);
+    SharedPreferences.Editor editor = sp.edit();
+    editor.putString("detectionResultList",json);
+    editor.commit();
+  }
+
+  public void refleshData(){
+    Map<String, String> map = new HashMap<>();
+    map.put("taskID",task.getTASKID());
+    map.put("DEVID",task.getDEVID());
+    map.put("USERNAME",task.getLOGINNAME());
+    String url = BaseUrl.BaseUrl+"getSaveResult";
+    Log.e(TAG,"url: "+url);
+    OkHttp okHttp=new OkHttp();
+    okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
+      @Override
+      public void onError(Call call, Exception e, int i) {
+        Log.e(TAG,"onError: "+e.toString());
+        Toasty.warning(ReDetectionActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+      }
+
+      @Override
+      public void onResponse(Result<List<DetectionResult>> listResult, int i) {
+        if (listResult.getMessage().equals("获取成功")) {
+          List<DetectionResult> list = listResult.getContent();
+          editorSharedPreferences(list,"detectionResultList");
+        }
+      }
+    });
+
+  }
+
+  public <T> void editorSharedPreferences(T value,String key){
+    String json2 = new Gson().toJson(value);
+    SharedPreferences.Editor editor = sp.edit();
+    editor.putString(key,json2);
+    editor.commit();
+  }
+
 }

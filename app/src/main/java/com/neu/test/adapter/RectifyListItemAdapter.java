@@ -22,6 +22,7 @@ import java.util.List;
  * created time : 16:38
  * email : 710256138@qq.com
  */
+
 public class RectifyListItemAdapter extends BaseAdapter {
     private static final String TAG = "RectifyListItemAdapter";
     private Context context;

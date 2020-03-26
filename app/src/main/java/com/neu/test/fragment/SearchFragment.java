@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +69,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private TextView selectStartTime;
     private TextView selectEndtTime;
 
+    private LinearLayout showNoData;
+
     private boolean flag_check=false;//判断是否已经根据条件选择了查询项，
 
 
@@ -98,11 +101,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     Column<String> nextInsertTime;
     private SearchUtil searchUtil = new SearchUtil();
 
-//    private String[] deviceType = {"锅炉","压力容器","电梯","起重机","专用机动车辆","大型游乐设施","压力管道","客车索道"};
-//    private String[] deviceQualify = {"合格","不合格"};
-//    private String[] taskType = {"自查","复查","下派","随机"};
-//    private String[] classofdev ={"1000","2000","3000","4000","5000","6000","7000","8000"};
-//    public Map<String,String> typeToDevclass = new HashMap<>();
 
 
 
@@ -200,6 +198,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         selectEndtTime = view.findViewById(R.id.select_endtime);
         taskSmartTable = view.findViewById(R.id.result_table);
 
+        showNoData = view.findViewById(R.id.search_fragment_noitem);
+
         MBsp_Type = view.findViewById(R.id.MBsp_deviceType);
         MBsp_Qualify = view.findViewById(R.id.MBsp_deviceQualify);
 //        MBsp_Checked = view.findViewById(R.id.MBsp_deviceChecked);
@@ -260,12 +260,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG," Type : "+MBsp_Type.getText());
         Log.e(TAG," Qualify : "+MBsp_Qualify.getText());
 
-//        String hege = new String();
-//        if (MBsp_Qualify.getText().toString().equals("合格")){
-//            hege = "0";
-//        }else if(MBsp_Qualify.getText().toString().equals("不合格")){
-//            hege = "1";
-//        }
 
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
@@ -277,15 +271,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG," devclass: "+searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
         Log.e(TAG," result: "+searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
         Log.e(TAG," taskType: "+MBsp_taskType.getText().toString());
-//        searchmap.put("taskID","1affb4ca-1b34-4d99-9222-5ce1ed62afa5");
-//        searchmap.put("DEVID","123456");
 
-//        searchmap.put("StartedTime","12345");//起始时间
-//        searchmap.put("EndTime","12345");//终止时间
-//        searchmap.put("DEVCLASS","12345");//设备种类
-//        searchmap.put("DEVCLASS","12345");//合格情况
-//        searchmap.put("DEVCLASS","12345");//检查情况
-//        searchmap.put("DEVCLASS","12345");//检查人员
 
         OkHttp okHttp = new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(searchmap), new ListTaskCallBack() {
@@ -305,18 +291,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     if(response.getContent().size()==0){
                         Toast.makeText(getContext(),"无数据",Toast.LENGTH_LONG).show();
                         Log.e("TAG"," response.getContent: "+"无数据");
-                        Task task = new Task();
-                        task.setCHECKDATE("12");
-                        task.setDEADLINE("12");
-                        task.setRESULT("1");
-                        task.setDEVCLASS("3000");
-                        tasks.add(task);
-                        initTable(tasks);
-                        Log.e("TAG"," Content: "+tasks.toString());
-                        Log.e("TAG"," 接收task: "+tasks.size());
+//                        Task task = new Task();
+//                        task.setCHECKDATE("12");
+//                        task.setDEADLINE("12");
+//                        task.setRESULT("1");
+//                        task.setDEVCLASS("3000");
+//                        tasks.add(task);
+//                        initTable(tasks);
+//                        Log.e("TAG"," Content: "+tasks.toString());
+//                        Log.e("TAG"," 接收task: "+tasks.size());
+                        showNoData.setVisibility(View.VISIBLE);
 
                     }else {
                         Log.e("TAG"," response.getContent: "+"有数据");
+                        showNoData.setVisibility(View.INVISIBLE);
+                        tasks.clear();
                         tasks = response.getContent();
                         initTable(tasks);
                         Log.e("TAG"," Content: "+tasks.toString());

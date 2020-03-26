@@ -14,19 +14,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary">
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="标题"-->
-            <!--android:textSize="20sp"/>-->
-            <!--<TextView-->
-            <!--android:id="@+id/toolbar_title_detction"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:singleLine="true"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="20sp" />-->
 
             <LinearLayout
                 android:layout_marginLeft="0dp"
@@ -126,21 +113,130 @@
                 android:textStyle="bold"
                 android:textSize="15dp"
                 android:textColor="@color/black"
-                android:text="整改方式："
+                android:text="整改问题描述："
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:text=" "
                 android:layout_marginTop="3dp"
                 android:background="@drawable/stroke"
                 android:layout_margin="3dp"
-                android:padding="6dp"
+                android:padding="12dp"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/black"
                 android:inputType="textMultiLine"
-                android:id="@+id/rectify_result_item_way_edittext"
+                android:id="@+id/rectify_result_item_content_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginTop="3dp"
+                android:paddingBottom="3dp"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:textColor="@color/black"
+                android:text="整改是否合格："
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:background="@drawable/stroke"
+                android:layout_marginTop="3dp"
+                android:padding="8dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_gravity="center_horizontal"
+                    android:text="整改合格"
+                    android:id="@+id/rectify_result_qualified"
+                    android:layout_weight="1"
+                    android:textSize="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <CheckBox
+                    android:text="整改不合格"
+                    android:id="@+id/rectify_result_unqualified"
+                    android:layout_weight="1"
+                    android:textSize="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_marginTop="3dp"
+                android:textStyle="bold"
+                android:textSize="15dp"
+                android:textColor="@color/black"
+                android:text="整改方式："
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!--<EditText-->
+                <!--android:layout_marginTop="3dp"-->
+                <!--android:background="@drawable/stroke"-->
+                <!--android:layout_margin="3dp"-->
+                <!--android:padding="6dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:inputType="textMultiLine"-->
+                <!--android:id="@+id/rectify_result_item_way_edittext"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content" />-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:visibility="visible"
+                    android:layout_marginTop="3dp"
+                    android:background="@drawable/stroke"
+                    android:layout_margin="3dp"
+                    android:paddingBottom="5dp"
+                    android:padding="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:inputType="textMultiLine"
+                    android:id="@+id/rectify_result_item_way_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:visibility="invisible"
+                    android:id="@+id/rectify_result_way_checkbox_lin"
+                    android:background="@drawable/stroke"
+                    android:padding="5dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <CheckBox
+                        android:layout_gravity="center_horizontal"
+                        android:text="限期整改"
+                        android:id="@+id/rectify_result_way_limit"
+                        android:layout_weight="1"
+                        android:textSize="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                    <CheckBox
+                        android:text="停产整改"
+                        android:id="@+id/rectify_result_way_stop"
+                        android:layout_weight="1"
+                        android:textSize="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+
+
+                </LinearLayout>
+
+
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_marginTop="3dp"
@@ -210,41 +306,27 @@
 
             <TextView
                 android:layout_marginTop="3dp"
-                android:paddingBottom="3dp"
                 android:textStyle="bold"
                 android:textSize="15dp"
                 android:textColor="@color/black"
-                android:text="整改是否合格："
+                android:text="操作人员手机号："
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:background="@drawable/stroke"
+            <TextView
+                android:text=" "
                 android:layout_marginTop="3dp"
-                android:padding="8dp"
-                android:orientation="horizontal"
+                android:background="@drawable/stroke"
+                android:layout_margin="3dp"
+                android:padding="10dp"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/black"
+                android:drawableRight="@drawable/ic_phone_blue_a400_24dp"
+                android:id="@+id/rectify_result_item_phonenumber_textview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <CheckBox
-                    android:layout_gravity="center_horizontal"
-                    android:text="整改合格"
-                    android:id="@+id/rectify_result_qualified"
-                    android:layout_weight="1"
-                    android:textSize="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
-
-                <CheckBox
-                    android:text="整改不合格"
-                    android:id="@+id/rectify_result_unqualified"
-                    android:layout_weight="1"
-                    android:textSize="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
 
-
-            </LinearLayout>
 
             <com.neu.test.layout.MyGridView
                 android:focusable="false"

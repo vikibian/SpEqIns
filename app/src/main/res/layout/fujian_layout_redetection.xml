@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <com.bm.library.PhotoView
+      android:id="@+id/fujian_gridview_item_photo"
+      android:paddingRight="3dp"
+      android:scaleType="centerInside"
+      android:checked="false"
+      android:clickable="false"
+      android:focusable="false"
+      android:focusableInTouchMode="false"
+      android:layout_width="125dp"
+      android:layout_height="125dp" />
+
+
+</LinearLayout>

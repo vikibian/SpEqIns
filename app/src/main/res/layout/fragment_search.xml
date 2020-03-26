@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="   操作人员 ："
-                    android:textSize="25dp"
+                    android:textSize="15dp"
                     android:textStyle="bold"
                     />
 
@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=" "
-                    android:textSize="25dp"
+                    android:textSize="15dp"
                     android:textStyle="normal"/>
 
             </LinearLayout>
@@ -63,6 +63,22 @@
                 android:id="@+id/search_drawerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/search_fragment_noitem"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="invisible"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="额，暂无数据"/>
+
+                </LinearLayout>
 
                 <FrameLayout
                     android:id="@+id/fragment_main"

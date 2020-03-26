@@ -46,6 +46,7 @@ import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.SearchUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ import java.util.stream.Collectors;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-
+@Deprecated
 public class DetctionActivity extends AppCompatActivity {
     private static String TAG = "DetctionActivity";
 
@@ -93,6 +94,7 @@ public class DetctionActivity extends AppCompatActivity {
     private TextView toolabr_subtitleRight;
     private static boolean isSave = false;
     private  Intent intent1;
+    private SearchUtil searchUtil = new SearchUtil();
 
 
     @Override
@@ -181,10 +183,10 @@ public class DetctionActivity extends AppCompatActivity {
                                 detectionResult.setDEVID(detectionResults.get(0).getDEVID());
                                 detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
                                 detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
-//                                DetectionItem testItem = new DetectionItem();
-//                                testItem.setCHECKCONTENT(itemString);
-//                                listData.add(testItem);
                                 detectionResults.add(detectionResult);
+                                DetailTask detailTask = new DetailTask();
+                                listData.add(detailTask);
+                                tv_totalitem.setText("------------共"+detectionResults.size()+"项------------");
                                 //更新
                                 detectionAdapter1.notifyDataSetChanged();
                                 lv_detection.invalidate();
@@ -206,28 +208,6 @@ public class DetctionActivity extends AppCompatActivity {
 
 
         btn_sure_detection.setOnClickListener(new View.OnClickListener() {
-            //            @Override
-//            public void onClick(View view) {
-//                String string = new Gson().toJson(detectionResults);
-//                String url = BaseUrl.BaseUrl+"setItemResult";
-//                OkHttp okHttp = new OkHttp();
-//                okHttp.postBypostString(url, string, new FileResultCallBack() {
-//                    @Override
-//                    public void onError(Call call, Exception e, int i) {
-//                        Log.e("error",e.toString());
-//                    }
-//
-//                    @Override
-//                    public void onResponse(FilePathResult filePathResult, int i) {
-//                        Log.e("message",filePathResult.getMessage());
-//                        Intent intent = new Intent(DetctionActivity.this,PDFActivity.class);
-//                        intent.putExtra("listData",(Serializable)detectionResults);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                    }
-//                });
-//            }
-
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
@@ -315,14 +295,7 @@ public class DetctionActivity extends AppCompatActivity {
         toolabr_subtitleRight.setText(taskType);
         toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
 
-        //getSupportActionBar.setDisplayHomeAsUpEnabled(true);
 
-//        setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null){
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setDisplayShowTitleEnabled(false);//让原始的toolbar的title不显示，可以使用
-//        }
 
     }
 
@@ -365,159 +338,12 @@ public class DetctionActivity extends AppCompatActivity {
 
     }
 
-//    private void postTaskAndGetResult() {
-//
-//        String url = SplashActivity.baseurl+"/addTaskServlet";
-//        Log.d(TAG,"POST url: "+url);
-//
-//
-//        JSONObject tSchedule = new JSONObject();
-//        JSONObject jsonObject = null;
-//        try {
-//            tSchedule.put("TASKID","123461");
-//            tSchedule.put("DEVCLASS","3000");
-//            tSchedule.put("DEVID","12345");
-//            tSchedule.put("LOGINNAME",LoginActivity.testinputName);
-//            tSchedule.put("TASKTYPE",taskTypes[taskType].toString());
-//
-//            jsonObject = new JSONObject();
-//            jsonObject.put("tSchedule", tSchedule);
-//            Log.e(TAG,"tSchedule: "+ jsonObject.toString());
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        OkHttp okHttp = new OkHttp();
-//        okHttp.postBypostString(url, jsonObject.toString(), new StringCallback() {
-//            @Override
-//            public void onError(Call call, Exception e, int i) {
-//                Log.e(TAG,"error: "+e.toString());
-//                Log.e(TAG,"i: "+i);
-//            }
-//
-//            @Override
-//            public void onResponse(String s, int i) {
-//                //测试Gson
-//                Gson gson = new Gson();
-//
-//
-////                if(message.equals("添加任务成功")){
-////                    String itemString;
-////                    EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
-////                    itemString = item.getText().toString();
-////                    DetectionItem testItem = new DetectionItem(itemString);
-////                    listData.add(testItem);
-////                    detectionAdapter.notifyDataSetChanged();
-////                    lv_detection.invalidate();
-////                    Toasty.success(DetctionActivity.this,"添加任务成功！",Toast.LENGTH_SHORT,true).show();
-////                } else if(message.equals("操作失败")){
-////                    Toasty.error(DetctionActivity.this, "添加任务失败！", Toast.LENGTH_LONG,true).show();
-////                }
-//
-//            }
-//        });
-//
-//    }
+
 
     public void getData(){
 //        listData = new ArrayList<DetectionItem>();
 
     }
-
-
-//    class DetectionAdapter extends BaseAdapter{
-//
-//        @Override
-//        public int getCount() {
-//            Log.d(TAG,"listData adapter: "+listData.size());
-//            return listData.size();
-//        }
-//
-//        @Override
-//        public Object getItem(int position) {
-//            return listData.get(position);
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return position;
-//        }
-//
-//        @Override
-//        public View getView(final int position, View convertView, ViewGroup parent) {
-//            ViewHolder viewHolder=null;
-//            //如果没有复用的
-//            if(convertView == null){
-//                //加载item的布局
-//                convertView = View.inflate(DetctionActivity.this, R.layout.listview_detection, null);
-//                viewHolder = new ViewHolder();
-//                viewHolder.contentView= (TextView) convertView.findViewById(R.id.tv_detection_item);
-//                viewHolder.menuView = (TextView) convertView.findViewById(R.id.tv_detection_menu);
-//                //viewHolder.rg_detection = convertView.findViewById(R.id.rg_detection);
-//                viewHolder.rb_detection_1 = convertView.findViewById(R.id.rb_detection_1);
-//                viewHolder.rb_detection_2 = convertView.findViewById(R.id.rb_detection_2);
-//                convertView.setTag(viewHolder);
-//            }
-//            else {
-//                viewHolder = (ViewHolder) convertView.getTag();
-//
-//            }
-//
-//            viewHolder.contentView.setText(listData.get(position).getCHECKCONTENT());
-//
-//            viewHolder.contentView.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//
-//                public void onClick(View v) {
-//                    jumpToSuggesstionActivity(position);
-//                    Toast.makeText(DetctionActivity.this, "click "+((TextView)v).getText(), Toast.LENGTH_SHORT).show();
-//
-//                }
-//
-//            });
-//
-//
-//
-//            viewHolder.rb_detection_2.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    listData.get(position).setResultStatus("不合格");
-//
-//
-//                }
-//            });
-//
-//            viewHolder.rb_detection_1.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    listData.get(position).setResultStatus("合格");
-//                }
-//            });
-//
-//
-//
-//            viewHolder.menuView.setOnClickListener(new View.OnClickListener() {
-//
-//                @Override
-//
-//                public void onClick(View v) {
-//
-//                    listData.remove(position);
-//                    detectionAdapter.notifyDataSetChanged();
-//                    lv_detection.invalidate();
-//
-//                }
-//
-//            });
-//
-//            SlideLayout slideLayout = (SlideLayout) convertView;
-//            slideLayout.setOnStateChangeListener(new MyOnStateChangeListener());
-//
-//            return convertView;
-//        }
-//    }
 
     class DetectionAdapter1 extends BaseAdapter{
 
@@ -525,12 +351,12 @@ public class DetctionActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return listData.size();
+            return detectionResults.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return listData.get(position);
+            return detectionResults.get(position);
         }
 
         @Override
@@ -566,7 +392,7 @@ public class DetctionActivity extends AppCompatActivity {
                 viewHolder.detction_item_image_right.setVisibility(View.INVISIBLE);
             }
 
-
+            Log.e(TAG,"检测添加选项："+detectionResults.get(position).getJIANCHAXIANGTITLE());
             //未选择是否合格
             if(detectionResults.get(position).getSTATUS().equals("2")){
                 //需要取证显示 取证按钮
@@ -668,7 +494,13 @@ public class DetctionActivity extends AppCompatActivity {
             viewHolder.detction_item_image_right.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                    //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
+                    if ((detectionResults.get(position).getISCHANGED().equals(searchUtil.changed))
+                            && detectionResults.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
+                        jumpToRectifyResultActivity(position);
+                    }else {
+                        jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                    }
                 }
             });
 
@@ -681,19 +513,6 @@ public class DetctionActivity extends AppCompatActivity {
             viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-//          AlertDialog.Builder builder=new AlertDialog.Builder(DetctionActivity.this);
-//          builder.setTitle("排查要求&法律法规");
-//          builder.setMessage(detectionResults.get(position).getCHECKCONTENT()+"/n"+detectionResults.get(position).getLAW());
-////          builder.setPositiveButton("我知道了",
-////            new DialogInterface.OnClickListener() {
-////            @Override
-////            public void onClick(DialogInterface dialogInterface, int i) {
-////
-////            }
-////          });
-//          AlertDialog dialog=builder.create();
-//          dialog.show();
-
 
                     new MaterialStyledDialog.Builder(DetctionActivity.this)
                             .setTitle("排查要求&法律法规")
@@ -718,10 +537,6 @@ public class DetctionActivity extends AppCompatActivity {
 
     private void jumpToRectifyResultActivity(int position) {
         Intent intent = new Intent(DetctionActivity.this,RectifyResultActivity.class);
-        DetectionResult test = new DetectionResult();
-//        test.setJIANCHAXIANGTITLE("测试");//测试代码
-//        test.setLOGINNAME(LoginActivity.inputName);//测试代码
-//        detectionResults.add(test);
         intent.putExtra("detectionResult",  detectionResults.get(position));
         intent.putExtra("position",position);
         intent.putExtra("toolbarTitle",title);
@@ -729,15 +544,6 @@ public class DetctionActivity extends AppCompatActivity {
         startActivityForResult(intent,RectifyCode);
     }
 
-//    private void jumpToSuggesstionActivity(int position) {
-//        //listData.get(position).setResultStatus(status);
-//        String noItem = listData.get(position).getCHECKCONTENT();
-//        String devclass = listData.get(position).getDEVCLASS();
-//        Intent intent = new Intent(DetctionActivity.this, SuggestionActivity.class);
-//        intent.putExtra("suggestion",noItem);
-//        intent.putExtra("DEVCLASS",devclass);
-//        startActivity(intent);
-//    }
 
     private void jumpToSuggesstionActivity(int position,String status) {
         //listData.get(position).setResultStatus(status);
@@ -756,6 +562,18 @@ public class DetctionActivity extends AppCompatActivity {
         //intent.putExtra("isHege",isHege);
         startActivityForResult(intent,RequestCor);
     }
+
+    static class ViewHolder{
+        public TextView detction_item_text_context;
+        public TextView detction_item_text_leftnum;
+        public CheckBox rectify_item_status_unrectify;
+        public CheckBox rectify_item_status_rectified;
+        public CheckBox rectify_item_status_rectifyliving;
+        public ImageView detction_item_image_right;
+        public LinearLayout ll_test;
+    }
+
+
 
     //接收图片视频的结果
     @Override
@@ -791,7 +609,13 @@ public class DetctionActivity extends AppCompatActivity {
                 Log.e("status5",status);
                 detectionResults.get(position).setSTATUS(status);
                 Log.e("status6",detectionResults.get(position).getSTATUS());
-                //}
+                //设置整改的属性为空  清空
+                detectionResults.get(position).setCHANGEDWAY("");
+                detectionResults.get(position).setCHANGEDACTION("");
+                detectionResults.get(position).setCHANGEDFINISHTIME("");
+                detectionResults.get(position).setCHANGEDRESULT("");
+                detectionResults.get(position).setCHANGEDIMAGE("");
+                detectionResults.get(position).setCHANGEDVIDEO("");
                 lv_detection.setAdapter(detectionAdapter1);
             }
 
@@ -812,57 +636,6 @@ public class DetctionActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-    public SlideLayout slideLayout = null;
-    class MyOnStateChangeListener implements SlideLayout.OnStateChangeListener {
-        @Override
-        public void onOpen(SlideLayout layout) {
-            slideLayout = layout;
-        }
-        @Override
-        public void onMove(SlideLayout layout) {
-            if (slideLayout != null && slideLayout !=layout)
-            {
-                slideLayout.closeMenu();
-            }
-        }
-
-        @Override
-        public void onClose(SlideLayout layout) {
-            if (slideLayout == layout)
-            {
-                slideLayout = null;
-            }
-        }
-    }
-
-    static class ViewHolder{
-        public TextView detction_item_text_context;
-        public TextView detction_item_text_leftnum;
-        public CheckBox rectify_item_status_unrectify;
-        public CheckBox rectify_item_status_rectified;
-        public CheckBox rectify_item_status_rectifyliving;
-        public ImageView detction_item_image_right;
-        public LinearLayout ll_test;
-    }
-
-
-//    static class ViewHolder
-//
-//    {
-//
-//        public TextView contentView;
-//
-//        public TextView menuView;
-//
-//        public RadioButton rb_detection_1;
-//        public RadioButton rb_detection_2;
-//        // public RadioButton rg_detection;
-//
-//
-//    }
 
     @Override
     protected void onStart() {

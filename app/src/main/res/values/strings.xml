@@ -1,16 +1,16 @@
 <resources>
 
-    <string name="app_name">沈阳市市场监督管理局</string>
+    <string name="app_name">特种设备企业自查系统</string>
 
     <string name="tab_home">自查</string>
 
-    <string name="tab_random">随机</string>
+    <string name="tab_random">临时</string>
 
     <string name="tab_task">下派</string>
 
     <string name="tab_video">查询</string>
 
-    <string name="tab_micro">复查</string>
+    <string name="tab_micro">整改</string>
 
     <string name="tab_me">我的</string>
 

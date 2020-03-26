@@ -4,30 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.DetctionActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#e2e4fe"
+    tools:context=".activity.RectifyListActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_detction"
+            android:id="@+id/toolbar_rectify_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary">
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="标题"-->
-            <!--android:textSize="20sp"/>-->
-            <!--<TextView-->
-                <!--android:id="@+id/toolbar_title_detction"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:singleLine="true"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="20sp" />-->
 
             <LinearLayout
                 android:layout_marginLeft="0dp"
@@ -37,7 +25,7 @@
 
                 <TextView
                     android:layout_weight="3"
-                    android:id="@+id/toolbar_detction_title"
+                    android:id="@+id/toolbar_rectify_list_title"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -59,7 +47,7 @@
 
                         <TextView
                             android:gravity="center_horizontal"
-                            android:id="@+id/toolbar_detction_subtitle_left"
+                            android:id="@+id/toolbar_rectify_list_subtitle_left"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
@@ -76,7 +64,7 @@
 
                         <TextView
                             android:gravity="left"
-                            android:id="@+id/toolbar_detction_subtitle_right"
+                            android:id="@+id/toolbar_rectify_list_subtitle_right"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="left"
@@ -93,7 +81,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/detection_nocontent"
+        android:id="@+id/rectify_list_nocontent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -108,7 +96,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/detection_hascontent"
+        android:id="@+id/rectify_list_hascontent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -117,7 +105,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/tv_totalitem"
+                android:id="@+id/rectify_list_tv_totalitem"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
                 android:layout_width="wrap_content"
@@ -125,7 +113,7 @@
                 android:text="---共5项---"/>
         </LinearLayout>
         <ListView
-            android:id="@+id/lv_detection"
+            android:id="@+id/rectify_list_lv"
             android:layout_width="match_parent"
             android:layoutAnimation="@anim/anim_listview_item"
             android:layout_height="match_parent"
@@ -133,37 +121,7 @@
             android:descendantFocusability="blocksDescendants">
 
         </ListView>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-            <Button
-                android:id="@+id/btn_add_detection"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_gravity="left"
-                android:text="添加"/>
-            <Button
-                android:id="@+id/btn_save_detection"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_gravity="left"
-                android:text="保存"/>
-            <Button
-                android:id="@+id/btn_sure_detection"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:layout_gravity="right"
-                android:text="确定"/>
-        </LinearLayout>
+
     </LinearLayout>
 
 

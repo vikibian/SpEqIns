@@ -38,7 +38,7 @@
         <TextView
             android:layout_weight="2"
             android:id="@+id/detction_item_text_context_2"
-
+            android:inputType="textMultiLine"
             android:textColor="@color/black"
             android:textSize="20dp"
             android:text="管道安全"

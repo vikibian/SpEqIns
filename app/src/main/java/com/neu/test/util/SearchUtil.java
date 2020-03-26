@@ -19,6 +19,7 @@ public class SearchUtil {
     public String[] classofdev ={"1000","2000","3000","4000","5000","6000","7000","8000"};
     public Map<String,String> typeToDevclass = new HashMap<>();
     public Map<String,String> devclassToType = new HashMap<>();
+    public Map<String,String> map_devclass = new HashMap<>();
     public String[] mTitles = new String[]{"文字", "图片", "视频"};
     public String[] choose = {"全部","合格","不合格","未定"};
     public String hege = "0";
@@ -30,8 +31,13 @@ public class SearchUtil {
     public String undecidedText = "未定";
     public String recifyQualifyText = "整改合格";
 
+    public String recify = "整改";
+
     public String changed = "1";
     public String unchanged = "0";
+
+    public String haveDetail = "1";
+    public String noHaveDetail = "0";
 
     public String getTypeToDevclass(String type){
         initTypeToDevclass();
@@ -54,6 +60,13 @@ public class SearchUtil {
         for (int i=0;i<deviceType.length;i++){
             typeToDevclass.put(deviceType[i],classofdev[i]);
         }
+    }
+
+    public Map<String,String> getMapdevclass(){
+        for (int i=0;i<classofdev.length;i++){
+            map_devclass.put(classofdev[i],deviceType[i]);
+        }
+        return map_devclass;
     }
 
     public String getNumToQuality(String num){

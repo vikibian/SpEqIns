@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -16,11 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 
 import androidx.annotation.NonNull;
@@ -31,6 +36,13 @@ import androidx.appcompat.widget.Toolbar;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.DialogSettings;
+import com.kongzue.dialog.util.InputInfo;
+import com.kongzue.dialog.util.TextInfo;
+import com.kongzue.dialog.v3.InputDialog;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.adapter.SuggestionGridViewAdapter;
 import com.neu.test.entity.DetectionResult;
@@ -44,6 +56,9 @@ import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.PhoneInfoUtils;
+import com.neu.test.util.ReloadImageAndVideo;
+import com.neu.test.util.SearchUtil;
 import com.neu.test.util.SuggestionActivitySaveDataUtil;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -63,7 +78,7 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-public class SuggestionActivity extends AppCompatActivity {
+public class SuggestionActivity extends AppCompatActivity implements View.OnClickListener {
     private static String TAG = "SuggestionActivity";
     private static final int REQUEST_CODE_CHOOSE = 23;
 
@@ -77,14 +92,21 @@ public class SuggestionActivity extends AppCompatActivity {
     private TextView tv_mygps;//显示定位
     private EditText et_suggestion;
     private TextView tv_num;
+    private TextView textview_phoneNumber;
+    private LinearLayout suggestion_dangerandrecify;
+    private CheckBox suggestion_danger_great;
+    private CheckBox suggestion_danger_normal;
+    private CheckBox suggestion_recify_way_now;
+    private CheckBox suggestion_recify_way_limit;
+    private CheckBox suggestion_recify_way_stop;
 
     final int RequestCor = 521;
     final int maxNum = 500;
     final int REQUEST_TEST = 66;
     public int position = 0;
 
-    private String ImagePath;
-    private String VideoPath;
+    private String ImagePath = "";
+    private String VideoPath = "";
     private DetectionResult detectionResult;
     private Intent intent;
 
@@ -94,8 +116,6 @@ public class SuggestionActivity extends AppCompatActivity {
     public  List<String> pathlistOfPhoto = new ArrayList<>();
     //测试视频和图片的显示分开，因为在缩小时他们的方向不同，旋转的角度不同
     public static String videoPath = new String();
-
-
 
     private  List<String> testpathlistOfPhoto = new ArrayList<>();
     private String testvideoPath = " ";
@@ -108,22 +128,37 @@ public class SuggestionActivity extends AppCompatActivity {
     private TextView toolbar_subtitleRight;
 
 
-    private String devclass;//接收从DetctionActivity传过来的DEVCLASS
-    private String suggestion;//接收从DetctionActivity传过来的检查项
-    private String title;//接收从DetctionActivity传过来的标题
-    private String taskType;
-    private String Path;
-    private String status;
+    private String devclass = "";//接收从DetctionActivity传过来的DEVCLASS
+    private String suggestion = "";//接收从DetctionActivity传过来的检查项
+    private String title = "";//接收从DetctionActivity传过来的标题
+    private String taskType = "";
+    private String Path = "";
+    private String status = "0";
+    private String phonenumber = "";
+    private SuggestionActivitySaveDataUtil saveDataUtil ;
+    private SearchUtil searchUtil = new SearchUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
         Log.e(TAG," oncreate");
-
+        saveDataUtil = new SuggestionActivitySaveDataUtil(SuggestionActivity.this);
         deleteIndex = -1;
         init();
 
+        PhoneInfoUtils phoneInfoUtils = new PhoneInfoUtils(SuggestionActivity.this,this);
+        phonenumber = phoneInfoUtils.getNativePhoneNumber();
+
+        if (!LoginActivity.phoneNumber.equals("")){
+            if (phonenumber.equals(LoginActivity.phoneNumber)){
+                textview_phoneNumber.setText(phonenumber);
+            }else {
+                textview_phoneNumber.setText(LoginActivity.phoneNumber);
+            }
+        }else {
+            textview_phoneNumber.setText(phonenumber);
+        }
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -153,29 +188,24 @@ public class SuggestionActivity extends AppCompatActivity {
         btn_submit_suggestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                //用来对没有选择图片或视频进行提醒 若没选 软件则会崩溃
-//                if (pathlistOfPhoto.size() == 0) {
-//                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！",Toast.LENGTH_LONG,true).show();
-//
-//                    postFiles(et_suggestion.getText().toString(),null);
-//                }else {
-//                    //提交数据   上传图片
-//                    postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
-//                }
-                if (pathlistOfPhoto.size() == 0) {
-                    Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
-                    intent.putExtra("position",position);
-                    intent.putExtra("imageNumber",0);
-                    intent.putExtra("videoNumber",0);
-                    intent.putExtra("status",status);
-                    Log.e("status7",status);
-                    intent.putExtra("content",et_suggestion.getText().toString());
-                    setResult(RESULT_OK,intent);
-                    finish();
+                if (phonenumber.equals("")){
+                    Toasty.info(getApplicationContext(),"对不起，您没有选择输入手机号！",Toasty.LENGTH_SHORT).show();
                 }else {
-                    //提交数据   上传图片
-                    postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
+                    if (suggestion_dangerandrecify.getVisibility() == View.VISIBLE){
+                        if ((!suggestion_danger_great.isChecked())&&(!suggestion_danger_normal.isChecked())){
+                            Toasty.info(getApplicationContext(),"对不起，您没有选择隐患等级！",Toasty.LENGTH_SHORT).show();
+                        }else {
+                            if ((!suggestion_recify_way_limit.isChecked())&&
+                                    (!suggestion_recify_way_now.isChecked())&&
+                                    (!suggestion_recify_way_stop.isChecked())){
+                                Toasty.info(getApplicationContext(),"对不起，您没有选择整改方式！",Toasty.LENGTH_SHORT).show();
+                            }else {
+                                submit();
+                            }
+                        }
+                    }else {
+                        submit();
+                    }
                 }
             }
         });
@@ -198,6 +228,44 @@ public class SuggestionActivity extends AppCompatActivity {
             }
         });
 
+        textview_phoneNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputDialog.build(SuggestionActivity.this)
+                        .setButtonTextInfo(new TextInfo().setFontColor(Color.BLACK))
+                        .setTitle("提示!")
+                        .setMessage("请输入您的手机号: ")
+                        .setInputText(textview_phoneNumber.getText().toString())
+                        .setOkButton("确定", new OnInputDialogButtonClickListener() {
+                            @Override
+                            public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
+                                if (inputStr.length() == 11){
+                                    textview_phoneNumber.setText(inputStr);
+                                    if(!inputStr.equals(LoginActivity.phoneNumber)){
+                                        saveDataUtil.save(LoginActivity.inputName,inputStr);
+                                    }
+                                    return false;
+                                }else {
+                                    TipDialog.show(SuggestionActivity.this, "手机号输入错误！", TipDialog.TYPE.ERROR);
+                                    return true;
+                                }
+                            }
+                        })
+                        .setStyle(DialogSettings.STYLE.STYLE_KONGZUE)
+                        .setTheme(DialogSettings.THEME.LIGHT)
+                        .setCancelButton("取消")
+                        .setHintText("手机号")
+                        .setInputInfo(new InputInfo()
+                                .setMAX_LENGTH(11)
+                                .setInputType(InputType.TYPE_CLASS_PHONE)
+                                .setTextInfo(new TextInfo().setFontColor(Color.BLACK)
+                                )
+                        )
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+
         if(pathlistOfPhoto.size()>0){
             suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
             gridView.setAdapter(suggestionGridViewAdapter);
@@ -205,13 +273,45 @@ public class SuggestionActivity extends AppCompatActivity {
 
     }
 
+    private void submit(){
+        if (pathlistOfPhoto.size() == 0) {
+            Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
+            intent.putExtra("position",position);
+            intent.putExtra("imageNumber",0);
+            intent.putExtra("videoNumber",0);
+            intent.putExtra("status",status);
+            Log.e("status7",status);
+            intent.putExtra("content",et_suggestion.getText().toString());
+            setResult(RESULT_OK,intent);
+            finish();
+        }else {
+            //提交数据   上传图片
+            postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
+        }
+    }
+
     private void init() {
+        textview_phoneNumber = findViewById(R.id.suggestion_phonenumber);
+        et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
+        tv_num = findViewById(R.id.tv_num);//计算字数框
         //定位
         tv_suggetion = findViewById(R.id.tv_suggetion);//显示不合格项
         //btn_get_gps = findViewById(R.id.btn_get_gps);//获取定位按钮
         btn_submit_suggestion = findViewById(R.id.btn_submit_suggestion);
-
         toolbar_suggestion = findViewById(R.id.toolbar_suggestion);
+        suggestion_dangerandrecify = findViewById(R.id.suggestion_dangerandrecify);
+        suggestion_danger_great = findViewById(R.id.suggestion_danger_great);
+        suggestion_danger_normal = findViewById(R.id.suggestion_danger_normal);
+        suggestion_recify_way_now = findViewById(R.id.suggestion_rectify_way_now);
+        suggestion_recify_way_limit = findViewById(R.id.suggestion_rectify_way_limit);
+        suggestion_recify_way_stop = findViewById(R.id.suggestion_rectify_way_stop);
+
+        suggestion_danger_great.setOnClickListener(this);
+        suggestion_danger_normal.setOnClickListener(this);
+        suggestion_recify_way_now.setOnClickListener(this);
+        suggestion_recify_way_limit.setOnClickListener(this);
+        suggestion_recify_way_stop.setOnClickListener(this);
+
 
         //获取drawble目录下的plus图片  但是好像获取的文件有问题， 设置一个空的String字符也可以 在Adapter设置图片显示的那里已经实现了
         Resources resources = getResources();
@@ -226,12 +326,6 @@ public class SuggestionActivity extends AppCompatActivity {
         //Collections.reverse(pathlistOfPhoto);
 
 
-
-        tv_mygps = findViewById(R.id.tv_mygps);
-        et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
-        tv_num = findViewById(R.id.tv_num);//计算字数框
-//        tv_mygps.setMovementMethod(ScrollingMovementMethod.getInstance());//显示定位  里面的参数给TextView添加滚动条  设置滚动方式
-        Log.e("ERROR","Suggesion crate");
 
         intent = getIntent();
         position = intent.getIntExtra("position",0);
@@ -272,14 +366,16 @@ public class SuggestionActivity extends AppCompatActivity {
         //设置标题栏
         title = intent.getStringExtra("title");
         taskType = intent.getStringExtra("taskType");
-        status = intent.getStringExtra("status");
         Log.e(TAG,"获取title："+title);
         Log.e(TAG,"获取taskType："+taskType);
-        Log.e(TAG,"获取status："+status);
-//        toolbar_suggestion.setTitleTextColor(getResources().getColor(R.color.white));
-//        toolbar_suggestion.setTitle(getResources().getString(R.string.app_name));
-//        toolbar_suggestion.setSubtitle(title+"("+taskType+")");
-//        toolbar_suggestion.setSubtitleTextColor(getResources().getColor(R.color.white));
+//
+
+        if (status.equals(searchUtil.nohege)){
+            suggestion_dangerandrecify.setVisibility(View.VISIBLE);
+        }else if (status.equals(searchUtil.hege)){
+            suggestion_dangerandrecify.setVisibility(View.GONE);
+        }
+
         toolbar_title = findViewById(R.id.toolbar_suggestion_title);
         toolabr_subtitleLeft = findViewById(R.id.toolbar_suggestion_subtitle_left);
         toolbar_subtitleRight = findViewById(R.id.toolbar_suggestion_subtitle_right);
@@ -290,8 +386,31 @@ public class SuggestionActivity extends AppCompatActivity {
         toolabr_subtitleLeft.setText(title);
         toolbar_subtitleRight.setText(taskType);
         toolbar_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
+    }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.suggestion_danger_great:
+                suggestion_danger_normal.setChecked(false);
+                break;
+            case R.id.suggestion_danger_normal:
+                suggestion_danger_great.setChecked(false);
+                break;
+            case R.id.suggestion_rectify_way_now:
+                suggestion_recify_way_limit.setChecked(false);
+                suggestion_recify_way_stop.setChecked(false);
+                break;
+            case R.id.suggestion_rectify_way_limit:
+                suggestion_recify_way_now.setChecked(false);
+                suggestion_recify_way_stop.setChecked(false);
+                break;
+            case R.id.suggestion_rectify_way_stop:
+                suggestion_recify_way_limit.setChecked(false);
+                suggestion_recify_way_now.setChecked(false);
+                break;
+        }
     }
 
     private void postFiles(String text, List<String> pathOfPhotos) {
@@ -333,7 +452,7 @@ public class SuggestionActivity extends AppCompatActivity {
                         setResult(RESULT_OK,intent);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
-                        Toasty.error(SuggestionActivity.this, "获取个人信息失败！", Toast.LENGTH_SHORT).show();
+                        Toasty.error(SuggestionActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -369,7 +488,7 @@ public class SuggestionActivity extends AppCompatActivity {
                 }else {
                     Toast.makeText(getApplicationContext(),"此图片不能删除",Toast.LENGTH_SHORT).show();
                 }
-                //pathlistOfPhoto
+
                 break;
 
 
@@ -679,4 +798,5 @@ public class SuggestionActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         Log.e(TAG,"onRestoreInstanceState");
     }
+
 }

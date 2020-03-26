@@ -4,10 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -17,23 +30,44 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.DialogSettings;
+import com.kongzue.dialog.util.InputInfo;
+import com.kongzue.dialog.util.TextInfo;
+import com.kongzue.dialog.v3.InputDialog;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.adapter.SuggestionGridViewAdapter;
 import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.FilePathResult;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.util.BaseUrl;
+import com.neu.test.util.PermissionUtils;
+import com.neu.test.util.PhoneInfoUtils;
+import com.neu.test.util.ReloadImageAndVideo;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.SidebarUtils;
+import com.neu.test.util.SuggestionActivitySaveDataUtil;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import okhttp3.Call;
 
 public class RectifyResultActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "RectifyResultActivity";
@@ -45,17 +79,24 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     private  List<String> testpathlistOfPhoto = new ArrayList<>();
 
     private TextView textView_item_title;
-    private EditText editText_rectify_way;
+//    private TextView editText_rectify_way;
     private EditText editText_rectify_action;
     private TextView textView_finish_time;
     private EditText editText_rectify_result;
+    private EditText editText_rectify_content;
     private Button button_submit;
     private CheckBox recify_result_qualified;
     private CheckBox recify_result_unqualified;
+    private TextView textView_recify_phonenumber;
+    private TextView recify_result_way_textview;
+    private CheckBox recify_result_way_limit;
+    private CheckBox recify_result_way_stop;
+    private LinearLayout recify_result_way_checkbox_lin;
     private int deleteIndex;
 
     private String testvideoPath = " ";
-
+    private final int GET_PERMISSION_REQUEST = 110; //权限申请自定义码
+    private boolean granted = false;
     final int RequestCor = 521;
     final int maxNum = 500;
     final int REQUEST_TEST = 66;
@@ -73,20 +114,38 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     private TextView toolbar_subtitleLeft;
     private TextView toolabr_subtitleRight;
 
-    private String toolbarTitle;
-    private String toolbarTaskType;
+    private String toolbarTitle ="";
+    private String toolbarTaskType="";
     //将status的固定值设置在一个固定的位置
     private SearchUtil searchUtil = new SearchUtil();
+    private SuggestionActivitySaveDataUtil saveDataUtil;
+    private String phonenumber ="";
+
+    private String way = "立即整改";
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rectify_result);
-
+        saveDataUtil = new SuggestionActivitySaveDataUtil(RectifyResultActivity.this);
         deleteIndex = -1;
 
         initview();
+
+        PhoneInfoUtils phoneInfoUtils = new PhoneInfoUtils(RectifyResultActivity.this,this);
+        phonenumber = phoneInfoUtils.getNativePhoneNumber();
+
+        if (!LoginActivity.phoneNumber.equals("")){
+            if (phonenumber.equals(LoginActivity.phoneNumber)){
+                textView_recify_phonenumber.setText(phonenumber);
+            }else {
+                textView_recify_phonenumber.setText(LoginActivity.phoneNumber);
+            }
+        }else {
+            textView_recify_phonenumber.setText(phonenumber);
+        }
 
         intentByPreviousActivity = getIntent();
         toolbarTitle = getIntent().getStringExtra("toolbarTitle");
@@ -94,10 +153,11 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         positionSelected = getIntent().getIntExtra("position",-1);
         detectionResult = (DetectionResult) getIntent().getSerializableExtra("detectionResult");
 
+        initRecifyContent();
+
 
         initToolbar();
 
-        textView_item_title.setText(detectionResult.getJIANCHAXIANGTITLE());//detectionResult.getJIANCHAXIANGTITLE()
 
         suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,0);
         gridView.setAdapter(suggestionGridViewAdapter);
@@ -127,6 +187,31 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         });
     }
 
+    private void initRecifyContent() {
+        //设置标题
+        textView_item_title.setText(detectionResult.getJIANCHAXIANGTITLE());//detectionResult.getJIANCHAXIANGTITLE()
+        //设置建议的内容
+        editText_rectify_content.setText(detectionResult.getSUGGESTION());
+        //对保存的内容进行查看
+        if (detectionResult.getSTATUS().equals(searchUtil.recifyQualify)){
+            if ((detectionResult.getISHAVEDETAIL().equals(searchUtil.haveDetail))
+                    &&(detectionResult.getISCHANGED().equals(searchUtil.changed))){
+//                editText_rectify_way.setText(detectionResult.getCHANGEDWAY());
+                editText_rectify_action.setText(detectionResult.getCHANGEDACTION());
+                textView_finish_time.setText(detectionResult.getCHANGEDFINISHTIME());
+                editText_rectify_result.setText(detectionResult.getCHANGEDRESULT());
+
+                ImagePath = detectionResult.getCHANGEDIMAGE();
+                VideoPath = detectionResult.getCHANGEDVIDEO();
+
+                //将设置图片地址的代码放到一个统一的文件里面 在SuggestionActivity中也一样
+                ReloadImageAndVideo reloadImageAndVideo = new ReloadImageAndVideo();
+                pathlistOfPhoto = reloadImageAndVideo.getPathlist(ImagePath,VideoPath,detectionResult.getLOGINNAME());
+
+            }
+        }
+    }
+
     private void initToolbar() {
         toolbar = findViewById(R.id.toolbar_rectify);
 
@@ -147,22 +232,34 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     private void initview() {
         gridView = findViewById(R.id.rectify_result_gridview);
         textView_item_title = findViewById(R.id.rectify_result_item_title_textview);
-        editText_rectify_way = findViewById(R.id.rectify_result_item_way_edittext);
+//        editText_rectify_way = findViewById(R.id.rectify_result_item_way_textview);
         editText_rectify_action = findViewById(R.id.rectify_result_item_action_edittext);
         textView_finish_time = findViewById(R.id.rectify_result_item_finishtime_textview);
         editText_rectify_result = findViewById(R.id.rectify_result_item_rectifyresult);
         button_submit = findViewById(R.id.rectify_result_item_submit_button);
         recify_result_qualified = findViewById(R.id.rectify_result_qualified);
         recify_result_unqualified = findViewById(R.id.rectify_result_unqualified);
+        editText_rectify_content = findViewById(R.id.rectify_result_item_content_edittext);
+        textView_recify_phonenumber = findViewById(R.id.rectify_result_item_phonenumber_textview);
+        recify_result_way_textview = findViewById(R.id.rectify_result_item_way_textview);
+        recify_result_way_limit = findViewById(R.id.rectify_result_way_limit);
+        recify_result_way_stop = findViewById(R.id.rectify_result_way_stop);
+        recify_result_way_checkbox_lin = findViewById(R.id.rectify_result_way_checkbox_lin);
 
         textView_finish_time.setOnClickListener(this);
         button_submit.setOnClickListener(this);
         recify_result_qualified.setOnClickListener(this);
         recify_result_unqualified.setOnClickListener(this);
+        textView_recify_phonenumber.setOnClickListener(this);
+        recify_result_qualified.setOnClickListener(this);
+        recify_result_unqualified.setOnClickListener(this);
+        recify_result_way_limit.setOnClickListener(this);
+        recify_result_way_stop.setOnClickListener(this);
 
 
         //默认合格
         recify_result_qualified.setChecked(true);
+        recify_result_way_textview.setText(way);
     }
 
     @Override
@@ -175,12 +272,17 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                 //在点击提交之前把整改的内容 添加到选中的detectionResult的相应属性中取
 
                 if (!textView_finish_time.getText().equals(" ")){
+                    if (recify_result_qualified.isChecked()){
                         setDetectionResult();
-                        intentByPreviousActivity.putExtra("detectionResult",detectionResult);
-                        intentByPreviousActivity.putExtra("position",positionSelected);
-                        setResult(RESULT_OK,intentByPreviousActivity);
-                        finish();
-
+                        postFiles("text",pathlistOfPhoto);
+                    }else if (recify_result_unqualified.isChecked()){
+                        if ((!recify_result_way_stop.isChecked())&&(!recify_result_way_limit.isChecked())){
+                            Toasty.info(getApplicationContext(),"对不起，您没有选择整改方式！",Toast.LENGTH_SHORT).show();
+                        }else {
+                          setDetectionResult();
+                          postFiles("text",pathlistOfPhoto);
+                        }
+                    }
                 }else {
                     Toasty.info(getApplicationContext(),"对不起，您没有选择时间！",Toasty.LENGTH_SHORT).show();
                 }
@@ -188,20 +290,122 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.rectify_result_qualified:
                 recify_result_unqualified.setChecked(false);
+                recify_result_way_textview.setVisibility(View.VISIBLE);
+                recify_result_way_textview.setText(way);
+                recify_result_way_checkbox_lin.setVisibility(View.INVISIBLE);
+                recify_result_way_limit.setChecked(false);
+                recify_result_way_stop.setChecked(false);
                 break;
             case R.id.rectify_result_unqualified:
                 recify_result_qualified.setChecked(false);
+                recify_result_way_textview.setVisibility(View.INVISIBLE);
+                recify_result_way_checkbox_lin.setVisibility(View.VISIBLE);
                 break;
+            case R.id.rectify_result_item_phonenumber_textview:
+                InputDialog.build(RectifyResultActivity.this)
+                        .setButtonTextInfo(new TextInfo().setFontColor(Color.BLACK))
+                        .setTitle("提示!")
+                        .setMessage("请输入您的手机号: ")
+                        .setInputText(textView_recify_phonenumber.getText().toString())
+                        .setOkButton("确定", new OnInputDialogButtonClickListener() {
+                            @Override
+                            public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
+                                if (inputStr.length() == 11){
+                                    textView_recify_phonenumber.setText(inputStr);
+                                    if(!inputStr.equals(LoginActivity.phoneNumber)){
+                                        saveDataUtil.save(LoginActivity.inputName,inputStr);
+                                    }
+                                    return false;
+                                }else {
+                                    TipDialog.show(RectifyResultActivity.this, "手机号输入错误！", TipDialog.TYPE.ERROR);
+                                    return true;
+                                }
+                            }
+                        })
+                        .setStyle(DialogSettings.STYLE.STYLE_KONGZUE)
+                        .setTheme(DialogSettings.THEME.LIGHT)
+                        .setCancelButton("取消")
+                        .setHintText("手机号")
+                        .setInputInfo(new InputInfo()
+                                .setMAX_LENGTH(11)
+                                .setInputType(InputType.TYPE_CLASS_PHONE)
+                                .setTextInfo(new TextInfo().setFontColor(Color.BLACK)
+                                )
+                        )
+                        .setCancelable(false)
+                        .show();
+                break;
+            case R.id.rectify_result_way_limit:
+                recify_result_way_stop.setChecked(false);
+                Toast.makeText(getApplicationContext(),recify_result_way_limit.getText(),Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.rectify_result_way_stop:
+                recify_result_way_limit.setChecked(false);
+                Toast.makeText(getApplicationContext(),recify_result_way_stop.getText(),Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
     }
 
+    private void postFiles(String text, List<String> pathOfPhotos) {
+
+        String url = BaseUrl.BaseUrl+"testServlet";
+        Log.d(TAG,"POST url: "+url);
+
+        Map<String,String> taskItem = new HashMap<String, String>();
+        taskItem.put("path",detectionResult.getLOGINNAME());
+
+
+
+        OkHttp okHttp = new OkHttp();
+        //Log.e(TAG, " pathlistOfPhoto: "+ pathOfPhotos.size());
+        okHttp.postFilesByPost(url, taskItem, pathOfPhotos, new FileResultCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                System.out.println(e.getMessage());
+                Toasty.warning(RectifyResultActivity.this,"客官，网络不给力",Toast.LENGTH_SHORT,true).show();
+            }
+
+            @Override
+            public void onResponse(FilePathResult response, int id) {
+                if (response.getMessage() != null){
+                    Log.d(TAG," getMessage: "+response.getMessage());//文件长传成功
+                    if (response.getMessage().equals("??????")) {//Result upload Success!
+                        Log.d(TAG," 文件上传成功");//文件长传成功
+                        Toasty.success(RectifyResultActivity.this,"文件上传成功！",Toast.LENGTH_SHORT,true).show();
+                        Log.e(TAG," imagenumber: "+response.imageNumber);
+                        Log.e(TAG," videonumber: "+response.videoNumber);
+                        intentByPreviousActivity.putExtra("detectionResult",detectionResult);
+                        intentByPreviousActivity.putExtra("position",positionSelected);
+
+                        setResult(RESULT_OK,intentByPreviousActivity);
+                        finish();
+                    } else if (response.getMessage().equals("结果上传失败")){
+                        Toasty.error(RectifyResultActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+
+    }
+
     private void setDetectionResult() {
-        detectionResult.setCHANGEDWAY(editText_rectify_way.getText().toString());
+//        detectionResult.setCHANGEDWAY(editText_rectify_way.getText().toString());
+        if (recify_result_qualified.isChecked()){
+            detectionResult.setCHANGEDWAY(recify_result_way_textview.getText().toString());
+        }else if (recify_result_unqualified.isChecked()){
+            if (recify_result_way_limit.isChecked()){
+                detectionResult.setCHANGEDWAY(recify_result_way_limit.getText().toString());
+            }else if (recify_result_way_stop.isChecked()){
+                detectionResult.setCHANGEDWAY(recify_result_way_stop.getText().toString());
+            }
+        }
         detectionResult.setCHANGEDACTION(editText_rectify_action.getText().toString());
         detectionResult.setCHANGEDFINISHTIME(textView_finish_time.getText().toString());
         detectionResult.setCHANGEDRESULT(editText_rectify_result.getText().toString());
+        detectionResult.setSUGGESTION(editText_rectify_content.getText().toString());
+        detectionResult.setISHAVEDETAIL(searchUtil.haveDetail);
         if (recify_result_qualified.isChecked()){
             detectionResult.setISCHANGED(searchUtil.changed);
             detectionResult.setSTATUS(searchUtil.recifyQualify);
@@ -297,11 +501,13 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                 if (!(imgString.equals(""))) {
                     ImagePath += imgString + ",";
                     imgString = Environment.getExternalStorageDirectory() + "/DCIM/" + detectionResult.getLOGINNAME() + "/Photo/" + imgString;
+//                    imgString = Environment.getExternalStorageDirectory() + "/DCIM/" + LoginActivity.inputName + "/Photo/" + imgString;
                     pathlistOfPhoto.add(imgString);
                 }
                 if (!(testvideoPath.equals(""))) {
                     VideoPath += videoString + ",";
                     videoString = Environment.getExternalStorageDirectory() + "/DCIM/" + detectionResult.getLOGINNAME() + "/Video/" + videoString;
+//                    videoString = Environment.getExternalStorageDirectory() + "/DCIM/" + LoginActivity.inputName + "/Video/" + videoString;
                     pathlistOfPhoto.add(videoString);
                 }
                 suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto, 1);

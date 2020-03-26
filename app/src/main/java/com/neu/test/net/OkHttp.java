@@ -95,7 +95,7 @@ public class OkHttp {
                     formBuilder.addFile("imageFile"+(++indexOfimage), file.getName(), file);
                 }
             }
-            Log.e(TAG," postFilesByPost: pathlist 为空");
+
 
         }
 

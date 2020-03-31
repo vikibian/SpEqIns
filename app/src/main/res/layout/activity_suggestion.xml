@@ -15,33 +15,27 @@
             android:id="@+id/toolbar_suggestion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:theme="@style/AppTheme.PopupOverlay"
             android:background="?attr/colorPrimary">
-            <!--<TextView-->
-                <!--android:id="@+id/toolbar_title_suggestion"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:singleLine="true"-->
-                <!--android:textColor="@color/white"-->
-                <!--android:textSize="20sp" />-->
-
 
             <LinearLayout
                 android:layout_marginLeft="0dp"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
                     android:layout_weight="3"
                     android:id="@+id/toolbar_suggestion_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:gravity="center_horizontal"
                     android:singleLine="true"
                     android:textColor="@color/white" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:orientation="horizontal"
@@ -99,6 +93,10 @@
            android:layout_height="wrap_content">
 
            <LinearLayout
+               android:layout_marginLeft="15dp"
+               android:layout_marginRight="15dp"
+               android:layout_marginTop="5dp"
+               android:layout_marginBottom="10dp"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:background="@drawable/shap"
@@ -111,6 +109,7 @@
                    android:layout_gravity="top|left" />
 
                <EditText
+                   android:hint="  请输入内容..."
                    android:id="@+id/et_suggestion"
                    android:layout_width="match_parent"
                    android:layout_height="120dp"
@@ -142,66 +141,66 @@
 
 
            <View
-               android:layout_marginLeft="10dp"
-               android:layout_marginRight="10dp"
-               android:background="@color/gray"
+               android:layout_marginLeft="50dp"
+               android:layout_marginRight="50dp"
+               android:background="#FCFAFA"
                android:layout_width="match_parent"
-               android:layout_height="2dp">
+               android:layout_height="1dp">
 
            </View>
 
-            <LinearLayout
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/stroke"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <!--<LinearLayout-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:background="@drawable/stroke"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
 
-               <!--<Button-->
-               <!--android:id="@+id/btn_get_gps"-->
-               <!--android:layout_marginLeft="5dp"-->
-               <!--android:layout_width="wrap_content"-->
-               <!--android:layout_height="wrap_content"-->
-               <!--android:layout_gravity="bottom|left"-->
-               <!--android:text="开始定位"/>-->
+               <!--&lt;!&ndash;<Button&ndash;&gt;-->
+               <!--&lt;!&ndash;android:id="@+id/btn_get_gps"&ndash;&gt;-->
+               <!--&lt;!&ndash;android:layout_marginLeft="5dp"&ndash;&gt;-->
+               <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+               <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+               <!--&lt;!&ndash;android:layout_gravity="bottom|left"&ndash;&gt;-->
+               <!--&lt;!&ndash;android:text="开始定位"/>&ndash;&gt;-->
+
+               <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:layout_marginLeft="10dp"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:id="@+id/tv_mygps"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:gravity="center_horizontal"&ndash;&gt;-->
+                   <!--&lt;!&ndash;android:text=""/>&ndash;&gt;-->
 
                <!--<TextView-->
-                   <!--android:layout_marginLeft="10dp"-->
-                   <!--android:id="@+id/tv_mygps"-->
+                   <!--android:layout_gravity="center_vertical"-->
+                   <!--android:layout_marginTop="2dp"-->
+                   <!--android:paddingTop="3dp"-->
+                   <!--android:paddingBottom="3dp"-->
+                   <!--android:padding="3dp"-->
+                   <!--android:textStyle="bold"-->
+                   <!--android:textSize="15dp"-->
+                   <!--android:textColor="@color/black"-->
+                   <!--android:text="操作人员手机号："-->
                    <!--android:layout_width="wrap_content"-->
-                   <!--android:layout_height="wrap_content"-->
-                   <!--android:layout_gravity="center"-->
-                   <!--android:gravity="center_horizontal"-->
-                   <!--android:text=""/>-->
+                   <!--android:layout_height="wrap_content" />-->
 
-               <TextView
-                   android:layout_gravity="center_vertical"
-                   android:layout_marginTop="2dp"
-                   android:paddingTop="3dp"
-                   android:paddingBottom="3dp"
-                   android:padding="3dp"
-                   android:textStyle="bold"
-                   android:textSize="15dp"
-                   android:textColor="@color/black"
-                   android:text="操作人员手机号："
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content" />
-
-                <TextView
-                    android:text=" "
-                    android:layout_marginTop="3dp"
-                    android:paddingTop="3dp"
-                    android:padding="3dp"
-                    android:layout_gravity="center_vertical"
-                    android:drawableRight="@drawable/ic_phone_blue_a400_24dp"
-                    android:textColor="@color/black"
-                    android:id="@+id/suggestion_phonenumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <!--<TextView-->
+                    <!--android:text=" "-->
+                    <!--android:layout_marginTop="3dp"-->
+                    <!--android:paddingTop="3dp"-->
+                    <!--android:padding="3dp"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:drawableRight="@drawable/ic_phone_blue_a400_24dp"-->
+                    <!--android:textColor="@color/black"-->
+                    <!--android:id="@+id/suggestion_phonenumber"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
 
 
-           </LinearLayout>
+           <!--</LinearLayout>-->
 
            <LinearLayout
                android:id="@+id/suggestion_dangerandrecify"
@@ -210,94 +209,112 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content">
 
-               <TextView
-                   android:layout_marginTop="3dp"
-                   android:paddingBottom="3dp"
-                   android:textStyle="bold"
-                   android:textSize="15dp"
-                   android:textColor="@color/black"
-                   android:text="隐患等级："
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content" />
-
                <LinearLayout
-                   android:background="@drawable/stroke"
-                   android:layout_marginTop="3dp"
-                   android:padding="8dp"
-                   android:orientation="horizontal"
+                   android:layout_marginLeft="15dp"
+                   android:layout_marginRight="15dp"
+                   android:layout_marginTop="5dp"
+                   android:layout_marginBottom="10dp"
+                   android:orientation="vertical"
                    android:layout_width="match_parent"
-                   android:layout_height="wrap_content">
-                   <CheckBox
-                       android:layout_gravity="center_horizontal"
-                       android:text="重大隐患"
-                       android:id="@+id/suggestion_danger_great"
-                       android:layout_weight="1"
-                       android:textSize="10dp"
-                       android:layout_width="wrap_content"
-                       android:layout_height="match_parent" />
+                   android:layout_height="match_parent">
 
-                   <CheckBox
-                       android:text="一般隐患"
-                       android:id="@+id/suggestion_danger_normal"
-                       android:layout_weight="1"
-                       android:textSize="10dp"
-                       android:layout_width="wrap_content"
-                       android:layout_height="match_parent" />
-
-               </LinearLayout>
-
-               <TextView
-                   android:layout_marginTop="3dp"
-                   android:textStyle="bold"
-                   android:textSize="15dp"
-                   android:textColor="@color/black"
-                   android:text="整改方式："
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content" />
-
-               <RelativeLayout
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content">
+                   <TextView
+                       android:layout_marginTop="3dp"
+                       android:paddingBottom="3dp"
+                       android:textStyle="bold"
+                       android:textSize="15dp"
+                       android:textColor="@color/black"
+                       android:text="隐患等级："
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content" />
 
                    <LinearLayout
-                       android:id="@+id/suggestion_recify_checkbox_lin"
-                       android:background="@drawable/stroke"
-                       android:padding="5dp"
+                       android:layout_marginTop="3dp"
+                       android:padding="8dp"
                        android:orientation="horizontal"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content">
                        <CheckBox
                            android:layout_gravity="center_horizontal"
-                           android:text="立即整改"
-                           android:id="@+id/suggestion_rectify_way_now"
+                           android:text="重大隐患"
+                           android:id="@+id/suggestion_danger_great"
                            android:layout_weight="1"
                            android:textSize="10dp"
                            android:layout_width="wrap_content"
                            android:layout_height="match_parent" />
 
                        <CheckBox
-                           android:text="限期整改"
-                           android:id="@+id/suggestion_rectify_way_limit"
+                           android:text="一般隐患"
+                           android:id="@+id/suggestion_danger_normal"
                            android:layout_weight="1"
                            android:textSize="10dp"
                            android:layout_width="wrap_content"
                            android:layout_height="match_parent" />
-
-                       <CheckBox
-                           android:text="停产整改"
-                           android:id="@+id/suggestion_rectify_way_stop"
-                           android:layout_weight="1"
-                           android:textSize="10dp"
-                           android:layout_width="wrap_content"
-                           android:layout_height="match_parent" />
-
-
 
                    </LinearLayout>
 
+               </LinearLayout>
+
+               <LinearLayout
+                   android:layout_marginLeft="15dp"
+                   android:layout_marginRight="15dp"
+                   android:layout_marginTop="5dp"
+                   android:layout_marginBottom="10dp"
+                   android:orientation="vertical"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <TextView
+                       android:layout_marginTop="3dp"
+                       android:textStyle="bold"
+                       android:textSize="15dp"
+                       android:textColor="@color/black"
+                       android:text="整改方式："
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content" />
+
+                   <RelativeLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+
+                       <LinearLayout
+                           android:id="@+id/suggestion_recify_checkbox_lin"
+                           android:padding="5dp"
+                           android:orientation="horizontal"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content">
+                           <!--<CheckBox-->
+                               <!--android:layout_gravity="center_horizontal"-->
+                               <!--android:text="立即整改"-->
+                               <!--android:id="@+id/suggestion_rectify_way_now"-->
+                               <!--android:layout_weight="1"-->
+                               <!--android:textSize="10dp"-->
+                               <!--android:layout_width="wrap_content"-->
+                               <!--android:layout_height="match_parent" />-->
+
+                           <CheckBox
+                               android:text="限期整改"
+                               android:id="@+id/suggestion_rectify_way_limit"
+                               android:layout_weight="1"
+                               android:textSize="10dp"
+                               android:layout_width="wrap_content"
+                               android:layout_height="match_parent" />
+
+                           <CheckBox
+                               android:text="停产整改"
+                               android:id="@+id/suggestion_rectify_way_stop"
+                               android:layout_weight="1"
+                               android:textSize="10dp"
+                               android:layout_width="wrap_content"
+                               android:layout_height="match_parent" />
 
 
-               </RelativeLayout>
+
+                       </LinearLayout>
+
+                   </RelativeLayout>
+
+               </LinearLayout>
 
            </LinearLayout>
 
@@ -328,6 +345,9 @@
            <!--</LinearLayout>-->
 
            <Button
+               android:layout_marginRight="100dp"
+               android:layout_marginLeft="100dp"
+               android:background="@drawable/bg_button"
                android:layout_marginTop="5dp"
                android:id="@+id/btn_submit_suggestion"
                android:layout_width="match_parent"

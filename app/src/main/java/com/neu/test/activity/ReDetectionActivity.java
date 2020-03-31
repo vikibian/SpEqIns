@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -46,6 +49,7 @@ import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
+import com.neu.test.util.ToastUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,9 +59,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import es.dmoral.toasty.Toasty;
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import okhttp3.Call;
 
-public class ReDetectionActivity extends AppCompatActivity {
+public class ReDetectionActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static String TAG = "ReDetectionActivity";
 
@@ -70,6 +75,14 @@ public class ReDetectionActivity extends AppCompatActivity {
     private ReDetectionActivity.ReDetectionAdapter detectionAdapter;
 
     public List<DetectionResult> detectionResults = new ArrayList<DetectionResult>();//检查结果list
+    public List<DetectionResult> detectionundo = new ArrayList<DetectionResult>();//检查结果list
+    public List<DetectionResult> detectiondone = new ArrayList<DetectionResult>();//检查结果list
+    public List<DetectionResult> detectionadd = new ArrayList<DetectionResult>();//检查结果list
+
+    private Map<Integer,Integer> undopositions = new HashMap<>();
+    private Map<Integer,Integer> donepositions = new HashMap<>();
+    private Map<Integer,Integer> addpositions = new HashMap<>();
+
 
     private String userName;
     private String url;
@@ -83,7 +96,7 @@ public class ReDetectionActivity extends AppCompatActivity {
 
     DetctionActivity.ViewHolder viewHolder=null;
     View view1;
-
+    WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private Toolbar toolbar;
     private TextView toolbar_textView;
     private static boolean isSave = false;
@@ -94,8 +107,19 @@ public class ReDetectionActivity extends AppCompatActivity {
     private  Intent intent1;
     private SearchUtil searchUtil = new SearchUtil();
 
+    private Button button_left;
+    private Button button_right;
+    private Button button_middle;
+
+    private String undo = "undo";
+    private String done = "done";
+    private String add = "add";
+    private static String select = "left";
+
     String data ;
     SharedPreferences sp;
+    Dialog dlg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,70 +135,45 @@ public class ReDetectionActivity extends AppCompatActivity {
         initToolbar();
         //初始化
         lv_detection = findViewById(R.id.lv_detection);
-        btn_add_detection = findViewById(R.id.btn_add_detection);
+//        btn_add_detection = findViewById(R.id.btn_add_detection);
         btn_sure_detection = findViewById(R.id.btn_sure_detection);
         btn_save_detection = findViewById(R.id.btn_save_detection);
         tv_totalitem = findViewById(R.id.tv_totalitem);
+
+        mWaveSwipeRefreshLayout = findViewById(R.id.main_swipe);
+
+        mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //mWaveSwipeRefreshLayout.setRefreshing(false);
+
+                mWaveSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        button_left = findViewById(R.id.button_selector_left);
+        button_right = findViewById(R.id.button_selector_right);
+        button_middle = findViewById(R.id.button_selector_middle);
+        button_left.setOnClickListener(this);
+        button_middle.setOnClickListener(this);
+        button_right.setOnClickListener(this);
+
         data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
         sp = getSharedPreferences(data, Context.MODE_PRIVATE);
 
         detectionResults = (List<DetectionResult>) getIntent().getSerializableExtra("items");
-//        for(int i=0;i<detectionResults.size();i++){
-//            detectionResults.get(i).setTASKID(task.getTASKID());
-//            //暂时默认 都有证据
-//            detectionResults.get(i).setHaveDetail(true);
-//        }
+        splitDatas();
         Log.e(TAG," detectionResults: "+detectionResults.size());
 
+        ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
 
-        tv_totalitem.setText("------------共"+detectionResults.size()+"项------------");
-        detectionAdapter = new ReDetectionActivity.ReDetectionAdapter();
+
+
+        tv_totalitem.setText("------共"+detectionResults.size()+"项--已完成"+donepositions.size()+"项-------");
+        setEnable(button_left);//默认选择未操作的
+        detectionAdapter = new ReDetectionActivity.ReDetectionAdapter(detectionundo,undo);
         lv_detection.setAdapter(detectionAdapter);
 
-        btn_add_detection.setOnClickListener(new View.OnClickListener() {
-            String itemString;
-            @Override
-            public void onClick(View v) {
-
-                Log.e(TAG," 保存");
-
-                LayoutInflater layoutInflater = LayoutInflater.from(ReDetectionActivity.this);
-                final View textEntryView = layoutInflater.inflate(R.layout.detection_dialog, null);
-                AlertDialog dlg = new AlertDialog.Builder(ReDetectionActivity.this)
-                        .setTitle("输入你要添加的检测项")
-                        .setView(textEntryView)
-                        .setPositiveButton("确定",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText item = (EditText) textEntryView.findViewById(R.id.et_add_item);
-                                itemString = item.getText().toString();
-                                DetectionResult detectionResult = new DetectionResult();
-                                detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
-                                detectionResult.setJIANCHAXIANGTITLE(itemString);
-                                detectionResult.setTASKID(detectionResults.get(0).getTASKID());
-                                detectionResult.setDEVID(detectionResults.get(0).getDEVID());
-                                detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
-                                detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
-                                detectionResults.add(detectionResult);
-                                tv_totalitem.setText("------------共"+detectionResults.size()+"项------------");
-                                //更新
-                                detectionAdapter.notifyDataSetChanged();
-
-//                                lv_detection.setAdapter(detectionAdapter);
-
-                                //postTaskAndGetResult();
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).create();
-                dlg.show();
-
-            }
-        });
 
         btn_sure_detection.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
@@ -236,6 +235,21 @@ public class ReDetectionActivity extends AppCompatActivity {
         });
     }
 
+    private void splitDatas() {
+        for (int i =0;i<detectionResults.size();i++){
+            int undo = 0;
+            int done = 0;
+            //如果STATUS不为2  表示该项还没有操作  则添加到未操作的组里  并存储其在原来项的list的位置
+            if (!detectionResults.get(i).getSTATUS().equals("2")){
+                detectiondone.add(detectionResults.get(i));
+                donepositions.put(donepositions.size(),i);
+            }else {
+                detectionundo.add(detectionResults.get(i));
+                undopositions.put(undopositions.size(),i);
+            }
+        }
+    }
+
     /**
      * @date : 2020/2/22
      * @time : 9:51
@@ -249,31 +263,162 @@ public class ReDetectionActivity extends AppCompatActivity {
       toolbar_subtitleLeft = findViewById(R.id.toolbar_detction_subtitle_left);
       toolabr_subtitleRight = findViewById(R.id.toolbar_detction_subtitle_right);
 
-      toolbar_title.setTextSize(20);
+      toolbar_title.setTextSize(18);
       toolbar_subtitleLeft.setTextSize(13);
       toolabr_subtitleRight.setTextSize(13);
 
-      toolbar_title.setText(getResources().getString(R.string.app_name));
+      toolbar_title.setText(taskType+"    ");//加空格的原因是让其显示居中
       toolbar_subtitleLeft.setText(title);
       toolabr_subtitleRight.setText(taskType);
       toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
 
+      setSupportActionBar(toolbar);
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
   }
 
+    //初始化Menu的布局
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_dynamic, menu);
+        return true;
+    }
+
+    //Menu的点击事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
+                this.finish();
+                return true;
+            case R.id.action_add_item://搜索，根据需要显示/隐藏下载按钮
+                LayoutInflater layoutInflater = LayoutInflater.from(ReDetectionActivity.this);
+                final View textEntryView = layoutInflater.inflate(R.layout.layout_add_item, null);
+                AlertDialog dlg = new AlertDialog.Builder(ReDetectionActivity.this)
+                        .setView(textEntryView)
+                        .setPositiveButton("确定",new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText add_title = (EditText) textEntryView.findViewById(R.id.add_title);
+                                EditText add_schedule = (EditText) textEntryView.findViewById(R.id.add_schedule);
+                                EditText add_law = (EditText) textEntryView.findViewById(R.id.add_law);
+                                DetectionResult detectionResult = new DetectionResult();
+                                detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
+                                detectionResult.setJIANCHAXIANGTITLE(add_title.getText().toString());
+                                detectionResult.setCHECKCONTENT(add_schedule.getText().toString());
+                                detectionResult.setLAW(add_law.getText().toString());
+                                detectionResult.setTASKID(detectionResults.get(0).getTASKID());
+                                detectionResult.setDEVID(detectionResults.get(0).getDEVID());
+                                detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
+                                detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
+                                ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
+                                detectionadd.add(detectionResult);
+                                Log.e(TAG, "onClick: addpositions:"+addpositions.size());
+                                addpositions.put(addpositions.size(),detectionResults.size()-1);
+
+                                //更新
+                                detectionAdapter.notifyDataSetChanged();
+
+//                                lv_detection.setAdapter(detectionAdapter);
+
+                                setEnable(button_right);
+                                reflashList(detectionadd,add);
+                                select = "right";
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).create();
+                dlg.show();
+                return true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button_selector_left:
+                setEnable(button_left);
+                reflashList(detectionundo,undo);
+                select = "left";
+                break;
+            case R.id.button_selector_middle:
+                setEnable(button_middle);
+                reflashList(detectiondone,done);
+                select = "middle";
+                break;
+            case R.id.button_selector_right:
+                setEnable(button_right);
+                reflashList(detectionadd,add);
+                select = "right";
+                break;
+        }
+    }
+
+    private void reflashList(List<DetectionResult> listtoflash, String flag) {
+        boolean isDo = false;
+        for (int i=0;i<detectionadd.size();i++){
+            if (!detectionadd.get(i).getSTATUS().equals("2")){
+                isDo = true;
+            }
+        }
+        if (isDo){
+            detectionadd.clear();
+        }
+        detectionAdapter = new ReDetectionActivity.ReDetectionAdapter(listtoflash,flag);
+        lv_detection.setAdapter(detectionAdapter);
+    }
+
+    private void setEnable(Button btn) {
+        List<Button> buttonList=new ArrayList<>();
+        if (buttonList.size()==0){
+            buttonList.add(button_left);
+            buttonList.add(button_right);
+            buttonList.add(button_middle);
+        }
+        for (int i = 0; i <buttonList.size() ; i++) {
+            buttonList.get(i).setEnabled(true);
+        }
+        btn.setEnabled(false);
+    }
 
 
     class ReDetectionAdapter extends BaseAdapter {
 
         private Map<Integer,Integer> hashMap = new HashMap<>();// key封装的是它爹的tag值，value封装儿子radiobutton
+        private List<DetectionResult> listdetectionresult = new ArrayList<>();
+        private String flag ;
+        public ReDetectionAdapter(List<DetectionResult> listdetectionresult,String flag){
+            this.listdetectionresult = listdetectionresult;
+            this.flag = flag;
+        }
+
+        public ReDetectionAdapter(){
+
+        }
 
         @Override
         public int getCount() {
-            return detectionResults.size();
+            return listdetectionresult.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return detectionResults.get(position);
+            return listdetectionresult.get(position);
         }
 
         @Override
@@ -296,34 +441,34 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.ll_test = convertView.findViewById(R.id.ll_ttt);
             convertView.setTag(viewHolder);
             //检查项标题
-            viewHolder.detction_item_text_context.setText(detectionResults.get(position).getJIANCHAXIANGTITLE());
+            viewHolder.detction_item_text_context.setText(listdetectionresult.get(position).getJIANCHAXIANGTITLE());
 
             //检查任务的number设置
             viewHolder.detction_item_text_leftnum.setText(position+1+"");
 
             //详细按钮的显示问题
-            if(detectionResults.get(position).getISHAVEDETAIL().equals("1")){
+            if(listdetectionresult.get(position).getISHAVEDETAIL().equals("1")){
                 viewHolder.detction_item_image_right.setVisibility(View.VISIBLE);
             }
             else{
                 viewHolder.detction_item_image_right.setVisibility(View.INVISIBLE);
             }
 
-            Log.e(TAG,"检测添加选项 re："+detectionResults.get(position).getJIANCHAXIANGTITLE());
+            Log.e(TAG,"检测添加选项 re："+listdetectionresult.get(position).getJIANCHAXIANGTITLE());
 
             //初始化选择状态
-            if(detectionResults.get(position).getSTATUS().equals("0")){
+            if(listdetectionresult.get(position).getSTATUS().equals("0")){
                 viewHolder.rectify_item_status_unrectify.setChecked(true);
                 viewHolder.rectify_item_status_rectified.setChecked(false);
                 viewHolder.rectify_item_status_rectifyliving.setChecked(false);
             }
 
-            else if(detectionResults.get(position).getSTATUS().equals("1")){
+            else if(listdetectionresult.get(position).getSTATUS().equals("1")){
                 viewHolder.rectify_item_status_unrectify.setChecked(false);
                 viewHolder.rectify_item_status_rectified.setChecked(true);
                 viewHolder.rectify_item_status_rectifyliving.setChecked(false);
             }
-            else if (detectionResults.get(position).getSTATUS().equals("3")){
+            else if (listdetectionresult.get(position).getSTATUS().equals("3")){
                 viewHolder.rectify_item_status_unrectify.setChecked(false);
                 viewHolder.rectify_item_status_rectified.setChecked(false);
                 viewHolder.rectify_item_status_rectifyliving.setChecked(true);
@@ -333,17 +478,15 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.rectify_item_status_unrectify.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//          viewHolder.rectify_item_status_unrectify.setChecked(true);
-//          viewHolder.rectify_item_status_rectified.setChecked(false);
-//          viewHolder.rectify_item_status_rectifyliving.setChecked(false);
-                    if(detectionResults.get(position).getSTATUS().equals("0")){
+                    if(listdetectionresult.get(position).getSTATUS().equals("0")){
                         viewHolder.rectify_item_status_unrectify.setChecked(true);
                         viewHolder.rectify_item_status_rectified.setChecked(false);
                         viewHolder.rectify_item_status_rectifyliving.setChecked(false);
-                        //Toasty.warning(DetctionActivity.this,"已选择，无法重复操作");
-                        lv_detection.setAdapter(detectionAdapter);
+                        Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
+                        reflashList(listdetectionresult,flag);
                     }else{
-                        jumpToSuggesstionActivity(position,"0");
+
+                        jumpToSuggesstionActivity(getIndex(flag,position),"0");
                     }
                 }
             });
@@ -352,16 +495,17 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.rectify_item_status_rectified.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(detectionResults.get(position).getSTATUS().equals("1")){
+                    if(listdetectionresult.get(position).getSTATUS().equals("1")){
                         viewHolder.rectify_item_status_unrectify.setChecked(false);
                         viewHolder.rectify_item_status_rectified.setChecked(true);
                         viewHolder.rectify_item_status_rectifyliving.setChecked(false);
                         Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
-                        lv_detection.setAdapter(detectionAdapter);
+                        reflashList(listdetectionresult,flag);
                     }else{
                         //页面跳转
                         //detectionResults.get(position).setSTATUS("1");
-                        jumpToSuggesstionActivity(position,"1");
+
+                        jumpToSuggesstionActivity( getIndex(flag,position),"1");
                     }
                 }
             });
@@ -369,22 +513,16 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.rectify_item_status_rectifyliving.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//          viewHolder.rectify_item_status_unrectify.setChecked(false);
-//          viewHolder.rectify_item_status_rectified.setChecked(false);
-//          viewHolder.rectify_item_status_rectifyliving.setChecked(true);
-                    if(detectionResults.get(position).getSTATUS().equals("3")){
+                    if(listdetectionresult.get(position).getSTATUS().equals("3")){
                         viewHolder.rectify_item_status_unrectify.setChecked(false);
                         viewHolder.rectify_item_status_rectified.setChecked(false);
                         viewHolder.rectify_item_status_rectifyliving.setChecked(true);
                         Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
-                        lv_detection.setAdapter(detectionAdapter);
+                        reflashList(listdetectionresult,flag);
                     }else{
                         //页面跳转  现场整改
-                        //detectionResults.get(position).setSTATUS("3");
-//                        Toasty.warning(ReDetectionActivity.this,"跳转至整改合格界面");
-                        //jumpToSuggesstionActivity(position);
-                        jumpToRectifyResultActivity(position);
-                        lv_detection.setAdapter(detectionAdapter);
+                        jumpToRectifyResultActivity( getIndex(flag,position));
+                        reflashList(listdetectionresult,flag);
                     }
                 }
             });
@@ -393,11 +531,11 @@ public class ReDetectionActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
-                    if ((detectionResults.get(position).getISCHANGED().equals(searchUtil.changed))
-                    && detectionResults.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
+                    if ((listdetectionresult.get(position).getISCHANGED().equals(searchUtil.changed))
+                            && listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
                         jumpToRectifyResultActivity(position);
                     }else {
-                        jumpToSuggesstionActivity(position,detectionResults.get(position).getSTATUS());
+                        jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
                     }
                 }
             });
@@ -411,25 +549,39 @@ public class ReDetectionActivity extends AppCompatActivity {
             viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    new MaterialStyledDialog.Builder(ReDetectionActivity.this)
-                            .setTitle("排查要求&法律法规")
-                            .setDescription("排查要求：\n"+detectionResults.get(position).getCHECKCONTENT()+
-                                    "\n"+"法律法规：\n"+detectionResults.get(position).getLAW())
-                            .setStyle(Style.HEADER_WITH_TITLE)
-                            .setScrollable(true,20)
-                            .setPositiveText("我知道了")
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    Log.d("MaterialStyledDialogs", "Do something!");
-                                }
-                            })
-                            .show();
+                    dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
+                    View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
+                    TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
+                    TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
+                    Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
+                    btn_cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dlg.dismiss();
+                        }
+                    });
+                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
+                    tv_laws.setText(detectionResults.get(position).getLAW());
+                    dlg.setContentView(textEntryView);
+                    dlg.show();
                     return true;
                 }
             });
             return convertView;
         }
+    }
+
+    private int getIndex(String flag, int position) {
+        int index =0;
+        if (flag.equals(undo)){
+            index = undopositions.get(position);
+        } else if (flag.equals(done)){
+            index = donepositions.get(position);
+        } else if (flag.equals(add)){
+            index = addpositions.get(position);
+        }
+
+        return index;
     }
 
     private void jumpToRectifyResultActivity(int position) {
@@ -508,7 +660,8 @@ public class ReDetectionActivity extends AppCompatActivity {
                 detectionResults.get(position).setCHANGEDIMAGE("");
                 detectionResults.get(position).setCHANGEDVIDEO("");
 
-                lv_detection.setAdapter(detectionAdapter);
+//                lv_detection.setAdapter(detectionAdapter);
+                judgeSelect();
             }
 
             if (requestCode == RectifyCode){
@@ -522,35 +675,27 @@ public class ReDetectionActivity extends AppCompatActivity {
                 Log.e(TAG,"imagepath: "+detectionResults.get(pos).getCHANGEDIMAGE());
                 Log.e(TAG,"videopath: "+detectionResults.get(pos).getCHANGEDVIDEO());
 
-                lv_detection.setAdapter(detectionAdapter);
-
+//                lv_detection.setAdapter(detectionAdapter);
+                judgeSelect();
             }
         }
     }
 
-    public SlideLayout slideLayout = null;
-    class MyOnStateChangeListener implements SlideLayout.OnStateChangeListener {
-        @Override
-        public void onOpen(SlideLayout layout) {
-            slideLayout = layout;
-        }
-        @Override
-        public void onMove(SlideLayout layout) {
-            if (slideLayout != null && slideLayout !=layout)
-            {
-                slideLayout.closeMenu();
-            }
-        }
+    private void judgeSelect() {
+        detectionundo.clear();
+        detectiondone.clear();
+        donepositions.clear();
+        undopositions.clear();
+        splitDatas();
 
-        @Override
-        public void onClose(SlideLayout layout) {
-            if (slideLayout == layout)
-            {
-                slideLayout = null;
-            }
+        if (select.equals("left")){
+            reflashList(detectionundo,undo);
+        } else if (select.equals("middle")){
+            reflashList(detectiondone,done);
+        } else if (select.equals("right")){
+            reflashList(detectionadd,add);
         }
     }
-
 
 
 

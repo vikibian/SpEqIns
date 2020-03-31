@@ -14,14 +14,14 @@ import java.util.Map;
 public class SearchUtil {
     private static String TAG = "SearchUtil";
     public String[] deviceType = {"锅炉","压力容器","电梯","起重机","专用机动车辆","大型游乐设施","压力管道","客车索道"};
-    public String[] deviceQualify = {"合格","不合格"};
-    public String[] taskType = {"自查","复查","下派","随机"};
+    public String[] deviceQualify = {"合格","不合格","整改合格"};
+    public String[] taskType = {"自查","整改","下派","临时"};
     public String[] classofdev ={"1000","2000","3000","4000","5000","6000","7000","8000"};
     public Map<String,String> typeToDevclass = new HashMap<>();
     public Map<String,String> devclassToType = new HashMap<>();
     public Map<String,String> map_devclass = new HashMap<>();
     public String[] mTitles = new String[]{"文字", "图片", "视频"};
-    public String[] choose = {"全部","合格","不合格","未定"};
+    public String[] choose = {"全部","合格","不合格","整改合格"};
     public String hege = "0";
     public String nohege = "1";
     public String undecided = "2";
@@ -89,7 +89,17 @@ public class SearchUtil {
             num = "1";
         }else if (quality.equals("未定")){
             num = "2";
+        }else if (quality.equals("整改合格")){
+            num = "3";
         }
         return num;
+    }
+
+    public Map<String,String> getHelpMapForResult(){
+        Map<String,String> helpMapForResult = new HashMap<>();
+        helpMapForResult.put(hege,hegeText);
+        helpMapForResult.put(nohege,nohegeText);
+        helpMapForResult.put(recifyQualify,recifyQualifyText);
+        return helpMapForResult;
     }
 }

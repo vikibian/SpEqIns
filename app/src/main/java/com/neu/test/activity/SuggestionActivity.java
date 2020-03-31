@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -56,6 +57,7 @@ import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.GPSUtil;
 import com.neu.test.util.PhoneInfoUtils;
 import com.neu.test.util.ReloadImageAndVideo;
 import com.neu.test.util.SearchUtil;
@@ -92,11 +94,11 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     private TextView tv_mygps;//显示定位
     private EditText et_suggestion;
     private TextView tv_num;
-    private TextView textview_phoneNumber;
+//    private TextView textview_phoneNumber;
     private LinearLayout suggestion_dangerandrecify;
     private CheckBox suggestion_danger_great;
     private CheckBox suggestion_danger_normal;
-    private CheckBox suggestion_recify_way_now;
+//    private CheckBox suggestion_recify_way_now;
     private CheckBox suggestion_recify_way_limit;
     private CheckBox suggestion_recify_way_stop;
 
@@ -137,28 +139,22 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     private String phonenumber = "";
     private SuggestionActivitySaveDataUtil saveDataUtil ;
     private SearchUtil searchUtil = new SearchUtil();
+    private GPSUtil gpsUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
-        Log.e(TAG," oncreate");
+        gpsUtil = new GPSUtil(this);
+        gpsUtil.startLocate();
         saveDataUtil = new SuggestionActivitySaveDataUtil(SuggestionActivity.this);
         deleteIndex = -1;
         init();
 
         PhoneInfoUtils phoneInfoUtils = new PhoneInfoUtils(SuggestionActivity.this,this);
         phonenumber = phoneInfoUtils.getNativePhoneNumber();
+        Log.e(TAG, "onCreate: shoujihao"+phonenumber);
 
-        if (!LoginActivity.phoneNumber.equals("")){
-            if (phonenumber.equals(LoginActivity.phoneNumber)){
-                textview_phoneNumber.setText(phonenumber);
-            }else {
-                textview_phoneNumber.setText(LoginActivity.phoneNumber);
-            }
-        }else {
-            textview_phoneNumber.setText(phonenumber);
-        }
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -188,24 +184,19 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         btn_submit_suggestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phonenumber.equals("")){
-                    Toasty.info(getApplicationContext(),"对不起，您没有选择输入手机号！",Toasty.LENGTH_SHORT).show();
-                }else {
-                    if (suggestion_dangerandrecify.getVisibility() == View.VISIBLE){
-                        if ((!suggestion_danger_great.isChecked())&&(!suggestion_danger_normal.isChecked())){
-                            Toasty.info(getApplicationContext(),"对不起，您没有选择隐患等级！",Toasty.LENGTH_SHORT).show();
-                        }else {
-                            if ((!suggestion_recify_way_limit.isChecked())&&
-                                    (!suggestion_recify_way_now.isChecked())&&
-                                    (!suggestion_recify_way_stop.isChecked())){
-                                Toasty.info(getApplicationContext(),"对不起，您没有选择整改方式！",Toasty.LENGTH_SHORT).show();
-                            }else {
-                                submit();
-                            }
-                        }
+                if (suggestion_dangerandrecify.getVisibility() == View.VISIBLE){
+                    if ((!suggestion_danger_great.isChecked())&&(!suggestion_danger_normal.isChecked())){
+                        Toasty.info(getApplicationContext(),"对不起，您没有选择隐患等级！",Toasty.LENGTH_SHORT).show();
                     }else {
-                        submit();
+                        if ((!suggestion_recify_way_limit.isChecked())&&
+                                (!suggestion_recify_way_stop.isChecked())){
+                            Toasty.info(getApplicationContext(),"对不起，您没有选择整改方式！",Toasty.LENGTH_SHORT).show();
+                        }else {
+                            submit();
+                        }
                     }
+                }else {
+                    submit();
                 }
             }
         });
@@ -228,43 +219,6 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        textview_phoneNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputDialog.build(SuggestionActivity.this)
-                        .setButtonTextInfo(new TextInfo().setFontColor(Color.BLACK))
-                        .setTitle("提示!")
-                        .setMessage("请输入您的手机号: ")
-                        .setInputText(textview_phoneNumber.getText().toString())
-                        .setOkButton("确定", new OnInputDialogButtonClickListener() {
-                            @Override
-                            public boolean onClick(BaseDialog baseDialog, View v, String inputStr) {
-                                if (inputStr.length() == 11){
-                                    textview_phoneNumber.setText(inputStr);
-                                    if(!inputStr.equals(LoginActivity.phoneNumber)){
-                                        saveDataUtil.save(LoginActivity.inputName,inputStr);
-                                    }
-                                    return false;
-                                }else {
-                                    TipDialog.show(SuggestionActivity.this, "手机号输入错误！", TipDialog.TYPE.ERROR);
-                                    return true;
-                                }
-                            }
-                        })
-                        .setStyle(DialogSettings.STYLE.STYLE_KONGZUE)
-                        .setTheme(DialogSettings.THEME.LIGHT)
-                        .setCancelButton("取消")
-                        .setHintText("手机号")
-                        .setInputInfo(new InputInfo()
-                                .setMAX_LENGTH(11)
-                                .setInputType(InputType.TYPE_CLASS_PHONE)
-                                .setTextInfo(new TextInfo().setFontColor(Color.BLACK)
-                                )
-                        )
-                        .setCancelable(false)
-                        .show();
-            }
-        });
 
         if(pathlistOfPhoto.size()>0){
             suggestionGridViewAdapter = new SuggestionGridViewAdapter(getApplicationContext(), pathlistOfPhoto,1);
@@ -291,7 +245,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void init() {
-        textview_phoneNumber = findViewById(R.id.suggestion_phonenumber);
+//        textview_phoneNumber = findViewById(R.id.suggestion_phonenumber);
         et_suggestion = findViewById(R.id.et_suggestion);//建议文本框
         tv_num = findViewById(R.id.tv_num);//计算字数框
         //定位
@@ -302,13 +256,13 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         suggestion_dangerandrecify = findViewById(R.id.suggestion_dangerandrecify);
         suggestion_danger_great = findViewById(R.id.suggestion_danger_great);
         suggestion_danger_normal = findViewById(R.id.suggestion_danger_normal);
-        suggestion_recify_way_now = findViewById(R.id.suggestion_rectify_way_now);
+//        suggestion_recify_way_now = findViewById(R.id.suggestion_rectify_way_now);
         suggestion_recify_way_limit = findViewById(R.id.suggestion_rectify_way_limit);
         suggestion_recify_way_stop = findViewById(R.id.suggestion_rectify_way_stop);
 
         suggestion_danger_great.setOnClickListener(this);
         suggestion_danger_normal.setOnClickListener(this);
-        suggestion_recify_way_now.setOnClickListener(this);
+//        suggestion_recify_way_now.setOnClickListener(this);
         suggestion_recify_way_limit.setOnClickListener(this);
         suggestion_recify_way_stop.setOnClickListener(this);
 
@@ -372,20 +326,25 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
 
         if (status.equals(searchUtil.nohege)){
             suggestion_dangerandrecify.setVisibility(View.VISIBLE);
+            et_suggestion.setHint("请输入不合格原因...");
         }else if (status.equals(searchUtil.hege)){
             suggestion_dangerandrecify.setVisibility(View.GONE);
+            et_suggestion.setHint("请输入合格描述...");
         }
 
         toolbar_title = findViewById(R.id.toolbar_suggestion_title);
         toolabr_subtitleLeft = findViewById(R.id.toolbar_suggestion_subtitle_left);
         toolbar_subtitleRight = findViewById(R.id.toolbar_suggestion_subtitle_right);
-        toolbar_title.setTextSize(20);
+        toolbar_title.setTextSize(18);
         toolabr_subtitleLeft.setTextSize(13);
         toolbar_subtitleRight.setTextSize(13);
-        toolbar_title.setText(getResources().getString(R.string.app_name));
+        toolbar_title.setText(taskType+"           ");//加空格的原因是让其显示居中
         toolabr_subtitleLeft.setText(title);
         toolbar_subtitleRight.setText(taskType);
         toolbar_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
+
+        setSupportActionBar(toolbar_suggestion);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -398,17 +357,17 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             case R.id.suggestion_danger_normal:
                 suggestion_danger_great.setChecked(false);
                 break;
-            case R.id.suggestion_rectify_way_now:
-                suggestion_recify_way_limit.setChecked(false);
-                suggestion_recify_way_stop.setChecked(false);
-                break;
+//            case R.id.suggestion_rectify_way_now:
+//                suggestion_recify_way_limit.setChecked(false);
+//                suggestion_recify_way_stop.setChecked(false);
+//                break;
             case R.id.suggestion_rectify_way_limit:
-                suggestion_recify_way_now.setChecked(false);
+//                suggestion_recify_way_now.setChecked(false);
                 suggestion_recify_way_stop.setChecked(false);
                 break;
             case R.id.suggestion_rectify_way_stop:
                 suggestion_recify_way_limit.setChecked(false);
-                suggestion_recify_way_now.setChecked(false);
+//                suggestion_recify_way_now.setChecked(false);
                 break;
         }
     }
@@ -494,6 +453,26 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
 
         }
         return super.onContextItemSelected(item);
+    }
+
+
+    //Menu的点击事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**

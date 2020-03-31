@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#eeeeee"
     tools:context=".activity.DetctionActivity"
     android:orientation="vertical">
 
@@ -14,6 +15,7 @@
             android:id="@+id/toolbar_detction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:theme="@style/AppTheme.PopupOverlay"
             android:background="?attr/colorPrimary">
             <!--<TextView-->
             <!--android:layout_width="match_parent"-->
@@ -31,20 +33,22 @@
 
             <LinearLayout
                 android:layout_marginLeft="0dp"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
                     android:layout_weight="3"
                     android:id="@+id/toolbar_detction_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:gravity="center_horizontal"
                     android:singleLine="true"
                     android:textColor="@color/white" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:orientation="horizontal"
@@ -85,6 +89,9 @@
 
                     </LinearLayout>
                 </LinearLayout>
+
+
+
             </LinearLayout>
 
 
@@ -124,28 +131,93 @@
                 android:layout_height="wrap_content"
                 android:text="---共5项---"/>
         </LinearLayout>
-        <ListView
-            android:id="@+id/lv_detection"
-            android:layout_width="match_parent"
-            android:layoutAnimation="@anim/anim_listview_item"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:descendantFocusability="blocksDescendants">
 
-        </ListView>
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
-            <Button
-                android:id="@+id/btn_add_detection"
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_marginRight="2dp"
                 android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:text="未操作"
+                    android:enabled="true"
+                    android:textColor="@color/button_selecor_color"
+                    android:id="@+id/button_selector_left"
+                    android:background="@drawable/logincode_left_selector"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+                <Button
+                    android:text="已操作"
+                    android:textColor="@color/button_selecor_color"
+                    android:id="@+id/button_selector_middle"
+                    android:background="@drawable/logincode_middle_selector"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_marginLeft="2dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:text="添加项"
+                    android:textColor="@color/button_selecor_color"
+                    android:id="@+id/button_selector_right"
+                    android:background="@drawable/logincode_right_selector"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/main_swipe">
+
+            <ListView
+                android:id="@+id/lv_detection"
+                android:layout_width="match_parent"
+                android:layoutAnimation="@anim/anim_listview_item"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_gravity="left"
-                android:text="添加"/>
+                android:listSelector="@android:color/transparent"
+                android:cacheColorHint="@android:color/transparent"
+                android:divider="@null"
+                android:layout_weight="1"
+                android:descendantFocusability="blocksDescendants">
+
+            </ListView>
+
+        </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+
+
+        <LinearLayout
+            android:padding="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <Button
+                android:background="@drawable/bg_button"
                 android:id="@+id/btn_save_detection"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
@@ -155,6 +227,7 @@
                 android:layout_gravity="left"
                 android:text="保存"/>
             <Button
+                android:background="@drawable/bg_button"
                 android:id="@+id/btn_sure_detection"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

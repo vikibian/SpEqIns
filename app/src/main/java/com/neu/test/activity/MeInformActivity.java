@@ -37,7 +37,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
     private SuperTextView stv_name;
     private SuperTextView stv_email;
     private SuperTextView stv_telephone;
-    private SuperButton sb_back;
+//    private SuperButton sb_back;
 
 
     private String message;
@@ -51,10 +51,10 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         init();
         toolbar_TextView.setText("个人信息");
 
-        getUserInfoByPost(LoginActivity.inputName);
+//        getUserInfoByPost(LoginActivity.inputName);
 
 
-        //showText();
+        showText();
     }
 
     private void getUserInfoByPost(String testinputName) {
@@ -93,8 +93,8 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
     private void showText() {
         stv_name.setCenterString(LoginActivity.inputName);
         //目前数据库里面还没有邮箱和电话
-        stv_email.setCenterString("123");
-        stv_telephone.setCenterString("123");
+        stv_email.setRightString("123");
+        stv_telephone.setRightString("123");
     }
 
     private void init() {
@@ -102,9 +102,8 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         stv_name = findViewById(R.id.meinform_stv_name);
         stv_email = findViewById(R.id.meinform_stv_emai);
         stv_telephone = findViewById(R.id.meinform_stv_telephone);
-        sb_back = findViewById(R.id.meinform_sb_back);
-
-        sb_back.setOnClickListener(this);
+//        sb_back = findViewById(R.id.meinform_sb_back);
+//        sb_back.setOnClickListener(this);
     }
 
     private void initToolBar() {
@@ -131,11 +130,11 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.meinform_sb_back:
-                setResult(RESULT_OK);
-                this.finish();
-
-                break;
+//            case R.id.meinform_sb_back:
+//                setResult(RESULT_OK);
+//                this.finish();
+//
+//                break;
             default:
                 break;
         }

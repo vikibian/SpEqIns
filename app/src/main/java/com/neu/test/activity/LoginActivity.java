@@ -65,14 +65,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences sharedPreferences;
 
     private boolean isSuccess ;
-    private SuggestionActivitySaveDataUtil saveDataUtil ;
-    public static String phoneNumber ="";
+//    private SuggestionActivitySaveDataUtil saveDataUtil ;
+//    public static String phoneNumber ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        saveDataUtil = new SuggestionActivitySaveDataUtil(getApplicationContext());
+//        saveDataUtil = new SuggestionActivitySaveDataUtil(getApplicationContext());
         init();
     }
 
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                   edit.putString("password",inputPassword);
                   edit.commit();
 //                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
-                    phoneNumber = saveDataUtil.load(inputName);
+//                    phoneNumber = saveDataUtil.load(inputName);
                     Toasty.success(LoginActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
                     List<Task> tasks = response.getContent();
                     if(response.getContent().size()==0){

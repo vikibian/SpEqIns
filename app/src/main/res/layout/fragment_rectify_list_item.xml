@@ -39,6 +39,7 @@
 
 
         <LinearLayout
+            android:layout_marginTop="10dp"
             android:id="@+id/recify_lin"
             android:layout_margin="3dp"
             android:padding="2dp"
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content" />
 
             <LinearLayout
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
@@ -70,7 +72,7 @@
 
                     <CheckBox
                         android:focusable="false"
-                        android:text="不合格"
+                        android:text="整改不合格"
                         android:id="@+id/recify_item_status_unqualified"
                         android:layout_weight="1"
                         android:textSize="10dp"
@@ -120,10 +122,11 @@
                 <TextView
                     android:layout_centerInParent="true"
                     android:id="@+id/recify_item_attach_num"
-                    android:text=" "
-                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:text="12"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content" />
             </RelativeLayout>
 
             <RelativeLayout

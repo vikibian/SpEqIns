@@ -72,6 +72,7 @@
 
     <!--<color name="white">#FFFFFF</color> &lt;!&ndash;白色 &ndash;&gt;-->
     <color name="ivory">#FFFFF0</color> <!--象牙色 -->
+    <color name="wxbg">#FCFCFB</color> <!--象牙色 -->
     <color name="lightyellow">#FFFFE0</color> <!--亮黄色 -->
     <color name="yellow">#FFFF00</color> <!--黄色 -->
     <color name="snow">#FFFAFA</color> <!--雪白色 -->

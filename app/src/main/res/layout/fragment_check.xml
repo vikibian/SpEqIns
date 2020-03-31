@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e2e4fe"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#EEEEEE"
     tools:context=".fragment.CheckFragment">
 
     <LinearLayout
@@ -30,9 +31,10 @@
         <com.jaredrummler.materialspinner.MaterialSpinner
             android:id="@+id/sp_devclass"
             style="@android:style/Widget.Spinner"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:textAlignment="center"
+            app:ms_background_selector="@drawable/bg_sp"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

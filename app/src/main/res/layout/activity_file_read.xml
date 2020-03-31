@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,57 +7,103 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/pdfView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
     <LinearLayout
-        android:layout_centerInParent="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:id="@+id/linearlayout_fileread"
+
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/file_read_loading_name"
-            android:text=" "
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.daimajia.numberprogressbar.NumberProgressBar
-            android:id="@+id/fileread_number_progress_bar"
-            style="@style/NumberProgressBar_Default"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/about_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            custom:progress_unreached_color="#CCCCCC"
-            custom:progress_reached_color="#3498DB"
+            >
 
-            custom:progress_unreached_bar_height="0.75dp"
-            custom:progress_reached_bar_height="1.5dp"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/me_fileread_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@color/colorPrimary"
+                app:titleTextColor="@color/white"
+                android:gravity="center"
+                app:theme="@style/AppTheme.PopupOverlay"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            custom:progress_text_size="10sp"
-            custom:progress_text_color="#3498DB"
-            custom:progress_text_offset="1dp"
-            custom:progress_text_visibility="visible"
+                <TextView
+                    android:id="@+id/me_fileread_toolbar_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" "
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
 
-            custom:progress_max="100"
-            custom:progress_current="80"/>
+                    />
 
-        <TextView
-            android:text="正在加载"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            </androidx.appcompat.widget.Toolbar>
 
+        </com.google.android.material.appbar.AppBarLayout>
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/pdfView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/linearlayout_fileread"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/file_read_loading_name"
+                android:text=" "
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/fileread_number_progress_bar"
+                style="@style/NumberProgressBar_Default"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                custom:progress_unreached_color="#CCCCCC"
+                custom:progress_reached_color="#3498DB"
+
+                custom:progress_unreached_bar_height="0.75dp"
+                custom:progress_reached_bar_height="1.5dp"
+
+                custom:progress_text_size="10sp"
+                custom:progress_text_color="#3498DB"
+                custom:progress_text_offset="1dp"
+                custom:progress_text_visibility="visible"
+
+                custom:progress_max="100"
+                custom:progress_current="80"/>
+
+            <TextView
+                android:text="正在加载"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+
+</LinearLayout>
 
 
 

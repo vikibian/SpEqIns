@@ -62,7 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     stv:sLeftTextString="用户名:"
-                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextSize="18dp"
                     stv:sLeftTextColor="@color/black"/>
 
                 <com.allen.library.SuperTextView
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     stv:sLeftTextString="邮箱:"
-                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextSize="18dp"
                     stv:sLeftTextColor="@color/black"/>
 
 
@@ -79,20 +79,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     stv:sLeftTextString="电话号码:"
-                    stv:sLeftTextSize="20sp"
+                    stv:sLeftTextSize="18dp"
                     stv:sLeftTextColor="@color/black"/>
 
-                <top.androidman.SuperButton
-                    android:layout_marginTop="60dp"
-                    android:id="@+id/meinform_sb_back"
-                    android:layout_height="40dp"
-                    android:layout_width="100dp"
-                    android:layout_gravity="center"
-                    app:corner="10dp"
-                    app:text="返回"
-                    app:textSize="20dp"
-                    app:textColor="@color/black"
-                    app:color_normal="@color/div_white" />
+                <!--<top.androidman.SuperButton-->
+                    <!--android:layout_marginTop="60dp"-->
+                    <!--android:id="@+id/meinform_sb_back"-->
+                    <!--android:layout_height="40dp"-->
+                    <!--android:layout_width="100dp"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--app:corner="10dp"-->
+                    <!--app:text="返回"-->
+                    <!--app:textSize="20dp"-->
+                    <!--app:textColor="@color/black"-->
+                    <!--app:color_normal="@color/div_white" />-->
 
             </LinearLayout>
 

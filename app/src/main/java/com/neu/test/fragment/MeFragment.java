@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +22,10 @@ import com.neu.test.activity.MeAccountAndSafeActivity;
 import com.neu.test.activity.MeFeedbackActivity;
 import com.neu.test.activity.MeInformActivity;
 import com.neu.test.util.BaseUrl;
+import com.qmuiteam.qmui.util.QMUIDisplayHelper;
+import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
+import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
 import java.io.File;
 
@@ -35,13 +41,8 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public static final int REQUEST_CODE_FEEDBACK = 2;
     public static final int REQUEST_CODE_ABOUT = 3;
     public static final int REQUEST_CODE_LAW= 4;
-
-    private SuperTextView STVinform;
-    private SuperTextView STVaccount;
-    private SuperTextView STVfeedback;
-    private SuperTextView STVabout;
-    private SuperTextView STVlaw;
-    private SuperTextView STVclearcache;
+    private TextView nametext;
+    private QMUIGroupListView groupListView ;
 
     int me;
 
@@ -56,57 +57,102 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_me, container, false);
         init(view);
-
+        initGroupListview(view);
         return view;
     }
 
+    private void initGroupListview(View view) {
+
+        int height = QMUIResHelper.getAttrDimen(getContext(), com.qmuiteam.qmui.R.attr.qmui_list_item_height);
+
+
+        QMUICommonListItemView Item0 = groupListView.createItemView("个人信息");
+        Item0.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item0.setTag(0);
+
+
+//        QMUICommonListItemView itemWithChevron = mGroupListView.createItemView("Item 4");
+//        itemWithChevron.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+
+        QMUICommonListItemView Item1 = groupListView.createItemView("账号与安全");
+        Item1.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item1.setTag(1);
+
+        QMUICommonListItemView Item2 = groupListView.createItemView("法律法规学习");
+        Item2.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item2.setTag(2);
+
+        QMUICommonListItemView Item3 = groupListView.createItemView("意见反馈");
+        Item3.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item3.setTag(3);
+
+        QMUICommonListItemView Item4 = groupListView.createItemView("关于软件");
+        Item4.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item4.setTag(4);
+
+        QMUICommonListItemView Item5 = groupListView.createItemView("清空缓存");
+        Item5.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item5.setTag(5);
+
+
+        int size = QMUIDisplayHelper.dp2px(view.getContext(), 20);
+        QMUIGroupListView.newSection(getContext())
+                .setUseDefaultTitleIfNone(false) //默认标题内容
+                .setUseTitleViewForSectionSpace(false) //取消标题显示
+//                .setTitle("Section 2: 自定义右侧 View/红点/new 提示")
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .addItemView(Item0, this)
+                .addItemView(Item1, this)
+                .addItemView(Item2, this)
+                .addItemView(Item3, this)
+                .addItemView(Item4, this)
+                .addItemView(Item5, this)
+                //   .setOnlyShowStartEndSeparator(true)
+                .addTo(groupListView);
+
+    }
+
     private void init(View view) {
-        STVinform = view.findViewById(R.id.STV_inform);
-        STVaccount = view.findViewById(R.id.STV_account);
-        STVfeedback = view.findViewById(R.id.STV_feedback);
-        STVabout = view.findViewById(R.id.STV_about);
-        STVlaw = view.findViewById(R.id.STV_law);
-        STVclearcache = view.findViewById(R.id.STV_clearCache);
+        groupListView = view.findViewById(R.id.me_fragment_ListView);
+        nametext = view.findViewById(R.id.me_fragment_nametext);
 
-
-        STVinform.setOnClickListener(this);
-        STVaccount.setOnClickListener(this);
-        STVfeedback.setOnClickListener(this);
-        STVabout.setOnClickListener(this);
-        STVlaw.setOnClickListener(this);
-        STVclearcache.setOnClickListener(this);
+        nametext.setText(LoginActivity.inputName);
     }
 
     @Override
     public void onClick(View v) {
         Intent intent;
-        switch (v.getId()){
-            case R.id.STV_inform:
-                intent = new Intent(getActivity(), MeInformActivity.class);
-                getActivity().startActivityForResult(intent,REQUEST_CODE_MEINFORM);
-                //startActivity(intent);
-                break;
-            case R.id.STV_account:
-                intent = new Intent(getActivity(), MeAccountAndSafeActivity.class);
-                getActivity().startActivityForResult(intent,REQUEST_CODE_ACCOUNTANDSAFE);
-                break;
-            case R.id.STV_law:
-                intent = new Intent(getActivity(), LawLearningActivity.class);
-                getActivity().startActivityForResult(intent,REQUEST_CODE_LAW);
-                break;
-            case R.id.STV_feedback:
-                intent = new Intent(getActivity(), MeFeedbackActivity.class);
-                getActivity().startActivityForResult(intent,REQUEST_CODE_FEEDBACK);
-                break;
-            case R.id.STV_about:
-                intent = new Intent(getActivity(), MeAboutActivity.class);
-                getActivity().startActivityForResult(intent,REQUEST_CODE_ABOUT);
-                break;
-            case R.id.STV_clearCache:
-                String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
-                File cacheFile = new File(cachePath);
-                clearAppCache(cacheFile);
-                break;
+
+        if(v instanceof QMUICommonListItemView){
+            switch ((int)v.getTag()){
+                case 0:
+                    Toast.makeText(getContext(), "click", Toast.LENGTH_SHORT).show();
+                    intent = new Intent(getActivity(), MeInformActivity.class);
+                    getActivity().startActivityForResult(intent,REQUEST_CODE_MEINFORM);
+                    //startActivity(intent);
+                    break;
+                case 1:
+                    intent = new Intent(getActivity(), MeAccountAndSafeActivity.class);
+                    getActivity().startActivityForResult(intent,REQUEST_CODE_ACCOUNTANDSAFE);
+                    break;
+                case 2:
+                    intent = new Intent(getActivity(), LawLearningActivity.class);
+                    getActivity().startActivityForResult(intent,REQUEST_CODE_LAW);
+                    break;
+                case 3:
+                    intent = new Intent(getActivity(), MeFeedbackActivity.class);
+                    getActivity().startActivityForResult(intent,REQUEST_CODE_FEEDBACK);
+                    break;
+                case 4:
+                    intent = new Intent(getActivity(), MeAboutActivity.class);
+                    getActivity().startActivityForResult(intent,REQUEST_CODE_ABOUT);
+                    break;
+                case 5:
+                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+                    File cacheFile = new File(cachePath);
+                    clearAppCache(cacheFile);
+                    break;
+            }
         }
     }
 

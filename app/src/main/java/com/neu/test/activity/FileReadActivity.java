@@ -1,10 +1,13 @@
 package com.neu.test.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +25,8 @@ import okhttp3.Call;
 
 public class FileReadActivity extends AppCompatActivity {
     private static String TAG = "FileReadActivity";
+    private Toolbar fileread_toolbar;
+    private TextView fileread_toolbar_textview;
     private PDFView pdfView;
     private String fileName;
     private String uri;
@@ -44,6 +49,7 @@ public class FileReadActivity extends AppCompatActivity {
         loading_name = findViewById(R.id.file_read_loading_name);
         loading_name.setText(fileName);
         uri = BaseUrl.lawFilePath+fileName;
+        initToolbar();
 
 //        if (!fileUrl.equals(null)){
 //            pdfView
@@ -73,6 +79,18 @@ public class FileReadActivity extends AppCompatActivity {
 
     }
 
+    private void initToolbar() {
+        fileread_toolbar = findViewById(R.id.me_fileread_toolbar);
+        fileread_toolbar.setTitleTextColor(Color.WHITE);
+        fileread_toolbar.setTitle(" ");
+
+        fileread_toolbar_textview = findViewById(R.id.me_fileread_toolbar_textview);
+        fileread_toolbar_textview.setText(fileName);
+
+        setSupportActionBar(fileread_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//显示箭头
+    }
+
     private void downloadAndRead(String uri, String folderPath, String name) {
         OkHttp okHttp = new OkHttp();
         okHttp.downloadFile(uri, new FileCallBack(folderPath,name) {
@@ -99,5 +117,16 @@ public class FileReadActivity extends AppCompatActivity {
 
     private void loadPdfFile(File file) {
         pdfView.fromFile(file).load();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(RESULT_OK);
+                this.finish();//back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

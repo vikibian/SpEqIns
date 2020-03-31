@@ -33,6 +33,14 @@
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
+
+    <style name="QMNoBar" parent="QMUI.Compat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
     
     <style name="TabLayoutTextStyle">
         <item name="android:textSize">@dimen/textsize</item>

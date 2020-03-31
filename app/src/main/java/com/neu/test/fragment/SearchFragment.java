@@ -267,10 +267,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         searchmap.put("DEVCLASS",searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
         searchmap.put("RESULT",searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
         searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
+        searchmap.put("startDate",selectStartTime.getText().toString());
+        searchmap.put("endDate",selectEndtTime.getText().toString());
         Log.e(TAG," loginname: "+LoginActivity.inputName);
         Log.e(TAG," devclass: "+searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
         Log.e(TAG," result: "+searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
         Log.e(TAG," taskType: "+MBsp_taskType.getText().toString());
+        Log.e(TAG," startDate: "+selectStartTime.getText().toString());
+        Log.e(TAG," endDate: "+selectEndtTime.getText().toString());
 
 
         OkHttp okHttp = new OkHttp();
@@ -307,6 +311,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         showNoData.setVisibility(View.INVISIBLE);
                         tasks.clear();
                         tasks = response.getContent();
+//                        List<Task> taskstest  = new ArrayList<Task>();
+//                        taskstest.add(response.getContent().get(0));
+//                        taskstest.add(response.getContent().get(0));
+//                        initTable(taskstest);
                         initTable(tasks);
                         Log.e("TAG"," Content: "+tasks.toString());
                         Log.e("TAG"," 接收task: "+tasks.size());
@@ -328,9 +336,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private void initTable( List<Task> tasksList) {
         for (int i=0;i<tasksList.size();i++){
-            if (tasksList.get(i).getRESULT().equals(searchUtil.hege)){
-                tasksList.get(i).setRESULT(searchUtil.hegeText);
-            }
+            //将result的文本类型数字转换为文字
+            tasksList.get(i).setRESULT(searchUtil.getHelpMapForResult().get(tasksList.get(i).getRESULT()));
+            tasksList.get(i).setDEVCLASS(searchUtil.getMapdevclass().get(tasksList.get(i).getDEVCLASS()));
         }
 
 
@@ -367,7 +375,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        latitude = new Column<String>("纬度","LATITUDE");
+        latitude = new Column<String>("设备注册码","DEVZHUCEMA");
         latitude.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
@@ -439,7 +447,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             @Override
             public int getBackGroundColor(CellInfo cellInfo) {
                 if(cellInfo.row%2 ==1) {
-                    return ContextCompat.getColor(getContext(), R.color.grey);      //需要在 app/res/values 中添加 <color name="tableBackground">#d4d4d4</color>
+                    return ContextCompat.getColor(getContext(), R.color.lightgray);      //需要在 app/res/values 中添加 <color name="tableBackground">#d4d4d4</color>
                 }else{
                     return TableConfig.INVALID_COLOR;
                 }

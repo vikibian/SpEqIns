@@ -91,19 +91,19 @@ public class SidebarUtils {
     }
 
     private static String  getTime(Date date) {
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
     }
 
     public static String getSystemTime(){
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日" );
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd" );
         Calendar calendar = Calendar.getInstance();
         Date date = new Date(System.currentTimeMillis());
         return format.format(date);
     }
 
     public static boolean isStartBeforeEnd(String starttime,String endtime)throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = format.parse(starttime);
         Date end = format.parse(endtime);
         if (start.before(end)||start.equals(end)){

@@ -9,14 +9,14 @@
     <LinearLayout
         android:background="@drawable/card_background_selector"
         android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="8dp"
-        android:paddingTop="5dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="15dp"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -130,30 +130,30 @@
 
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:layout_weight="3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp">
+                <!--<LinearLayout-->
+                    <!--android:layout_weight="3"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="0dp">-->
 
-                    <com.neu.test.layout.CircleRelativeLayout
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginRight="12dp"
-                        android:id="@+id/check_list_imagebutton"
-                        android:layout_centerInParent="true"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                    <!--<ImageView-->
+                    <!--<com.neu.test.layout.CircleRelativeLayout-->
+                        <!--android:layout_marginLeft="12dp"-->
+                        <!--android:layout_marginRight="12dp"-->
                         <!--android:id="@+id/check_list_imagebutton"-->
-                        <!--android:layout_marginRight="8dp"-->
-                        <!--android:layout_marginLeft="8dp"-->
-                        <!--android:paddingLeft="5dp"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--android:background="@drawable/circle_imageview"-->
+                        <!--android:layout_centerInParent="true"-->
                         <!--android:layout_width="match_parent"-->
                         <!--android:layout_height="match_parent" />-->
 
-                </LinearLayout>
+                    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/check_list_imagebutton"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginRight="8dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginLeft="8dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:paddingLeft="5dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_gravity="center_vertical"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:background="@drawable/circle_imageview"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent" />&ndash;&gt;-->
+
+                <!--</LinearLayout>-->
 
 
 

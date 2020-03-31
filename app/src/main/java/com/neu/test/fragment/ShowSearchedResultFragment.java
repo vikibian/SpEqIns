@@ -89,7 +89,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 //    private List<DetectionItem1> listDatas_unqualified = new ArrayList<>();
     private List<DetectionResult> listDatas_qualified = new ArrayList<>();
     private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
-    private List<DetectionResult> listDatas_undecied = new ArrayList<>();
+    private List<DetectionResult> listDatas_undecied = new ArrayList<>();//代表的是整改合格
 
 
     public ShowSearchedResultFragment() {
@@ -165,11 +165,11 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
-        map.put("taskID","123456785");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
-//        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+//        map.put("taskID","123456785");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
         Log.e(TAG,"map: "+ map.toString());
-        map.put("DEVID","五号电梯");//123456  devID
-//        map.put("DEVID",devID);//123456  devID
+//        map.put("DEVID","五号电梯");//123456  devID
+        map.put("DEVID",devID);//123456  devID
         Log.e(TAG,"map: "+ map.toString());
 
 
@@ -211,8 +211,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
             ||listResult.get(i).getSTATUS().equals(searchUtil.nohege)){
                 listDatas_unqualified.add(listResult.get(i));
             }
-            if (listResult.get(i).getSTATUS().equals(searchUtil.undecidedText)
-            ||listResult.get(i).getSTATUS().equals(searchUtil.undecided)){
+            if (listResult.get(i).getSTATUS().equals(searchUtil.recifyQualifyText)
+            ||listResult.get(i).getSTATUS().equals(searchUtil.recifyQualify)){
                 listDatas_undecied.add(listResult.get(i));
             }
         }
@@ -242,7 +242,7 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
 //                List<DetectionItem1> listunQualifed = new ArrayList<>();
                 List<DetectionResult> listQualifed = new ArrayList<>();
                 List<DetectionResult> listunQualifed = new ArrayList<>();
-                List<DetectionResult> listundecied = new ArrayList<>();
+                List<DetectionResult> listundecied = new ArrayList<>();//代表的是整改合格
                 for(int i=0;i<listResult.size();i++){
                     if(listResult.get(i).getSTATUS().equals(searchUtil.hegeText)
                     ||listResult.get(i).getSTATUS().equals(searchUtil.hege)){
@@ -251,8 +251,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
                     else if(listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)
                     ||listResult.get(i).getSTATUS().equals(searchUtil.nohege)){
                         listunQualifed.add(listResult.get(i));
-                    }else if (listResult.get(i).getSTATUS().equals(searchUtil.undecidedText)
-                    ||listResult.get(i).getSTATUS().equals(searchUtil.undecided)){
+                    }else if (listResult.get(i).getSTATUS().equals(searchUtil.recifyQualifyText)
+                    ||listResult.get(i).getSTATUS().equals(searchUtil.recifyQualify)){
                         listundecied.add(listResult.get(i));
                     }
                 }

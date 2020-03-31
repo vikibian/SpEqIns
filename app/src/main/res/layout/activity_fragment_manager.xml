@@ -76,7 +76,7 @@
 
         android:layout_width="match_parent"
 
-        android:layout_height="45dp"
+        android:layout_height="50dp"
 
         android:orientation="horizontal"
 
@@ -98,17 +98,17 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_home_normal"
+            app:iconNormal="@drawable/ic_assignment_black_24dp"
 
-            app:iconSelected="@mipmap/tab_home_selected"
-
+            app:iconSelected="@drawable/ic_assignment_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
             app:itemText="@string/tab_home"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
-
-            app:itemTextSize="8sp"
+            app:textColorSelected="@color/colorPrimary"
 
             app:itemMarginTop="-5dp"
 
@@ -132,17 +132,19 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_recheck_normal"
+            app:iconNormal="@drawable/ic_build_black_24dp"
 
-            app:iconSelected="@mipmap/tab_recheck_selected"
+            app:iconSelected="@drawable/ic_build_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
 
             app:itemText="@string/tab_micro"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
+            app:textColorSelected="@color/colorPrimary"
 
-            app:itemTextSize="8sp"
 
             app:itemMarginTop="-5dp"
 
@@ -162,17 +164,18 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_task_normal"
+            app:iconNormal="@drawable/ic_assignment_returned_black_24dp"
 
-            app:iconSelected="@mipmap/tab_task_selected"
-
+            app:iconSelected="@drawable/ic_assignment_returned_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
             app:itemText="@string/tab_task"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
+            app:textColorSelected="@color/colorPrimary"
 
-            app:itemTextSize="8sp"
 
             app:itemMarginTop="-5dp"
 
@@ -190,17 +193,17 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_random_normal"
+            app:iconNormal="@drawable/ic_hourglass_empty_black_24dp"
 
-            app:iconSelected="@mipmap/tab_random_selected"
-
+            app:iconSelected="@drawable/ic_hourglass_empty_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
             app:itemText="@string/tab_random"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
-
-            app:itemTextSize="8sp"
+            app:textColorSelected="@color/colorPrimary"
 
             app:itemMarginTop="-5dp"
 
@@ -219,17 +222,17 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_select_normal"
+            app:iconNormal="@drawable/ic_search_black_24dp"
 
-            app:iconSelected="@mipmap/tab_select_selected"
-
+            app:iconSelected="@drawable/ic_search_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
             app:itemText="@string/tab_video"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
-
-            app:itemTextSize="8sp"
+            app:textColorSelected="@color/colorPrimary"
 
             app:itemMarginTop="-5dp"
 
@@ -252,17 +255,17 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@mipmap/tab_me_normal"
+            app:iconNormal="@drawable/ic_account_circle_black_24dp"
 
-            app:iconSelected="@mipmap/tab_me_selected"
-
+            app:iconSelected="@drawable/ic_account_circle_blue_a700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
             app:itemText="我的"
 
-            app:textColorNormal="@color/tab_normal_color"
+            app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/tab_selected_color"
-
-            app:itemTextSize="8sp"
+            app:textColorSelected="@color/colorPrimary"
 
             app:itemMarginTop="-5dp"
 
@@ -271,11 +274,6 @@
             app:touchDrawable="@drawable/selector_bg"
 
             />
-
-
-
-
-
 
 
 

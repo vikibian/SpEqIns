@@ -140,6 +140,12 @@ dependencies {
     implementation 'com.kongzue.dialog_v3:dialog:3.1.8'
     //饺子视频
     implementation 'cn.jzvd:jiaozivideoplayer:7.2.3'
+
+    implementation 'com.qmuiteam:qmui:2.0.0-alpha04'
+    //listview刷新
+    implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
+    //仿抖音
+    implementation 'com.lmxjw3.media:videoplay:1.0.0'
 }
 
 repositories {

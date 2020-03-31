@@ -76,11 +76,14 @@ public class LawLearningActivity extends AppCompatActivity {
     private void init() {
         law_toolbar_textview = findViewById(R.id.me_law_toolbar_textview);
         listView_law = findViewById(R.id.law_learning_listview);
+
+
+        law_toolbar_textview.setText("法律法规学习");
     }
 
     private void initToolbar() {
         law_toolbar = findViewById(R.id.me_law_toolbar);
-        law_toolbar.setTitle(" ");
+        law_toolbar.setTitle(" ");//不能去掉 需要把toolbar中心的文字设置为空 才能显示设置好的
         law_toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(law_toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//显示箭头

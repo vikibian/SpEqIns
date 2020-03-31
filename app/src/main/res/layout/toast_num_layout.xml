@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+  <TextView
+    android:id="@+id/tv_gong"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textStyle="bold"
+    android:textSize="15sp"
+    android:text="共"/>
+  <TextView
+    android:layout_centerInParent="true"
+    android:id="@+id/tv_number"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/skyblue"
+    android:textSize="35sp"
+    android:text="15"/>
+  <TextView
+    android:layout_below="@id/tv_number"
+    android:layout_toRightOf="@id/tv_number"
+    android:textStyle="bold"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="15sp"
+    android:text="项"/>
+
+
+
+</RelativeLayout>

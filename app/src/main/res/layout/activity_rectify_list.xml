@@ -108,6 +108,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:textSize="14dp"
                 android:id="@+id/rectify_list_tv_totalitem"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
@@ -121,7 +122,8 @@
             android:layoutAnimation="@anim/anim_listview_item"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:descendantFocusability="blocksDescendants">
+            android:divider="@null"
+            >
 
         </ListView>
 
@@ -129,12 +131,12 @@
             android:id="@+id/rectify_list_submit_button"
             android:text="提交"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:background="@drawable/bg_button"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="35dp" />
 
     </LinearLayout>
 

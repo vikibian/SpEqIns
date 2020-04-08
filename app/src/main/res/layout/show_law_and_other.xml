@@ -87,13 +87,13 @@
 
   </ScrollView>
 
-  <com.qmuiteam.qmui.layout.QMUIButton
-      android:layout_marginLeft="15dp"
-      android:layout_marginRight="15dp"
+  <Button
+      android:layout_marginLeft="5dp"
+      android:layout_marginRight="5dp"
       android:id="@+id/btn_cancel"
       android:layout_gravity="right"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="35dp"
       android:background="@drawable/bg_button"
       android:textColor="@color/white"
       android:text="我知道了"/>

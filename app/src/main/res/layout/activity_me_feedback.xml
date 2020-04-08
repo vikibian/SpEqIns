@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EEEEEE"
     tools:context=".activity.MeFeedbackActivity">
 
     <LinearLayout
@@ -17,37 +18,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/about_appbar"
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/me_feedback_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="48dp"
+                android:background="?attr/colorPrimary"
+                app:titleTextColor="@color/white"
+                android:gravity="center"
+                app:theme="@style/AppTheme.PopupOverlay"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/me_feedback_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@color/colorPrimary"
-                    app:titleTextColor="@color/white"
-                    android:gravity="center"
-                    app:theme="@style/AppTheme.PopupOverlay"
-                    app:popupTheme="@style/AppTheme.PopupOverlay">
+                <TextView
+                    android:id="@+id/me_feedback_toolbar_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1233"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
 
-                    <TextView
-                        android:id="@+id/me_feedback_toolbar_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1233"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="15dp"
+                    />
 
-                        />
-
-                </androidx.appcompat.widget.Toolbar>
-
-            </com.google.android.material.appbar.AppBarLayout>
+            </androidx.appcompat.widget.Toolbar>
 
             <LinearLayout
                 android:layout_marginTop="20dp"
@@ -55,34 +49,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <RelativeLayout
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="wrap_content">
 
                     <EditText
-                        android:layout_margin="10dp"
+                        android:hint="请输入您的意见..."
+                        android:padding="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
                         android:id="@+id/me_feedback_edittext"
-                        android:selectAllOnFocus="true"
-                        android:minLines="5"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="您有什么意见..."/>
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:minLines="4"
+                        android:background="@drawable/bg_edittext2"
+                        android:inputType="textMultiLine"
+                        android:textColor="@color/black"
+                        android:textSize="15dp" />
 
 
-                </RelativeLayout>
+                    <Button
+                        android:layout_marginTop="25dp"
+                        android:id="@+id/me_feedback_submit"
+                        android:textColor="@color/white"
+                        android:text="提交"
+                        android:background="@drawable/bg_button2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
 
 
-                <top.androidman.SuperButton
-                    android:layout_marginTop="60dp"
-                    android:id="@+id/me_feedback_sb_submit"
-                    android:layout_height="40dp"
-                    android:layout_width="100dp"
-                    android:layout_gravity="center"
-                    app:corner="10dp"
-                    app:text="提交"
-                    app:textSize="20dp"
-                    app:textColor="@color/black"
-                    app:color_normal="@color/div_white" />
 
             </LinearLayout>
 

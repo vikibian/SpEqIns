@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#EEEEEE"
     tools:context=".fragment.MeFragment">
 
 
@@ -17,15 +18,17 @@
         <LinearLayout
             android:background="@color/lightblue"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:orientation="vertical">
             <LinearLayout
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_margin="10dp">
+                android:layout_margin="25dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="50dp"
                     android:layout_height="50dp"

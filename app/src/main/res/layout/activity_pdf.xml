@@ -7,6 +7,28 @@
     android:orientation="vertical"
     tools:context=".activity.PDFActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_pdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+
+            <TextView
+                android:text="五号电梯"
+                android:layout_weight="3"
+                android:id="@+id/toolbar_pdf_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:singleLine="true"
+                android:textColor="@color/white" />
+
+
+
+    </androidx.appcompat.widget.Toolbar>
+
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
@@ -16,9 +38,14 @@
     </com.github.barteksc.pdfviewer.PDFView>
 
     <Button
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="2dp"
         android:id="@+id/btn_pdf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@drawable/bg_button"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:textColor="@color/white"
         android:text="确定" />
 
 </LinearLayout>

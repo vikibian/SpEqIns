@@ -12,9 +12,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
     <LinearLayout
+        android:paddingBottom="5dp"
+        android:alpha="50"
+        android:background="#F0F5F5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <!--<com.jaredrummler.materialspinner.MaterialSpinner-->
             <!--android:id="@+id/sp_devid"-->
@@ -23,9 +26,13 @@
             <!--android:layout_width="0dp"-->
             <!--android:layout_height="wrap_content" />-->
         <TextView
+            android:layout_gravity="center_vertical"
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:layout_weight="1"
             android:layout_marginLeft="5dp"
             android:text="设备类别: "
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <com.jaredrummler.materialspinner.MaterialSpinner
@@ -36,7 +43,7 @@
             android:textAlignment="center"
             app:ms_background_selector="@drawable/bg_sp"
             android:layout_weight="1"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
     </LinearLayout>

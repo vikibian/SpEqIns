@@ -39,11 +39,11 @@ public class ShowVideoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_video);
-//        videoPath = (List<String>) getIntent().getSerializableExtra("video");
-        videoPath.add("http://39.97.108.172:8080/pic/yuhang/%20video_1584256348490.mp4");
-        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584540967093.mp4");
-        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584582023465.mp4");
-        videoPath.add("http://39.97.108.172:8080/pic/video_1584240973852.mp4");
+        videoPath = (List<String>) getIntent().getSerializableExtra("video");
+//        videoPath.add("http://39.97.108.172:8080/pic/yuhang/%20video_1584256348490.mp4");
+//        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584540967093.mp4");
+//        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584582023465.mp4");
+//        videoPath.add("http://39.97.108.172:8080/pic/video_1584240973852.mp4");
         initView();
     }
 
@@ -184,6 +184,7 @@ public class ShowVideoActivity extends AppCompatActivity {
                 }
                 mCurrentHolder.flVideo.addView(textureView);
             }
+//            Log.e("视频测试  ",videoPath.get(mCurrentPosition));
             videoPlayer.setDataSource(videoPath.get(mCurrentPosition));
             videoPlayer.prepare();
         }

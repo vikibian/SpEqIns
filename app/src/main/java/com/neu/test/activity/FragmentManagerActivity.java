@@ -93,7 +93,7 @@ public class FragmentManagerActivity extends AppCompatActivity {
         //绑定自定义的toolbar组件设置toolbar上面的文字
         simpleToolbar = findViewById(R.id.simple_toolbar);
         simpleToolbar.setLeftTitleText(getResources().getString(R.string.app_name));
-        simpleToolbar.setRightTitleText(LoginActivity.inputName);
+        simpleToolbar.setRightTitleText(LoginActivity.user.getUSERNAME());
 
     }
 

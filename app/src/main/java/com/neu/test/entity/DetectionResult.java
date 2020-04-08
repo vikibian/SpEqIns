@@ -175,9 +175,9 @@ public class DetectionResult implements Serializable {
   }
 
   //测试
-  private String CHANGEDWAY;
+  private String CHANGEDWAY = "" ;
   private String CHANGEDACTION;
-  private String CHANGEDFINISHTIME;
+  private String CHANGEDFINISHTIME = "";
   private String CHANGEDRESULT;
 
   public String getCHANGEDWAY() {
@@ -210,5 +210,42 @@ public class DetectionResult implements Serializable {
 
   public void setCHANGEDRESULT(String CHANGEDRESULT) {
     this.CHANGEDRESULT = CHANGEDRESULT;
+  }
+
+  private String YINHUANLEVEL = "";//隐患等级
+  private String PHONE = "";//手机号
+  private String LONGITUDE = "";//经度
+  private String LATITUDE = "";//纬度
+
+  public String getYINHUANLEVEL() {
+    return YINHUANLEVEL;
+  }
+
+  public void setYINHUANLEVEL(String YINHUANLEVEL) {
+    this.YINHUANLEVEL = YINHUANLEVEL;
+  }
+
+  public String getPHONE() {
+    return PHONE;
+  }
+
+  public void setPHONE(String PHONE) {
+    this.PHONE = PHONE;
+  }
+
+  public String getLONGITUDE() {
+    return LONGITUDE;
+  }
+
+  public void setLONGITUDE(String LONGITUDE) {
+    this.LONGITUDE = LONGITUDE;
+  }
+
+  public String getLATITUDE() {
+    return LATITUDE;
+  }
+
+  public void setLATITUDE(String LATITUDE) {
+    this.LATITUDE = LATITUDE;
   }
 }

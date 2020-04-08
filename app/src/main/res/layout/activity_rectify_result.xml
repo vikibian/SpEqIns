@@ -83,7 +83,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="vertical"
@@ -392,19 +392,23 @@
                 android:numColumns="3"
                 android:id="@+id/rectify_result_gridview"
                 android:layout_width="match_parent"
+                android:paddingBottom="10dp"
                 android:layout_height="50dp">
 
             </com.neu.test.layout.MyGridView>
 
             <Button
+                android:layout_gravity="bottom"
                 android:background="@drawable/bg_button"
-                android:layout_marginLeft="100dp"
-                android:layout_marginRight="100dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:id="@+id/rectify_result_item_submit_button"
-                android:text="确定"
+                android:text="提交"
+                android:textColor="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="35dp" />
+
 
         </LinearLayout>
 

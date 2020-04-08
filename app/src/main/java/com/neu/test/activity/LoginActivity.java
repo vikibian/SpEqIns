@@ -27,7 +27,10 @@ import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.entity.Result;
+import com.neu.test.entity.ResultForTaskAndUser;
 import com.neu.test.entity.Task;
+import com.neu.test.entity.User;
+import com.neu.test.net.callback.ListTaskAndUserCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.net.OkHttp;
 import com.neu.test.util.BaseUrl;
@@ -61,18 +64,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button bt_login; //登录
     private Button bt_signin; //注册
     String url;  //登录的接口网址
+    public static User user = new User();
 
     private SharedPreferences sharedPreferences;
 
     private boolean isSuccess ;
-//    private SuggestionActivitySaveDataUtil saveDataUtil ;
-//    public static String phoneNumber ="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        saveDataUtil = new SuggestionActivitySaveDataUtil(getApplicationContext());
+
         init();
     }
 
@@ -122,7 +125,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             inputName = input_name.getText().toString().trim();
             inputPassword = input_password.getText().toString().trim();
 
-            getDataBypost();
+//            getDataBypost();
+            getTasksAndUserBypost();
         }
 
 
@@ -173,6 +177,66 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                    Intent intent = new Intent(LoginActivity.this,RectifyResultActivity.class);
                     intent.putExtra("userTask", (Serializable) tasks);
                     Log.e("TAG"," tasks: "+tasks.size());
+                    intent.putExtra("userName",inputName);
+                    startActivity(intent);
+                    finish();
+                }
+                else {
+                    Toasty.error(LoginActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
+
+                }
+            }
+        });
+    }
+
+    private void getTasksAndUserBypost() {
+        url = BaseUrl.BaseUrl+"getUserAndTask";
+        Log.d(TAG,"POST url: "+url);
+        Map<String, String> map = new HashMap<>();
+        map.put("username",inputName);
+        map.put("password",inputPassword);
+        Log.e(TAG,"map: "+ map.toString());
+
+
+        String gson = new Gson().toJson(map);
+        Log.e(TAG,"gson: "+ gson);
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, gson, new ListTaskAndUserCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                System.out.println(e.getMessage());
+                Log.e("error"," "+e.toString());
+
+                Toasty.warning(LoginActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(ResultForTaskAndUser<List<Task>, User> response, int i) {
+                if(response.getMessage().equals("登录成功")){
+
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putString("name",inputName);
+                    edit.putString("password",inputPassword);
+                    edit.commit();
+
+                    Toasty.success(LoginActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
+                    List<Task> tasks = response.getContent();
+                    if(response.getContent().size()==0){
+
+                        Log.e("TAG"," response.getContent: "+"无数据");
+                        tasks = new ArrayList<Task>();
+                    }
+                    user = response.getUserInfo();
+                    Toast.makeText(LoginActivity.this,"成功",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
+                    intent.putExtra("userTask", (Serializable) tasks);
+                    Log.e("TAG"," tasks: "+tasks.size());
+                    Log.e("TAG"," user: "+user.getLOGINNAME());
+                    Log.e("TAG"," user: "+user.getLOGINPWD());
+                    Log.e("TAG"," user: "+user.getUSERNAME());
+                    Log.e("TAG"," user: "+user.getUSERID());
+                    Log.e("TAG"," user: "+user.getUSEUNITNAME());
                     intent.putExtra("userName",inputName);
                     startActivity(intent);
                     finish();

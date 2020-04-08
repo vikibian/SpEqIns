@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class SearchUtil {
     private static String TAG = "SearchUtil";
-    public String[] deviceType = {"锅炉","压力容器","电梯","起重机","专用机动车辆","大型游乐设施","压力管道","客车索道"};
+    public String[] deviceType = {"锅炉","压力容器","电梯","起重机","厂车","大型游乐设施","压力管道","客车索道"};
     public String[] deviceQualify = {"合格","不合格","整改合格"};
     public String[] taskType = {"自查","整改","下派","临时"};
-    public String[] classofdev ={"1000","2000","3000","4000","5000","6000","7000","8000"};
+    public String[] classofdev ={"1000","2000","3000","4000","5000","6000","8000","9000"};
     public Map<String,String> typeToDevclass = new HashMap<>();
     public Map<String,String> devclassToType = new HashMap<>();
     public Map<String,String> map_devclass = new HashMap<>();

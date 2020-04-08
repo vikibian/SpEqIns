@@ -15,7 +15,18 @@ public class User {
     private String USEUNITNAME;  //单位名
     private String PHONE;  //手机
     private String ZGZTYPE;  //资格证类型
-    private String ZHENGJIANHAO;  //证件号
+//    private String ZHENGJIANHAO;  //证件号
+
+    private String IDCARD;  //证件号
+    private String UNITTYPE;  //单位类别
+    private String APPROVENAME;  //审核人
+    private String APPROVETIME;  //审核时间
+    private String EMAIL;  //邮箱
+    private String UNITCODE; //统一社会信用代码
+    private String PROVINCE; // 省级
+    private String CITY;   //市级
+    private String DISTRICT; // 区级
+    private String SUPUNIT; // 上级监察单位（使用单位）
 
     public int getUSERID() {
         return USERID;
@@ -129,16 +140,92 @@ public class User {
         this.ZGZTYPE = ZGZTYPE;
     }
 
-    public String getZHENGJIANHAO() {
-        return ZHENGJIANHAO;
+//    public String getZHENGJIANHAO() {
+//        return ZHENGJIANHAO;
+//    }
+
+//    public void setZHENGJIANHAO(String ZHENGJIANHAO) {
+//        this.ZHENGJIANHAO = ZHENGJIANHAO;
+//    }
+
+
+    public String getIDCARD() {
+        return IDCARD;
     }
 
-    public void setZHENGJIANHAO(String ZHENGJIANHAO) {
-        this.ZHENGJIANHAO = ZHENGJIANHAO;
+    public void setIDCARD(String IDCARD) {
+        this.IDCARD = IDCARD;
     }
 
+    public String getUNITTYPE() {
+        return UNITTYPE;
+    }
 
+    public void setUNITTYPE(String UNITTYPE) {
+        this.UNITTYPE = UNITTYPE;
+    }
 
+    public String getAPPROVENAME() {
+        return APPROVENAME;
+    }
 
+    public void setAPPROVENAME(String APPROVENAME) {
+        this.APPROVENAME = APPROVENAME;
+    }
 
+    public String getAPPROVETIME() {
+        return APPROVETIME;
+    }
+
+    public void setAPPROVETIME(String APPROVETIME) {
+        this.APPROVETIME = APPROVETIME;
+    }
+
+    public String getEMAIL() {
+        return EMAIL;
+    }
+
+    public void setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
+    }
+
+    public String getUNITCODE() {
+        return UNITCODE;
+    }
+
+    public void setUNITCODE(String UNITCODE) {
+        this.UNITCODE = UNITCODE;
+    }
+
+    public String getPROVINCE() {
+        return PROVINCE;
+    }
+
+    public void setPROVINCE(String PROVINCE) {
+        this.PROVINCE = PROVINCE;
+    }
+
+    public String getCITY() {
+        return CITY;
+    }
+
+    public void setCITY(String CITY) {
+        this.CITY = CITY;
+    }
+
+    public String getDISTRICT() {
+        return DISTRICT;
+    }
+
+    public void setDISTRICT(String DISTRICT) {
+        this.DISTRICT = DISTRICT;
+    }
+
+    public String getSUPUNIT() {
+        return SUPUNIT;
+    }
+
+    public void setSUPUNIT(String SUPUNIT) {
+        this.SUPUNIT = SUPUNIT;
+    }
 }

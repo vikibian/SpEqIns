@@ -146,6 +146,10 @@ dependencies {
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
     //仿抖音
     implementation 'com.lmxjw3.media:videoplay:1.0.0'
+    //验证码输入
+    implementation 'com.hxb:verification:1.0.1'
+    //badgeview
+    implementation 'q.rorbin:badgeview:1.1.3'
 }
 
 repositories {

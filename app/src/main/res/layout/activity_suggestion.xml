@@ -85,7 +85,7 @@
 
    <ScrollView
        android:layout_width="match_parent"
-       android:layout_height="match_parent">
+       android:layout_height="wrap_content">
 
        <LinearLayout
            android:orientation="vertical"
@@ -344,21 +344,24 @@
 
            <!--</LinearLayout>-->
 
-           <Button
-               android:layout_marginRight="100dp"
-               android:layout_marginLeft="100dp"
-               android:background="@drawable/bg_button"
-               android:layout_marginTop="5dp"
-               android:id="@+id/btn_submit_suggestion"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_gravity="right|bottom"
-               android:text="确定"/>
+
 
 
        </LinearLayout>
 
    </ScrollView>
+
+    <Button
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@drawable/bg_button"
+        android:layout_marginTop="5dp"
+        android:id="@+id/btn_submit_suggestion"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:textColor="@color/white"
+        android:layout_gravity="right|bottom"
+        android:text="确定"/>
 
 
 </LinearLayout>

@@ -14,18 +14,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -38,13 +43,16 @@ import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.entity.CheckLists;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
+import com.neu.test.layout.MyListView;
 import com.neu.test.layout.SlideLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.net.callback.ListCheckListCallBack;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
@@ -83,6 +91,10 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
     private Map<Integer,Integer> donepositions = new HashMap<>();
     private Map<Integer,Integer> addpositions = new HashMap<>();
 
+    private MyListView listView;
+    private ArrayAdapter adapter;
+    private List<String> titleData = new ArrayList<>();
+    private List<CheckLists> checkLists = new ArrayList<>();
 
     private String userName;
     private String url;
@@ -94,7 +106,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
     private int pposition;
 
 
-    DetctionActivity.ViewHolder viewHolder=null;
+    ViewHolder viewHolder=null;
     View view1;
     WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private Toolbar toolbar;
@@ -167,24 +179,29 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 
         ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
 
-
-
-        tv_totalitem.setText("------共"+detectionResults.size()+"项--已完成"+donepositions.size()+"项-------");
+        reflashTotalItem();
         setEnable(button_left);//默认选择未操作的
         detectionAdapter = new ReDetectionActivity.ReDetectionAdapter(detectionundo,undo);
         lv_detection.setAdapter(detectionAdapter);
 
 
         btn_sure_detection.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
+//            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
+                List<DetectionResult> list = new ArrayList<>();
+                for(int i=0;i<detectionResults.size();i++){
+                    if (detectionResults.get(i).getSTATUS().equals("2")){
+                        list.add(detectionResults.get(i));
+                    }
+                }
 
-                List<DetectionResult> list = detectionResults.stream().filter(dete -> dete.getSTATUS().equals("2")).collect(Collectors.toList());
+//                List<DetectionResult> list = detectionResults.stream().filter(dete -> dete.getSTATUS().equals("2")).collect(Collectors.toList());
                 if (list.size() != 0) {
                     Toasty.warning(ReDetectionActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
                 } else {
                     String string = new Gson().toJson(detectionResults);
+                    Log.e(TAG,"detectionResults: "+string);
                     String url = BaseUrl.BaseUrl+"setItemResult";
                     OkHttp okHttp = new OkHttp();
                     okHttp.postBypostString(url, string, new FileResultCallBack() {
@@ -200,6 +217,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                             editor.clear();
                             Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
                             intent.putExtra("listData", (Serializable) detectionResults);
+                            intent.putExtra("task",task);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                         }
@@ -212,6 +230,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(View view) {
                 String string = new Gson().toJson(detectionResults);
+                Log.e(TAG,"detectionResults: "+string);
+                System.out.println(string);
                 String url = BaseUrl.BaseUrl+"setItemResult";
                 OkHttp okHttp = new OkHttp();
                 okHttp.postBypostString(url, string, new FileResultCallBack() {
@@ -223,16 +243,38 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onResponse(FilePathResult filePathResult, int i) {
                         Log.e("message",filePathResult.getMessage());
-                      editorSave();
-                      intent1.putExtra("position",pposition);
-                      intent1.putExtra("isDoing",isDoing);
-                      intent1.putExtra("where","finish");
+                        editorSave();
+                        intent1.putExtra("position",pposition);
+                        intent1.putExtra("isDoing",isDoing);
+                        intent1.putExtra("where","finish");
                         setResult(RESULT_OK,intent1);
                         finish();
                     }
                 });
             }
         });
+    }
+
+    private void reflashTotalItem() {
+//        tv_totalitem.setText("---------待操作"+(undopositions.size())+"项--已完成"+donepositions.size()+"项---------");
+        if (undopositions.size() != 0){
+            button_left.setText("未操作("+undopositions.size()+")");
+        }else if (undopositions.size() == 0){
+            button_left.setText("未操作");
+        }
+
+        if (donepositions.size() != 0){
+            button_middle.setText("已操作("+donepositions.size()+")");
+        }else if (donepositions.size() == 0){
+            button_middle.setText("已操作");
+        }
+
+        if (addpositions.size() != 0){
+            button_right.setText("添加项("+addpositions.size()+")");
+        }else if (addpositions.size() == 0){
+            button_right.setText("添加项");
+        }
+
     }
 
     private void splitDatas() {
@@ -302,14 +344,67 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
             case R.id.action_add_item://搜索，根据需要显示/隐藏下载按钮
                 LayoutInflater layoutInflater = LayoutInflater.from(ReDetectionActivity.this);
                 final View textEntryView = layoutInflater.inflate(R.layout.layout_add_item, null);
+
+                EditText add_title = (EditText) textEntryView.findViewById(R.id.add_title);
+                EditText add_schedule = (EditText) textEntryView.findViewById(R.id.add_schedule);
+                EditText add_law = (EditText) textEntryView.findViewById(R.id.add_law);
+
+                listView = textEntryView.findViewById(R.id.lv_search);
+                adapter = new ArrayAdapter<String>(ReDetectionActivity.this,android.R.layout.simple_list_item_1,titleData);
+                listView.setAdapter((ListAdapter) adapter);
+
+                View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if(v.getId() == R.id.add_schedule ||v.getId() == R.id.add_law){
+                            if(hasFocus){
+                                listView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                };
+                add_schedule.setOnFocusChangeListener(onFocusChangeListener);
+                add_law.setOnFocusChangeListener(onFocusChangeListener);
+
+                TextWatcher textWatcher = new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        Log.e("tttttttbeTtChanged:",s.toString());
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        int size = s.length();
+                        if(size>1){
+                            getTitleDataList(s.toString(),task.getDEVCLASS());
+                        }else {
+                            listView.setVisibility(View.GONE);
+                        }
+                        Log.e("tttttttonTextChanged:",s.toString());
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                };
+
+                add_title.addTextChangedListener(textWatcher);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        add_title.removeTextChangedListener(textWatcher);
+                        add_title.setText(titleData.get(position));
+                        add_schedule.setText(checkLists.get(position).getMONITORITEMS());
+                        add_title.addTextChangedListener(textWatcher);
+                        listView.setVisibility(View.GONE);
+                    }
+                });
+
                 AlertDialog dlg = new AlertDialog.Builder(ReDetectionActivity.this)
                         .setView(textEntryView)
                         .setPositiveButton("确定",new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                EditText add_title = (EditText) textEntryView.findViewById(R.id.add_title);
-                                EditText add_schedule = (EditText) textEntryView.findViewById(R.id.add_schedule);
-                                EditText add_law = (EditText) textEntryView.findViewById(R.id.add_law);
                                 DetectionResult detectionResult = new DetectionResult();
                                 detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
                                 detectionResult.setJIANCHAXIANGTITLE(add_title.getText().toString());
@@ -321,6 +416,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                                 detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
                                 ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
                                 detectionadd.add(detectionResult);
+                                detectionResults.add(detectionResult);
                                 Log.e(TAG, "onClick: addpositions:"+addpositions.size());
                                 addpositions.put(addpositions.size(),detectionResults.size()-1);
 
@@ -328,7 +424,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                                 detectionAdapter.notifyDataSetChanged();
 
 //                                lv_detection.setAdapter(detectionAdapter);
-
+                                reflashTotalItem();
                                 setEnable(button_right);
                                 reflashList(detectionadd,add);
                                 select = "right";
@@ -431,7 +527,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 
             //加载item的布局
             convertView = View.inflate(ReDetectionActivity.this, R.layout.test_list_item2, null);
-            viewHolder = new DetctionActivity.ViewHolder();
+            viewHolder = new ViewHolder();
             viewHolder.detction_item_text_leftnum= (TextView) convertView.findViewById(R.id.detction_item_text_leftnum_2);
             viewHolder.detction_item_text_context= (TextView) convertView.findViewById(R.id.detction_item_text_context_2);
             viewHolder.rectify_item_status_rectified = convertView.findViewById(R.id.rectify_item_status_rectified_2);
@@ -439,6 +535,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
             viewHolder.rectify_item_status_unrectify = convertView.findViewById(R.id.rectify_item_status_unrectify_2);
             viewHolder.detction_item_image_right = convertView.findViewById(R.id.detction_item_image_right_2);
             viewHolder.ll_test = convertView.findViewById(R.id.ll_ttt);
+            viewHolder.detction_item_image_error = convertView.findViewById(R.id.detction_item_imageview_error_2);
+
             convertView.setTag(viewHolder);
             //检查项标题
             viewHolder.detction_item_text_context.setText(listdetectionresult.get(position).getJIANCHAXIANGTITLE());
@@ -533,22 +631,16 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                     //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
                     if ((listdetectionresult.get(position).getISCHANGED().equals(searchUtil.changed))
                             && listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
-                        jumpToRectifyResultActivity(position);
+                        jumpToRectifyResultActivity(getIndex(flag,position));
                     }else {
                         jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
                     }
                 }
             });
 
-            viewHolder.detction_item_text_context.setOnClickListener(new View.OnClickListener() {
+            viewHolder.detction_item_image_error.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                }
-            });
-            viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
                     dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
                     View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
                     TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
@@ -560,13 +652,38 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                             dlg.dismiss();
                         }
                     });
-                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
-                    tv_laws.setText(detectionResults.get(position).getLAW());
+//                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
+//                    tv_laws.setText(detectionResults.get(position).getLAW());
+                    tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
+                    tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
                     dlg.setContentView(textEntryView);
                     dlg.show();
-                    return true;
                 }
             });
+
+//            viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
+//                    View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
+//                    TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
+//                    TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
+//                    Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
+//                    btn_cancel.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            dlg.dismiss();
+//                        }
+//                    });
+////                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
+////                    tv_laws.setText(detectionResults.get(position).getLAW());
+//                    tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
+//                    tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
+//                    dlg.setContentView(textEntryView);
+//                    dlg.show();
+//                    return true;
+//                }
+//            });
             return convertView;
         }
     }
@@ -660,6 +777,23 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 detectionResults.get(position).setCHANGEDIMAGE("");
                 detectionResults.get(position).setCHANGEDVIDEO("");
 
+                if (status.equals(searchUtil.nohege)){
+                    String yinhuanlevel = data.getStringExtra("yinhuanlevel");
+                    String changway = data.getStringExtra("changway");
+                    detectionResults.get(position).setYINHUANLEVEL(yinhuanlevel);
+                    detectionResults.get(position).setCHANGEDWAY(changway);
+                }
+
+                String phone = data.getStringExtra("phone");
+                detectionResults.get(position).setPHONE(phone);
+                String longitude = data.getStringExtra("longitude");
+                detectionResults.get(position).setLONGITUDE(longitude);
+                String latitude = data.getStringExtra("latitude");
+                detectionResults.get(position).setLATITUDE(latitude);
+                Log.e(TAG," 手机号："+phone);
+                Log.e(TAG," 经度："+longitude);
+                Log.e(TAG," 纬度："+latitude);
+
 //                lv_detection.setAdapter(detectionAdapter);
                 judgeSelect();
             }
@@ -674,6 +808,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 Log.e(TAG," result: "+detectionResults.get(pos).getCHANGEDRESULT());
                 Log.e(TAG,"imagepath: "+detectionResults.get(pos).getCHANGEDIMAGE());
                 Log.e(TAG,"videopath: "+detectionResults.get(pos).getCHANGEDVIDEO());
+                Log.e(TAG,"status: "+detectionResults.get(pos).getSTATUS());
+                Log.e(TAG,"pos: "+pos);
 
 //                lv_detection.setAdapter(detectionAdapter);
                 judgeSelect();
@@ -686,6 +822,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
         detectiondone.clear();
         donepositions.clear();
         undopositions.clear();
+        detectionadd.clear();
+        addpositions.clear();
         splitDatas();
 
         if (select.equals("left")){
@@ -707,6 +845,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
         public CheckBox rectify_item_status_rectifyliving;
         public ImageView detction_item_image_right;
         public LinearLayout ll_test;
+
+        public ImageView detction_item_image_error;
     }
 
 
@@ -715,6 +855,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
     public void onResume() {
         super.onResume();
         lv_detection.setAdapter(detectionAdapter);
+        reflashTotalItem();
         Log.e(TAG," onResume");
     }
 
@@ -772,5 +913,41 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
     editor.putString(key,json2);
     editor.commit();
   }
+
+    public void getTitleDataList(String content,String Devclass){
+        Map<String, String> map = new HashMap<>();
+        map.put("content",content);
+        map.put("DEVCLASS",Devclass);
+
+        String url = BaseUrl.BaseUrl+"findMonitorContent";
+        Log.e(TAG,"url: "+url);
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListCheckListCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Log.e(TAG,"onError: "+e.toString());
+                Toasty.warning(ReDetectionActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
+
+//            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onResponse(Result<List<CheckLists>> listResult, int i) {
+                Log.e("tttt",listResult.getMessage());
+                if (listResult.getMessage().equals("操作成功")) {
+                    List<CheckLists> list = listResult.getContent();
+                    checkLists.addAll(list);
+                    titleData.clear();
+                    for (int j=0;j<list.size();j++){
+                        titleData.add(list.get(j).getMONITORCONTENT());
+                    }
+//                    titleData = list.stream().map(CheckLists::getMONITORCONTENT).collect(Collectors.toList());
+                    Log.e("tttt",titleData.size()+"");
+                    adapter = new ArrayAdapter<String>(ReDetectionActivity.this,android.R.layout.simple_list_item_1,titleData);
+                    listView.setAdapter(adapter);
+                    listView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
 
 }

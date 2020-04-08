@@ -76,7 +76,7 @@
 
         android:layout_width="match_parent"
 
-        android:layout_height="50dp"
+        android:layout_height="45dp"
 
         android:orientation="horizontal"
 
@@ -100,7 +100,7 @@
 
             app:iconNormal="@drawable/ic_assignment_black_24dp"
 
-            app:iconSelected="@drawable/ic_assignment_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_assignment_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -108,7 +108,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
             app:itemMarginTop="-5dp"
 
@@ -134,7 +134,7 @@
 
             app:iconNormal="@drawable/ic_build_black_24dp"
 
-            app:iconSelected="@drawable/ic_build_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_build_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -143,7 +143,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
 
             app:itemMarginTop="-5dp"
@@ -166,7 +166,7 @@
 
             app:iconNormal="@drawable/ic_assignment_returned_black_24dp"
 
-            app:iconSelected="@drawable/ic_assignment_returned_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_assignment_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -174,7 +174,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
 
             app:itemMarginTop="-5dp"
@@ -195,7 +195,7 @@
 
             app:iconNormal="@drawable/ic_hourglass_empty_black_24dp"
 
-            app:iconSelected="@drawable/ic_hourglass_empty_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_hourglass_empty_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -203,7 +203,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
             app:itemMarginTop="-5dp"
 
@@ -224,7 +224,7 @@
 
             app:iconNormal="@drawable/ic_search_black_24dp"
 
-            app:iconSelected="@drawable/ic_search_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_search_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -232,7 +232,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
             app:itemMarginTop="-5dp"
 
@@ -257,7 +257,7 @@
 
             app:iconNormal="@drawable/ic_account_circle_black_24dp"
 
-            app:iconSelected="@drawable/ic_account_circle_blue_a700_24dp"
+            app:iconSelected="@drawable/ic_account_circle_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -265,7 +265,7 @@
 
             app:textColorNormal="@color/black"
 
-            app:textColorSelected="@color/colorPrimary"
+            app:textColorSelected="@color/lightblue"
 
             app:itemMarginTop="-5dp"
 

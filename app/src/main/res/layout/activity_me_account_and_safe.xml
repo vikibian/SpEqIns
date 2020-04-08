@@ -19,17 +19,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/about_appbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/me_account_safe_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@color/colorPrimary"
+                    android:background="?attr/colorPrimary"
                     app:titleTextColor="@color/white"
                     android:gravity="center"
                     app:theme="@style/AppTheme.PopupOverlay"
@@ -49,143 +44,30 @@
 
                 </androidx.appcompat.widget.Toolbar>
 
-            </com.google.android.material.appbar.AppBarLayout>
 
-            <LinearLayout
-                android:layout_marginTop="20dp"
+            <com.qmuiteam.qmui.layout.QMUILinearLayout
+                android:background="#EEEEEE"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:orientation="horizontal"
+                <ScrollView
+                    android:background="@color/qmui_config_color_white"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    >
 
-                    <TextView
-                        android:id="@+id/me_account_safe_tv_password"
-                        android:text="密          码:"
-                        android:layout_marginTop="4dp"
-                        android:textColor="@color/black"
-                        android:textSize="25sp"
-                        android:layout_width="wrap_content"
+                    <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                        android:id="@+id/me_acAndsafe_ListView"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
-                    <!--<EditText-->
-                        <!--android:enabled="false"-->
-                        <!--android:paddingLeft="10dp"-->
-                        <!--android:hint="请输入密码"-->
-                        <!--android:inputType="textPassword"-->
-                        <!--android:id="@+id/me_account_safe_et_password"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="50dp" />-->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText android:id="@+id/me_account_safe_et_password"
-                            android:paddingLeft="10dp"
-                            android:layout_width="match_parent"
-                            android:paddingTop="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:inputType="textPassword"
-                            android:hint="请输入密码" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/me_account_safe_tv_newpassword"
-                        android:text="新   密  码:"
-                        android:textColor="@color/black"
-                        android:layout_marginTop="4dp"
-                        android:textSize="25sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <!--<EditText-->
-                        <!--android:enabled="false"-->
-                        <!--android:paddingLeft="10dp"-->
-                        <!--android:hint="请输入新密码"-->
-                        <!--android:inputType="textPassword"-->
-                        <!--android:id="@+id/me_account_safe_et_newpassword"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="50dp" />-->
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText android:id="@+id/me_account_safe_et_newpassword"
-                            android:paddingLeft="10dp"
-                            android:layout_width="match_parent"
-                            android:paddingTop="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:inputType="textPassword"
-                            android:hint="请输入密码" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/me_account_safe_tv_confirmnewpassword"
-                        android:text="确认新密码:"
-                        android:textColor="@color/black"
-                        android:textSize="25sp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <!--<EditText-->
-                        <!--android:enabled="false"-->
-                        <!--android:paddingLeft="10dp"-->
-                        <!--android:hint="请再次输入新密码"-->
-                        <!--android:inputType="textPassword"-->
-                        <!--android:id="@+id/me_account_safe_et_confirmnewpassword"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="50dp" />-->
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText android:id="@+id/me_account_safe_et_confirmnewpassword"
-                            android:paddingLeft="10dp"
-                            android:layout_width="match_parent"
-                            android:paddingTop="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:inputType="textPassword"
-                            android:hint="请输入密码" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
+                </ScrollView>
 
 
-                <top.androidman.SuperButton
-                    android:layout_marginTop="60dp"
-                    android:id="@+id/me_account_safe_sb_confirm"
-                    android:layout_height="40dp"
-                    android:layout_width="100dp"
-                    android:layout_gravity="center"
-                    app:corner="10dp"
-                    app:text="修改"
-                    app:textSize="20dp"
-                    app:textColor="@color/black"
-                    app:color_normal="@color/div_white" />
 
-            </LinearLayout>
+
+            </com.qmuiteam.qmui.layout.QMUILinearLayout>
 
 
         </LinearLayout>

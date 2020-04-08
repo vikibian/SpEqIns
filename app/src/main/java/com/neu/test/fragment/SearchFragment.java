@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -35,6 +36,7 @@ import com.neu.test.R;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
+import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
@@ -113,6 +115,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
+        simple_toolbar.setVisibility(View.VISIBLE);
+
         initActivity(view);
 
         selectStartTime.setText(SidebarUtils.getSystemTime());
@@ -207,7 +213,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         MBsp_taskType = view.findViewById(R.id.MBsp_taskType);
 
         //设置操作人员
-        searchTtoolbarTextview.setText(LoginActivity.inputName);
+        searchTtoolbarTextview.setText(LoginActivity.user.getUSERNAME());
 
 
         //search_select_time.setOnClickListener(this);//时间选择Button点击事件设置

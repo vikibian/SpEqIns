@@ -14,6 +14,7 @@ import java.util.List;
  * email : 710256138@qq.com
  */
 public class ReloadImageAndVideo {
+    private static final String TAG = "ReloadImageAndVideo";
 
 
     public List<String> getPathlist(String ImagePath, String VideoPath, String loginname){
@@ -53,5 +54,74 @@ public class ReloadImageAndVideo {
         }
 
         return pathlistOfPhoto;
+    }
+
+    public List<String> decodeImagePath(String imagePath,String name) {
+        List<String> paths = new ArrayList<>();
+        if ((!imagePath.equals(""))&&(!imagePath.equals(null))){
+            String[] splitpath = imagePath.split(",");
+            for (int i=0;i<splitpath.length;i++){
+
+                String imgPath = Environment.getExternalStorageDirectory() +"/DCIM/"+name+"/Photo/"+splitpath[i];
+                File file = new File(imgPath);
+                //本地有，从本地读取
+                if(file.exists()){
+                    paths.add(imgPath);
+                }//若本地没有，从服务器获取
+                else {
+                    String path = BaseUrl.pathOfPhotoAndVideo+name+"/"+splitpath[i];
+                    paths.add(path);
+                }
+            }
+        }else {
+
+        }
+        return paths;
+    }
+
+    public List<String> decodeVideoPath(String videoPath,String name) {
+
+        List<String> paths = new ArrayList<>();
+        if ((!videoPath.equals(""))&&(!videoPath.equals(null))){
+            String[] splitpath = videoPath.split(",");
+            for (int i=0;i<splitpath.length;i++){
+                String vdoPath = Environment.getExternalStorageDirectory() +"/DCIM/"+name+"/Video/"+splitpath[i];
+                File file = new File(vdoPath);
+                //本地有，从本地读取
+                if(file.exists()){
+                    paths.add(vdoPath);
+                }//若本地没有，从服务器获取
+                else {
+                    String path = BaseUrl.pathOfPhotoAndVideo+name+"/"+splitpath[i];
+                    paths.add(path);
+                }
+            }
+        }else {
+
+        }
+        return paths;
+    }
+
+    public int getVideoNumber(String videoPath) {
+
+        int number = 0;
+        if ((!videoPath.equals(""))&&(!videoPath.equals(null))){
+            String[] splitpath = videoPath.split(",");
+            number = splitpath.length;
+        }else {
+
+        }
+        return number;
+    }
+
+    public int getPhotoNumber(String imagePath) {
+        int number = 0;
+        if ((!imagePath.equals(""))&&(!imagePath.equals(null))){
+            String[] splitpath = imagePath.split(",");
+            number = splitpath.length;
+        }else {
+
+        }
+        return number;
     }
 }

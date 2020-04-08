@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -131,12 +132,13 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
         toolbar_subtitleLeft.setTextSize(13);
         toolabr_subtitleRight.setTextSize(13);
 
-        toolbar_title.setText(getResources().getString(R.string.app_name));
+        toolbar_title.setText(taskType+"    ");
         toolbar_subtitleLeft.setText(title);
         toolabr_subtitleRight.setText(taskType);
         toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
 
         this.setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -206,7 +208,7 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 //        detectionResult.setCHANGEDIMAGE("image_202031610246.jpg,image_202031662445.jpg,image_202031610246.jpg,image_202031662445.jpg");//image_202031610246.jpg,image_202031662445.jpg  image_202031610246.jpg,image_202031662445.jpg,image_202031610246.jpg,image_202031662445.jpg
         List<String> paths = new ArrayList<>();
         String imagePath = "";
-        imagePath = detectionResult.getCHANGEDIMAGE();
+        imagePath = detectionResult.getREFJIM();
         if ((!imagePath.equals(""))&&(!imagePath.equals(null))){
             String[] splitpath = imagePath.split(",");
             for (int i=0;i<splitpath.length;i++){
@@ -223,7 +225,7 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 //        detectionResult.setCHANGEDVIDEO("video_1584540967093.mp4,video_1584582023465.mp4,video_1584540967093.mp4,video_1584582023465.mp4");
         List<String> paths = new ArrayList<>();
         String videoPath = "";
-        videoPath = detectionResult.getCHANGEDVIDEO();
+        videoPath = detectionResult.getREFJVI();
         if ((!videoPath.equals(""))&&(!videoPath.equals(null))){
             String[] splitpath = videoPath.split(",");
             for (int i=0;i<splitpath.length;i++){
@@ -235,6 +237,24 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 
         }
         return paths;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

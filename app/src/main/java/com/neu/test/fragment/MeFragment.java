@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.allen.library.SuperTextView;
+import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.DialogSettings;
+import com.kongzue.dialog.v3.MessageDialog;
 import com.neu.test.R;
 import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.LoginActivity;
@@ -21,7 +26,9 @@ import com.neu.test.activity.MeAboutActivity;
 import com.neu.test.activity.MeAccountAndSafeActivity;
 import com.neu.test.activity.MeFeedbackActivity;
 import com.neu.test.activity.MeInformActivity;
+import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.CacheUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -43,6 +50,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public static final int REQUEST_CODE_LAW= 4;
     private TextView nametext;
     private QMUIGroupListView groupListView ;
+    private QMUIGroupListView.Section section ;
 
     int me;
 
@@ -56,12 +64,18 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_me, container, false);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
+        simple_toolbar.setVisibility(View.GONE);
+
+        section = new QMUIGroupListView.Section(getContext());
+
         init(view);
         initGroupListview(view);
         return view;
     }
 
-    private void initGroupListview(View view) {
+    private void initGroupListview(View view)  {
 
         int height = QMUIResHelper.getAttrDimen(getContext(), com.qmuiteam.qmui.R.attr.qmui_list_item_height);
 
@@ -90,8 +104,19 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         Item4.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item4.setTag(4);
 
-        QMUICommonListItemView Item5 = groupListView.createItemView("清空缓存");
-        Item5.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+//        QMUICommonListItemView Item5 = groupListView.createItemView("清空缓存");
+//        Item5.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+//        Item5.setTag(5);
+
+        String cachesize = "";
+        cachesize = getCacheSize();
+
+        QMUICommonListItemView Item5 = groupListView.createItemView(
+                null,
+                "清空缓存",
+                cachesize,
+                QMUICommonListItemView.HORIZONTAL,
+                QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item5.setTag(5);
 
 
@@ -116,7 +141,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         groupListView = view.findViewById(R.id.me_fragment_ListView);
         nametext = view.findViewById(R.id.me_fragment_nametext);
 
-        nametext.setText(LoginActivity.inputName);
+        nametext.setText(LoginActivity.user.getUSERNAME());
     }
 
     @Override
@@ -148,9 +173,36 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     getActivity().startActivityForResult(intent,REQUEST_CODE_ABOUT);
                     break;
                 case 5:
-                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
-                    File cacheFile = new File(cachePath);
-                    clearAppCache(cacheFile);
+//                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+//                    File cacheFile = new File(cachePath);
+//                    clearAppCache(cacheFile);
+                    MessageDialog.build((AppCompatActivity) getContext())
+                            .setStyle(DialogSettings.STYLE.STYLE_IOS)
+                            .setTitle("提示")
+                            .setMessage("该操作会清空该软件的存储文件！")
+                            .setOkButton("确定", new OnDialogButtonClickListener() {
+                                @Override
+                                public boolean onClick(BaseDialog baseDialog, View v) {
+                                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+                                    File cacheFile = new File(cachePath);
+                                    clearAppCache(cacheFile);
+//                                    ((QMUICommonListItemView) v).setDetailText(getCacheSize());
+                                    ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+                                    Log.e(TAG," "+groupListView.getSectionCount());
+                                    Log.e(TAG," "+ v.getTag());
+                                    return false;
+                                }
+                            })
+                            .setCancelButton("取消", new OnDialogButtonClickListener() {
+                                @Override
+                                public boolean onClick(BaseDialog baseDialog, View v) {
+
+                                    return false;
+                                }
+                            })
+                            .show();
+
+
                     break;
             }
         }
@@ -171,5 +223,26 @@ public class MeFragment extends Fragment implements View.OnClickListener {
             Toasty.info(getContext(),"缓存已清空！",Toasty.LENGTH_SHORT).show();
         }
 
+    }
+
+    private String getCacheSize(){
+        CacheUtil cacheUtil = new CacheUtil();
+        String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+        File cacheFile = new File(cachePath);
+        long cachesize = 0;
+        try {
+            cachesize = cacheUtil.getFileSizes(cacheFile);
+            Log.e(TAG,"size: "+cachesize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return cacheUtil.FormetFileSize(cachesize);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
     }
 }

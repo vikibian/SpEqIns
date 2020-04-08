@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -37,6 +38,7 @@ import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.layout.CircleRelativeLayout;
+import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListIDetailTaskCallBack;
@@ -112,6 +114,9 @@ public class CheckFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_check, null);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
+        simple_toolbar.setVisibility(View.VISIBLE);
         lv_check = view.findViewById(R.id.lv_check);
 //        sp_devid = view.findViewById(R.id.sp_devid);
         sp_devclass = view.findViewById(R.id.sp_devclass);

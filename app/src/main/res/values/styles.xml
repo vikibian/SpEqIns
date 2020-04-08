@@ -28,16 +28,16 @@
 
     <style name="NoBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
 
     <style name="QMNoBar" parent="QMUI.Compat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>

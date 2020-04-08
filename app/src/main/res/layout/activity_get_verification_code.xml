@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.GetVerificationCodeActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/me_getverifcode_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:theme="@style/AppTheme.PopupOverlay"
+                android:background="?attr/colorPrimary">
+
+                <TextView
+                    android:id="@+id/me_getverifcode_toolbar_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="标题"
+                    android:textColor="@color/white" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/me_getverifcde_content"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginRight="50dp"
+                        android:layout_marginLeft="50dp"
+                        android:textSize="15dp"
+                        android:gravity="center"
+                        android:text="123"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+
+                    <com.hxb.verification.VerificationInputView
+                        android:layout_marginTop="25dp"
+                        android:id="@+id/verification_input_view"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        app:child_count="4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+
+                    <LinearLayout
+                        android:layout_gravity="center"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="35dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:gravity="center_horizontal"
+                            android:layout_gravity="center_horizontal"
+                            android:id="@+id/me_getverifcde_tip"
+                            android:text="验证码"
+                            android:textSize="15dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:visibility="gone"
+                            android:id="@+id/me_getverifcde_reget"
+                            android:textColor="@color/white"
+                            android:text="重新获取"
+                            android:background="@drawable/bg_button2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

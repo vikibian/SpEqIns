@@ -23,6 +23,8 @@ public class GPSUtil {
     private Context context;
     private LocationManager mLocationManager;
     private String local = "";
+    private String longitude = "";
+    private String latitude ="";
 
     public GPSUtil(Context context){
         this.context = context;
@@ -55,11 +57,14 @@ public class GPSUtil {
 
             DecimalFormat df = new DecimalFormat("0.00");
             StringBuffer sb = new StringBuffer(256);
-            String El = df.format(location.getLongitude());
-            String Nl = df.format(location.getLatitude());
-            sb.append("E:"+El);
-            sb.append(" N:"+Nl);
+//            String El = df.format(location.getLongitude());
+//            String Nl = df.format(location.getLatitude());
+            longitude = df.format(location.getLongitude());
+            latitude = df.format(location.getLatitude());
+            sb.append("E:"+ longitude);
+            sb.append(" N:"+ latitude);
             local = sb.toString();
+
 
         }
 
@@ -100,4 +105,11 @@ public class GPSUtil {
         mLocationManager.removeUpdates(locationListener);
     }
 
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
 }

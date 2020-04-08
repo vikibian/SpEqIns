@@ -1,20 +1,13 @@
 package com.neu.test.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 
 import androidx.annotation.NonNull;
@@ -34,27 +26,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
-import com.google.gson.Gson;
-import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
-import com.kongzue.dialog.util.BaseDialog;
-import com.kongzue.dialog.util.DialogSettings;
-import com.kongzue.dialog.util.InputInfo;
-import com.kongzue.dialog.util.TextInfo;
-import com.kongzue.dialog.v3.InputDialog;
-import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.adapter.SuggestionGridViewAdapter;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.LocationService;
-import com.neu.test.entity.Result;
-import com.neu.test.entity.Task;
-import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
-import com.neu.test.net.callback.ListTaskCallBack;
 
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.GPSUtil;
@@ -66,14 +44,9 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
-import com.zhy.http.okhttp.callback.StringCallback;
 
-import org.json.JSONObject;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +126,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
 
         PhoneInfoUtils phoneInfoUtils = new PhoneInfoUtils(SuggestionActivity.this,this);
         phonenumber = phoneInfoUtils.getNativePhoneNumber();
-        Log.e(TAG, "onCreate: shoujihao"+phonenumber);
+        Log.e(TAG, "onCreate: shoujihao "+phonenumber);
 
 
 
@@ -236,6 +209,15 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             intent.putExtra("status",status);
             Log.e("status7",status);
             intent.putExtra("content",et_suggestion.getText().toString());
+            intent.putExtra("phone",phonenumber);
+            intent.putExtra("longitude",gpsUtil.getLongitude());
+            intent.putExtra("laitude",gpsUtil.getLatitude());
+
+
+            if (status.equals(searchUtil.nohege)){
+                setLevelAndWay();
+            }
+
             setResult(RESULT_OK,intent);
             finish();
         }else {
@@ -290,30 +272,11 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         VideoPath = detectionResult.getREFJVI();
         et_suggestion.setText(detectionResult.getSUGGESTION());
 
-        if(!(ImagePath.equals(""))){
-            String[] imgSplit = ImagePath.split(",");
-            Log.e("lenth",imgSplit.length+"");
-            for (int i=0;i<imgSplit.length;i++){
-                String imgPath = Environment.getExternalStorageDirectory() +"/DCIM/"+detectionResult.getLOGINNAME()+"/Photo/"+imgSplit[i];
-                File file = new File(imgPath);
-                //本地有，从本地读取
-                if(file.exists()){
-                    pathlistOfPhoto.add(imgPath);
-                }
-                //若本地没有，从服务器获取
-            }
-        }
-        if(!(VideoPath.equals(""))){
-            String[] vdoSplit = VideoPath.split(",");
-            for (int i=0;i<vdoSplit.length;i++){
-                String vdoPath = Environment.getExternalStorageDirectory() +"/DCIM/"+detectionResult.getLOGINNAME()+"/Video/"+vdoSplit[i];
-                File file = new File(vdoPath);
-                //本地有，从本地读取
-                if(file.exists()){
-                    pathlistOfPhoto.add(vdoPath);
-                }
-            }
-        }
+
+        //将设置图片地址的代码放到一个统一的文件里面 在SuggestionActivity中也一样
+        ReloadImageAndVideo reloadImageAndVideo = new ReloadImageAndVideo();
+        pathlistOfPhoto = reloadImageAndVideo.getPathlist(ImagePath,VideoPath,detectionResult.getLOGINNAME());
+
 
         tv_suggetion.setText(detectionResult.getJIANCHAXIANGTITLE());  //写下不合格的检查项
 
@@ -327,6 +290,26 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         if (status.equals(searchUtil.nohege)){
             suggestion_dangerandrecify.setVisibility(View.VISIBLE);
             et_suggestion.setHint("请输入不合格原因...");
+
+            if (!detectionResult.getYINHUANLEVEL().isEmpty()){
+                if (detectionResult.getYINHUANLEVEL().equals("重大隐患")){
+                    suggestion_danger_great.setChecked(true);
+                    suggestion_danger_normal.setChecked(false);
+                }else if (detectionResult.getYINHUANLEVEL().equals("一般隐患")){
+                    suggestion_danger_normal.setChecked(true);
+                    suggestion_danger_great.setChecked(false);
+                }
+
+                if (detectionResult.getCHANGEDWAY().equals("限期整改")){
+                    suggestion_recify_way_limit.setChecked(true);
+                    suggestion_recify_way_stop.setChecked(false);
+                } else if (detectionResult.getCHANGEDWAY().equals("停产整改")){
+                    suggestion_recify_way_limit.setChecked(false);
+                    suggestion_recify_way_stop.setChecked(true);
+                }
+
+            }
+
         }else if (status.equals(searchUtil.hege)){
             suggestion_dangerandrecify.setVisibility(View.GONE);
             et_suggestion.setHint("请输入合格描述...");
@@ -396,7 +379,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             public void onResponse(FilePathResult response, int id) {
                 if (response.getMessage() != null){
                         Log.d(TAG," getMessage: "+response.getMessage());//文件长传成功
-                    if (response.getMessage().equals("??????")) {//Result upload Success!
+                    if (response.getMessage().equals("结果上传成功")) {//Result upload Success!
                         Log.d(TAG," 文件上传成功");//文件长传成功
                         Toasty.success(SuggestionActivity.this,"文件上传成功！",Toast.LENGTH_SHORT,true).show();
 
@@ -408,6 +391,15 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
                         intent.putExtra("VideoPath",VideoPath);
                         intent.putExtra("status",status);
                         Log.e("status3",status);
+                        intent.putExtra("phone",phonenumber);
+                        intent.putExtra("longitude",gpsUtil.getLongitude());
+                        intent.putExtra("laitude",gpsUtil.getLatitude());
+
+
+                        if (status.equals(searchUtil.nohege)){
+                            setLevelAndWay();
+                        }
+
                         setResult(RESULT_OK,intent);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
@@ -418,6 +410,25 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         });
 
 
+    }
+
+    private void setLevelAndWay() {
+        String yinhuanlevel = "";
+        if (suggestion_danger_great.isChecked()){
+            yinhuanlevel = suggestion_danger_great.getText().toString();
+        }else if (suggestion_danger_normal.isChecked()){
+            yinhuanlevel = suggestion_danger_normal.getText().toString();
+        }
+        String changway = "";
+        if (suggestion_recify_way_limit.isChecked()){
+            changway = suggestion_recify_way_limit.getText().toString();
+        }else if (suggestion_recify_way_stop.isChecked()){
+            changway = suggestion_recify_way_stop.getText().toString();
+        }
+        intent.putExtra("yinhuanlevel",yinhuanlevel);
+        intent.putExtra("changway",changway);
+        Log.e(TAG, "  隐患等级: "+yinhuanlevel);
+        Log.e(TAG, "  整改方式: "+changway);
     }
 
     /**
@@ -548,72 +559,12 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-    public  Bitmap PicZoom(Bitmap bitmap,int width,int height){
-        int bmpWidth = bitmap.getWidth();
-        int bmpHeight = bitmap.getHeight();
-        Matrix matrix = new Matrix();
-        matrix.postScale((float)width/bmpWidth,(float)height/bmpHeight);
-        return Bitmap.createBitmap(bitmap,0,0,bmpWidth,bmpHeight,matrix,true);
-    }
-
-    public  int reckonThumbnail(int oldWidth, int oldHeight, int newWidth, int newHeight) {
-        if ((oldHeight > newHeight && oldWidth > newWidth)
-                || (oldHeight <= newHeight && oldWidth > newWidth)) {
-            int be = (int) (oldWidth / (float) newWidth);
-            if (be <= 1)
-                be = 1;
-            return be;
-        } else if (oldHeight > newHeight && oldWidth <= newWidth) {
-            int be = (int) (oldHeight / (float) newHeight);
-            if (be <= 1)
-                be = 1;
-            return be;
-        }
-        return  1;
-    }
-
-
-
-
-
-//   定位功能
-    /**
-     * 显示请求字符串
-     *
-     * @param str
-     */
-    public void logMsg(String str) {
-        final String s = str;
-        try {
-            if (tv_mygps != null){
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tv_mygps.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                //tv_mygps.setText(s);
-                            }
-                        });
-
-                    }
-                }).start();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     /***
      * Stop location service
      */
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
-        locationService.unregisterListener(mListener); //注销掉监听
-        locationService.stop(); //停止定位服务
-        Log.e(TAG,"Su onStop()");
         super.onStop();
     }
 
@@ -621,128 +572,10 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     protected void onStart() {
         Log.e(TAG," onStart");
         // TODO Auto-generated method stub
-
         super.onStart();
-        // -----------location config ------------
-       // locationService = ((LocationApplication) getApplication()).locationService;
-        locationService = new LocationService(getApplication());
-        //获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
-        locationService.registerListener(mListener);
-        //注册监听
-       // int type = getIntent().getIntExtra("from", 0);
-       // if (type == 0) {
-        locationService.setLocationOption(locationService.getDefaultLocationClientOption());
-        //} else if (type == 1) {
-           // locationService.setLocationOption(locationService.getOption());
-        //  }
 
-        locationService.start();// 定位SDK
 
     }
-
-
-    /**
-     *
-     * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
-     *
-     */
-    private BDAbstractLocationListener mListener = new BDAbstractLocationListener() {
-
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            // TODO Auto-generated method stub
-            if (null != location && location.getLocType() != BDLocation.TypeServerError) {
-                StringBuffer sb = new StringBuffer(256);
-               // sb.append("time : ");
-                /**
-                 * 时间也可以使用systemClock.elapsedRealtime()方法 获取的是自从开机以来，每次回调的时间；
-                 * location.getTime() 是指服务端出本次结果的时间，如果位置不发生变化，则时间不变
-                 */
-               // sb.append(location.getTime());
-              //  sb.append("\nlocType : ");// 定位类型
-               // sb.append(location.getLocType());
-               // sb.append("\nlocType description : ");// *****对应的定位类型说明*****
-               // sb.append(location.getLocTypeDescription());
-               // sb.append("\nradius : ");// 半径
-                //sb.append(location.getRadius());
-                //sb.append("\nCountryCode : ");// 国家码
-                //sb.append(location.getCountryCode());
-               // sb.append("\nCountry : ");// 国家名称
-               // sb.append(location.getCountry());
-               // sb.append("\ncitycode : ");// 城市编码
-                //sb.append(location.getCityCode());
-                //sb.append("\ncity : ");// 城市
-                //sb.append(location.getCity());
-               // sb.append("\nDistrict : ");// 区
-                //sb.append(location.getDistrict());
-               // sb.append("\nStreet : ");// 街道
-              //  sb.append(location.getStreet());
-
-                sb.append("");// 地址信息:\n
-                sb.append(location.getAddrStr());
-
-                sb.append("   经度 : ");// 经度
-                sb.append(location.getLongitude());
-                sb.append(" 纬度 : ");// 纬度
-                sb.append(location.getLatitude());
-
-               // sb.append("\nUserIndoorState: ");// *****返回用户室内外判断结果*****
-               // sb.append(location.getUserIndoorState());
-               // sb.append("\nDirection(not all devices have value): ");
-              //  sb.append(location.getDirection());// 方向
-              //  sb.append("\nlocationdescribe: ");
-               // sb.append(location.getLocationDescribe());// 位置语义化信息
-               // sb.append("\nPoi: ");// POI信息
-//                if (location.getPoiList() != null && !location.getPoiList().isEmpty()) {
-//                    for (int i = 0; i < location.getPoiList().size(); i++) {
-//                        Poi poi = (Poi) location.getPoiList().get(i);
-//                        sb.append(poi.getName() + ";");
-//                    }
-//                }
-
-                /*
-                if (location.getLocType() == BDLocation.TypeGpsLocation) {// GPS定位结果
-                    sb.append("\nspeed : ");
-                    sb.append(location.getSpeed());// 速度 单位：km/h
-                    sb.append("\nsatellite : ");
-                    sb.append(location.getSatelliteNumber());// 卫星数目
-                    sb.append("\nheight : ");
-                    sb.append(location.getAltitude());// 海拔高度 单位：米
-                    sb.append("\ngps status : ");
-                    sb.append(location.getGpsAccuracyStatus());// *****gps质量判断*****
-                    sb.append("\ndescribe : ");
-                    sb.append("gps定位成功");
-                 } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {// 网络定位结果
-                    // 运营商信息
-                    if (location.hasAltitude()) {// *****如果有海拔高度*****
-                        sb.append("\nheight : ");
-                        sb.append(location.getAltitude());// 单位：米
-                    }
-                    sb.append("\noperationers : ");// 运营商信息
-                    sb.append(location.getOperators());
-                    sb.append("\ndescribe : ");
-                    sb.append("网络定位成功");
-                } else if (location.getLocType() == BDLocation.TypeOffLineLocation) {// 离线定位结果
-                    sb.append("\ndescribe : ");
-                    sb.append("离线定位成功，离线定位结果也是有效的");
-                } else if (location.getLocType() == BDLocation.TypeServerError) {
-                    sb.append("\ndescribe : ");
-                    sb.append("服务端网络定位失败，可以反馈IMEI号和大体定位时间到loc-bugs@baidu.com，会有人追查原因");
-                } else if (location.getLocType() == BDLocation.TypeNetWorkException) {
-                    sb.append("\ndescribe : ");
-                    sb.append("网络不同导致定位失败，请检查网络是否通畅");
-                } else if (location.getLocType() == BDLocation.TypeCriteriaException) {
-                    sb.append("\ndescribe : ");
-                    sb.append("无法获取有效定位依据导致定位失败，一般是由于手机的原因，处于飞行模式下一般会造成这种结果，可以试着重启手机");
-                }
-                */
-                logMsg(sb.toString());
-            }
-        }
-
-    };
-
-
 
 
     @Override

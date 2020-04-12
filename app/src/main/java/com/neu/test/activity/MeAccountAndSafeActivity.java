@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -51,7 +52,7 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
         initview();
         initToolBar();
 //        getUserInfoByPost(LoginActivity.inputName);
-        userInfo = LoginActivity.user;
+//        userInfo = LoginActivity.user;
 //        userInfo.setUSERNAME("username");
 //        userInfo.setUSEUNITNAME("USEUNITNAME");
 //        userInfo.setPHONE("PHONE");
@@ -61,36 +62,6 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
 
     }
 
-//    private void getUserInfoByPost(String testinputName) {
-//        String url = BaseUrl.BaseUrltest +"getUserInfo";
-//        Log.d(TAG,"POST url: "+url);
-//
-//
-//        Map<String, String> user = new HashMap<>();
-//        user.put("username",testinputName);
-//
-//        Log.e(TAG,"user: "+ user.toString());
-//        OkHttp okHttp = new OkHttp();
-//        okHttp.postBypostString(url, new Gson().toJson(user), new UserInfomCallBack() {
-//            @Override
-//            public void onError(Call call, Exception e, int i) {
-//                Log.e(TAG, "onError: "+e.toString());
-//            }
-//
-//            @Override
-//            public void onResponse(Result<User> response, int id) {
-//                if (response.getMessage().equals("获取数据成功")) {
-//                    Log.d(TAG," 获取数据成功");
-//                    userInfo = response.getContent();
-//                    initGroupListview();
-//                } else if (response.getMessage().equals("操作失败")){
-//                    Toasty.error(MeAccountAndSafe2Activity.this, "获取个人信息失败！", Toast.LENGTH_SHORT,true).show();
-//                } else if (response.getMessage().equals("用户不存在")){
-//                    Toasty.warning(MeAccountAndSafe2Activity.this,"用户不存在！",Toast.LENGTH_LONG,true).show();
-//                }
-//            }
-//        });
-//    }
 
     private void initGroupListview() {
         int height = QMUIResHelper.getAttrDimen(this, com.qmuiteam.qmui.R.attr.qmui_list_item_height);
@@ -107,7 +78,7 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
         QMUICommonListItemView Item1 = groupListView.createItemView(
                 null,
                 "手机号",
-                userInfo.getPHONE(),
+                LoginActivity.user.getPHONE(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON,
                 height);
@@ -116,7 +87,7 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
         QMUICommonListItemView Item2 = groupListView.createItemView(
                 null,
                 "邮箱",
-                userInfo.getEMAIL(),
+                LoginActivity.user.getEMAIL(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item2.setTag(2);
@@ -184,5 +155,18 @@ public class MeAccountAndSafeActivity extends AppCompatActivity implements View.
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((QMUICommonListItemView)groupListView.findViewWithTag(1)).setDetailText(LoginActivity.user.getPHONE());
+        ((QMUICommonListItemView)groupListView.findViewWithTag(2)).setDetailText(LoginActivity.user.getEMAIL());
     }
 }

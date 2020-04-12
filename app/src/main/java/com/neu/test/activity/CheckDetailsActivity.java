@@ -4,30 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.widget.Button;
 import android.widget.TextView;
 
 
 import com.google.android.material.tabs.TabLayout;
 import com.neu.test.R;
 import com.neu.test.adapter.MyFragmentPagerAdapter;
-import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Task;
-import com.neu.test.util.ResultBean;
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CheckDetailsActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
@@ -51,7 +41,6 @@ public class CheckDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getSupportActionBar().hide();//隐藏掉整个ActionBar
         setContentView(R.layout.activity_check_details);
 
 
@@ -61,7 +50,6 @@ public class CheckDetailsActivity extends AppCompatActivity {
         initToolbar();
         //初始化视图
         initViews();
-        //mTextView.setText(mResultBean.getDeviceType()+" 检查详情");
 
     }
 
@@ -71,7 +59,7 @@ public class CheckDetailsActivity extends AppCompatActivity {
         mToolbar.setTitle(" ");
         mToolbar.setTitleTextColor(Color.WHITE);
 
-        mTextView.setText(" ");
+        mTextView.setText("检查详情");
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//显示箭头

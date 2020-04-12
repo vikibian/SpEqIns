@@ -2,6 +2,10 @@ package com.neu.test.fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -33,6 +38,7 @@ import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.listener.OnColumnItemClickListener;
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.activity.ShowSearchedResultActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
@@ -70,7 +76,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private Button search_bt_concel;
     private TextView selectStartTime;
     private TextView selectEndtTime;
-
+    private TextView noitem_textview;
     private LinearLayout showNoData;
 
     private boolean flag_check=false;//判断是否已经根据条件选择了查询项，
@@ -102,6 +108,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     Column<String> danwei;
     Column<String> nextInsertTime;
     private SearchUtil searchUtil = new SearchUtil();
+    private static boolean isSearch = false;
+    private SimpleToolbar toolbar;
 
 
 
@@ -118,8 +126,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
-
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         initActivity(view);
+        if (!isSearch){
+            showNoData.setVisibility(View.VISIBLE);
+            noitem_textview.setText("您还未开始查询数据");
+        }
 
         selectStartTime.setText(SidebarUtils.getSystemTime());
         selectEndtTime.setText(SidebarUtils.getSystemTime());
@@ -139,31 +151,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         initsidebar();
 
-//        if (flag_check){
-//            initFragment();
-//        }
-
-        //initFragment();
-
-
-
         return view;
     }
 
-    private void initFragment(List<Task> tasks) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        PanelFragment fragment = new PanelFragment(tasks);
-        transaction.replace(R.id.fragment_main,fragment);
-        transaction.commit();
-
-    }
-
     private void initsidebar() {
-
-//        String[] deviceChecked = {"已检查","未检查","待复查"};
-//        String[] deviceUser = {"admin","operator"};
-
-
         adapterDeviceType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner, searchUtil.deviceType);
         adapterDeviceType.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_Type.setAdapter(adapterDeviceType);
@@ -193,6 +184,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initActivity(View view ) {
+        toolbar = getActivity().findViewById(R.id.simple_toolbar);
         searchTtoolbarTextview = view.findViewById(R.id.textview_opeator_name);
         mDrawerLayout = view.findViewById(R.id.search_drawerLayout);
         searchRightDrawer = view.findViewById(R.id.search_right_drawer);
@@ -205,16 +197,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         taskSmartTable = view.findViewById(R.id.result_table);
 
         showNoData = view.findViewById(R.id.search_fragment_noitem);
+        noitem_textview = view.findViewById(R.id.search_fragment_noitem_textview);
 
         MBsp_Type = view.findViewById(R.id.MBsp_deviceType);
         MBsp_Qualify = view.findViewById(R.id.MBsp_deviceQualify);
 //        MBsp_Checked = view.findViewById(R.id.MBsp_deviceChecked);
 //        MBsp_User = view.findViewById(R.id.MBsp_deviceUser);
         MBsp_taskType = view.findViewById(R.id.MBsp_taskType);
-
-        //设置操作人员
-        searchTtoolbarTextview.setText(LoginActivity.user.getUSERNAME());
-
 
         //search_select_time.setOnClickListener(this);//时间选择Button点击事件设置
         search_bt_confirm.setOnClickListener(this);
@@ -238,14 +227,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 try {
                     if (SidebarUtils.isStartBeforeEnd(starttime,endtime)){
                         mDrawerLayout.closeDrawer(searchRightDrawer);
-
+                        isSearch = true;
                         getSearchedData();
 //                        //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
 //                        initFragment();
 //                        isDirection_right = false;
 //                        flag_check=true;
                     }else {
-                        //Toast.makeText(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG).show();
                         Toasty.warning(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG,true).show();
                     }
                 } catch (ParseException e) {
@@ -266,7 +254,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         Log.e(TAG," Type : "+MBsp_Type.getText());
         Log.e(TAG," Qualify : "+MBsp_Qualify.getText());
 
-
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
         searchmap.put("LOGINNAME",LoginActivity.inputName);
@@ -275,6 +262,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
         searchmap.put("startDate",selectStartTime.getText().toString());
         searchmap.put("endDate",selectEndtTime.getText().toString());
+        //测试用数据
+//        searchmap.put("LOGINNAME",LoginActivity.inputName);
+//        searchmap.put("DEVCLASS","3000");
+//        searchmap.put("RESULT","1");
+//        searchmap.put("TASKTYPE","临时");
+//        searchmap.put("startDate","2020-03-08");
+//        searchmap.put("endDate","2020-04-09");
         Log.e(TAG," loginname: "+LoginActivity.inputName);
         Log.e(TAG," devclass: "+searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
         Log.e(TAG," result: "+searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
@@ -295,21 +289,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Result<List<Task>> response, int id) {
                 if(response.getMessage().equals("获取任务成功")){
-//                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
                     Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
-
                     if(response.getContent().size()==0){
                         Toast.makeText(getContext(),"无数据",Toast.LENGTH_LONG).show();
                         Log.e("TAG"," response.getContent: "+"无数据");
-//                        Task task = new Task();
-//                        task.setCHECKDATE("12");
-//                        task.setDEADLINE("12");
-//                        task.setRESULT("1");
-//                        task.setDEVCLASS("3000");
-//                        tasks.add(task);
-//                        initTable(tasks);
-//                        Log.e("TAG"," Content: "+tasks.toString());
-//                        Log.e("TAG"," 接收task: "+tasks.size());
                         showNoData.setVisibility(View.VISIBLE);
 
                     }else {
@@ -323,12 +306,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 //                        initTable(taskstest);
                         initTable(tasks);
                         Log.e("TAG"," Content: "+tasks.toString());
+                        String resultString = new Gson().toJson(tasks);
+                        Log.e("TAG"," resultString: "+resultString);
                         Log.e("TAG"," 接收task: "+tasks.size());
                     }
                     Toast.makeText(getContext(),"成功",Toast.LENGTH_LONG).show();
                     //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
-
-                    //initFragment(tasks);
                     isDirection_right = false;
                     flag_check=true;
                 }
@@ -341,10 +324,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initTable( List<Task> tasksList) {
+//
         for (int i=0;i<tasksList.size();i++){
+            Log.e("TAG"," 转换之前:  RESULT："+tasksList.get(i).getRESULT()+"  DEVCLASS: "+tasksList.get(i).getDEVCLASS());
             //将result的文本类型数字转换为文字
             tasksList.get(i).setRESULT(searchUtil.getHelpMapForResult().get(tasksList.get(i).getRESULT()));
             tasksList.get(i).setDEVCLASS(searchUtil.getMapdevclass().get(tasksList.get(i).getDEVCLASS()));
+            Log.e("TAG"," 转换之后:  RESULT："+tasksList.get(i).getRESULT()+"  DEVCLASS: "+tasksList.get(i).getDEVCLASS());
         }
 
 
@@ -445,7 +431,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 //        table.getConfig().setContentStyle(new FontStyle(50, Color.BLUE));
         taskSmartTable.getConfig().setMinTableWidth(1024);       //设置表格最小宽度
         FontStyle style = new FontStyle();
-        style.setTextSize(30);
+        style.setTextSize(15);
         taskSmartTable.setZoom(true);
         taskSmartTable.getConfig().setContentStyle(style);       //设置表格主题字体样式
         taskSmartTable.getConfig().setColumnTitleStyle(style);   //设置表格标题字体样式
@@ -464,19 +450,22 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void jumpToShowSearchedResultFragment(int position) {
-        Bundle bundle = new Bundle();
         Log.e(TAG,"发送数据显示："+tasks.get(position).getCHECKDATE());
         Log.e(TAG,"发送数据显示："+position);
         Log.e(TAG,"发送数据显示："+tasks.size());
         Log.e(TAG,"发送数据显示  result："+tasks.get(position).getRESULT());
-        bundle.putSerializable("tasks",tasks.get(position));
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        ShowSearchedResultFragment showSearchedResultFragment = new ShowSearchedResultFragment();
-        showSearchedResultFragment.setArguments(bundle);
-        transaction.replace(R.id.fl_content,showSearchedResultFragment);
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.addToBackStack(null);
-        transaction.commit();
+
+        for (int i=0;i<tasks.size();i++){
+            Log.e("TAG"," 转换之前:  RESULT："+tasks.get(i).getRESULT()+"  DEVCLASS: "+tasks.get(i).getDEVCLASS());
+            //将result的文字转换为文本数字
+            tasks.get(i).setRESULT(searchUtil.getHelpMapForResultReverse().get(tasks.get(i).getRESULT()));
+            tasks.get(i).setDEVCLASS(searchUtil.getMapdevclassReverse().get(tasks.get(i).getDEVCLASS()));
+            Log.e("TAG"," 转换之后:  RESULT："+tasks.get(i).getRESULT()+"  DEVCLASS: "+tasks.get(i).getDEVCLASS());
+        }
+
+        Intent intent = new Intent(getActivity(), ShowSearchedResultActivity.class);
+        intent.putExtra("tasks",tasks.get(position));
+        startActivity(intent);
 
     }
 
@@ -486,10 +475,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         Log.e(TAG," onStart");
-        //Log.e(TAG," tasks.size: "+tasks.size());
-
 //        View view = (View) LayoutInflater.from(getContext()).inflate(R.layout.fragment_panel, null, false);
-//
 //        //初始化
 //        taskSmartTable = view.findViewById(R.id.table);
         if (tasks.size()!=0){
@@ -504,6 +490,42 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+//        getActivity().setRequestedOrientation(//通过程序改变屏幕显示的方向
+//                hidden ? ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
+//                        : ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
+        if (hidden) {
+             Log.e(TAG, "隐藏");
+        } else {
+              Log.e(TAG, "显示");
+            //指定屏幕的方向为竖屏
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        }
+
+    }
+
+    @Override
+    public void onConfigurationChanged( Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // 如果是橫屏時候
+        try {
+            // Checks the orientation of the screen
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                Log.e(TAG, "onConfigurationChanged: "+ "ORIENTATION_LANDSCAPE");
+                toolbar.setVisibility(View.GONE);
+//                initTable(tasks);
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                Log.e(TAG, "onConfigurationChanged: "+ "ORIENTATION_PORTRAIT");
+                toolbar.setVisibility(View.VISIBLE);
+//                initTable(tasks);
+            }
+        } catch (Exception ex) {
+
+        }
+
+    }
 }

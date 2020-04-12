@@ -52,7 +52,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         initview();
         initToolBar();
 
-        userInfo = LoginActivity.user;
+//        userInfo = LoginActivity.user;
 //        userInfo.setUSERNAME("username");
 //        userInfo.setUSEUNITNAME("USEUNITNAME");
 //        userInfo.setPHONE("PHONE");
@@ -61,36 +61,6 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         initGroupListview();
     }
 
-//    private void getUserInfoByPost(String testinputName) {
-//        String url = BaseUrl.BaseUrltest +"getUserInfo";
-//        Log.d(TAG,"POST url: "+url);
-//
-//
-//        Map<String, String> user = new HashMap<>();
-//        user.put("username",testinputName);
-//
-//        Log.e(TAG,"user: "+ user.toString());
-//        OkHttp okHttp = new OkHttp();
-//        okHttp.postBypostString(url, new Gson().toJson(user), new UserInfomCallBack() {
-//            @Override
-//            public void onError(Call call, Exception e, int i) {
-//                Log.e(TAG, "onError: "+e.toString());
-//            }
-//
-//            @Override
-//            public void onResponse(Result<User> response, int id) {
-//                if (response.getMessage().equals("获取数据成功")) {
-//                    Log.d(TAG," 获取数据成功");
-//                    userInfo = response.getContent();
-//                    initGroupListview();
-//                } else if (response.getMessage().equals("操作失败")){
-//                    Toasty.error(MeInformActivity.this, "获取个人信息失败！",Toast.LENGTH_SHORT,true).show();
-//                } else if (response.getMessage().equals("用户不存在")){
-//                    Toasty.warning(MeInformActivity.this,"用户不存在！",Toast.LENGTH_LONG,true).show();
-//                }
-//            }
-//        });
-//    }
 
     private void initGroupListview() {
         int height = QMUIResHelper.getAttrDimen(this, com.qmuiteam.qmui.R.attr.qmui_list_item_height);
@@ -98,7 +68,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item0 = groupListView.createItemView(
                 null,
                 "用户名称",
-                userInfo.getLOGINNAME(),
+                LoginActivity.user.getLOGINNAME(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_NONE,
                 height);
@@ -107,7 +77,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item1 = groupListView.createItemView(
                 null,
                 "姓名",
-                userInfo.getUSERNAME(),
+                LoginActivity.user.getUSERNAME(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_NONE,
                 height);
@@ -116,7 +86,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item2 = groupListView.createItemView(
                 null,
                 "工作单位",
-                userInfo.getUSEUNITNAME(),
+                LoginActivity.user.getUSEUNITNAME(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_NONE);
         Item2.setTag(2);
@@ -124,7 +94,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item3 = groupListView.createItemView(
                 null,
                 "手机号",
-                userInfo.getPHONE(),
+                LoginActivity.user.getPHONE(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item3.setTag(3);
@@ -132,7 +102,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item4 = groupListView.createItemView(
                 null,
                 "证件号",
-                userInfo.getIDCARD(),
+                LoginActivity.user.getIDCARD(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_NONE);
         Item4.setTag(4);
@@ -140,7 +110,7 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
         QMUICommonListItemView Item5 = groupListView.createItemView(
                 null,
                 "邮箱",
-                userInfo.getEMAIL(),
+                LoginActivity.user.getEMAIL(),
                 QMUICommonListItemView.HORIZONTAL,
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item5.setTag(5);
@@ -218,5 +188,12 @@ public class MeInformActivity extends AppCompatActivity implements View.OnClickL
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ((QMUICommonListItemView)groupListView.findViewWithTag(3)).setDetailText(LoginActivity.user.getPHONE());
+        ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(LoginActivity.user.getEMAIL());
     }
 }

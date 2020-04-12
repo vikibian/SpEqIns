@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.print.PrintAttributes;
 import android.print.pdf.PrintedPdfDocument;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -65,7 +66,7 @@ public class PDFActivity extends AppCompatActivity {
     private TextView toolbar_subtitleRight;
     private TextView toolabr_subtitleLeft;
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +163,8 @@ public class PDFActivity extends AppCompatActivity {
         toolbar_title.setTextSize(18);
 //        toolabr_subtitleLeft.setTextSize(13);
 //        toolbar_subtitleRight.setTextSize(13);
-        toolbar_title.setText(task.getDEVID());//加空格的原因是让其显示居中
+        toolbar_title.setText(task.getDEVID());
+        mToolbar.setTitle("");
 //        toolabr_subtitleLeft.setText(title);
 //        toolbar_subtitleRight.setText(taskType);
 //        toolbar_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
@@ -183,6 +185,25 @@ public class PDFActivity extends AppCompatActivity {
         final int j = getIntent().getIntExtra("taskType",0);
         final int hegeFlag = getIntent().getIntExtra("hegeFlag",0);
 
+    }
+
+    //Menu的点击事件
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case android.R.id.home:
+                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
+                this.finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 

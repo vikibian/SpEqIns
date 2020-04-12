@@ -28,12 +28,13 @@ import com.neu.test.fragment.SearchFragment;
 import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.layout.SimpleToolbar;
+import com.neu.test.util.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class FragmentManagerActivity extends AppCompatActivity {
+public class FragmentManagerActivity extends BaseActivity {
 
     private final String TAG = "FragmentManager";
 

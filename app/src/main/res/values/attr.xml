@@ -2,6 +2,10 @@
 
 <resources>
 
+    <attr name="fontsize_1" format="dimension"/>
+    <attr name="fontsize_2" format="dimension"/>
+    <attr name="fontsize_3" format="dimension"/>
+
     <declare-styleable name="BottomBarItem">
 
         <!--默认状态下的图标-->

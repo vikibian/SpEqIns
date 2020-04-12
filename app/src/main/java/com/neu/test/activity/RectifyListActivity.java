@@ -33,8 +33,10 @@ import com.neu.test.R;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.Task;
+import com.neu.test.layout.MyTextView;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.ReloadImageAndVideo;
 import com.neu.test.util.SearchUtil;
@@ -50,7 +52,7 @@ import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import q.rorbin.badgeview.QBadgeView;
 
-public class RectifyListActivity extends AppCompatActivity  {
+public class RectifyListActivity extends BaseActivity  {
     private static final String TAG = "RectifyListActivity";
     private Toolbar toolbar;
     private TextView toolbar_title;
@@ -125,6 +127,7 @@ public class RectifyListActivity extends AppCompatActivity  {
                     Toasty.warning(RectifyListActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
                 } else {
                     String string = new Gson().toJson(detectionResults);
+                    Log.e(TAG,"提交时："+string);
                     String url = BaseUrl.BaseUrl+"setItemResult";
                     OkHttp okHttp = new OkHttp();
                     okHttp.postBypostString(url, string, new FileResultCallBack() {
@@ -234,7 +237,10 @@ public class RectifyListActivity extends AppCompatActivity  {
 
             //测试
             if (position == 0){
+//                detectionResults.get(position).setREFJIM("");
                 detectionResults.get(position).setREFJIM("image_202031610246.jpg,image_202031662445.jpg");
+//                detectionResults.get(position).setREFJVI("");
+                detectionResults.get(position).setREFJVI("video_1584540967093.mp4,video_1584582023465.mp4");
             }
 //            //测试
             if (position == 1){
@@ -474,7 +480,7 @@ public class RectifyListActivity extends AppCompatActivity  {
 
     static class RectifyListViewHolder{
         public TextView recify_textview_leftnum;
-        public TextView recify_textview_context;
+        public MyTextView recify_textview_context;
         public CheckBox recify_checkbox_unqualified;
         public CheckBox recify_checkbox_recifyqualified;
         public ImageView recify_imageview_attach;

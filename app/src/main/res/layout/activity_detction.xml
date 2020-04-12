@@ -155,13 +155,13 @@
                     android:id="@+id/button_selector_left"
                     android:background="@drawable/logincode_left_selector"
                     android:layout_alignParentRight="true"
-                    android:layout_width="100dp"
+                    android:layout_width="120dp"
                     android:layout_height="30dp" />
 
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent">
                 <Button
@@ -170,7 +170,7 @@
                     android:id="@+id/button_selector_middle"
                     android:background="@drawable/logincode_middle_selector"
                     android:layout_alignParentRight="true"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="30dp" />
 
             </RelativeLayout>
@@ -186,7 +186,7 @@
                     android:textColor="@color/button_selecor_color"
                     android:id="@+id/button_selector_right"
                     android:background="@drawable/logincode_right_selector"
-                    android:layout_width="100dp"
+                    android:layout_width="120dp"
                     android:layout_height="30dp" />
 
             </RelativeLayout>

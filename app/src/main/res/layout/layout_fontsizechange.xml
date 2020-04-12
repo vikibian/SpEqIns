@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:orientation="vertical">
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.Toolbar
+      android:id="@+id/change_font_toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="48dp"
+      android:background="?attr/colorPrimary"
+      app:titleTextColor="@color/white"
+      android:gravity="center"
+      >
+
+      <TextView
+        android:id="@+id/change_font_toolbar_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="字体大小"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+
+        />
+
+    </androidx.appcompat.widget.Toolbar>
+
+  </LinearLayout>
+  <LinearLayout
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_weight="1"
+  android:orientation="vertical">
+  <TextView
+    android:layout_marginTop="10dp"
+    android:layout_gravity="right"
+    android:id="@+id/tv_message"
+    android:text="预览字体大小"
+    android:background="@drawable/shap"
+    android:textSize="?fontsize_1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+  <TextView
+    android:id="@+id/tv_message2"
+    android:layout_marginTop="40dp"
+    android:textSize="?fontsize_1"
+    android:background="@drawable/shap"
+    android:text="拖动下面滑块，可设置字体大小"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+  <TextView
+    android:id="@+id/tv_message3"
+    android:layout_marginTop="20dp"
+    android:textSize="?fontsize_1"
+    android:background="@drawable/shap"
+    android:text="设置后，会改变任务和任务项的字体大小。如果在使用过程中存在问题和意见，可以反馈给我们。"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+</LinearLayout>
+  <LinearLayout
+    android:layout_gravity="bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.neu.test.layout.RaeSeekBar
+      android:id="@+id/seekBar"
+      android:layout_gravity="bottom"
+
+      android:layout_width="match_parent"
+
+      android:layout_height="wrap_content"
+
+      android:background="@android:color/transparent"
+
+      android:progressDrawable="@android:color/transparent"
+
+      android:theme="@style/Widget.AppCompat.SeekBar"
+
+      android:thumb="@drawable/seekbar_thumb_material_anim_font_setting"/>
+  </LinearLayout>
+</LinearLayout>

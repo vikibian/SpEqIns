@@ -176,12 +176,15 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
                 try {
                     result = new JSONObject(reponse);
                     if (result.get("message").equals("更改成功")){
+                        LoginActivity.user.setEMAIL(new_email.getText().toString());
                         TipDialog.show(ResetEmailActivity.this,"修改成功！",TipDialog.TYPE.SUCCESS);
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(ResetEmailActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetEmailActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
+                    setResult(RESULT_OK);
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

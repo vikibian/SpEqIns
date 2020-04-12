@@ -2,7 +2,9 @@ package com.neu.test.util;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,14 +16,15 @@ import java.util.Map;
 public class SearchUtil {
     private static String TAG = "SearchUtil";
     public String[] deviceType = {"锅炉","压力容器","电梯","起重机","厂车","大型游乐设施","压力管道","客车索道"};
-    public String[] deviceQualify = {"合格","不合格","整改合格"};
+    public String[] deviceQualify = {"合格","不合格"};
     public String[] taskType = {"自查","整改","下派","临时"};
     public String[] classofdev ={"1000","2000","3000","4000","5000","6000","8000","9000"};
     public Map<String,String> typeToDevclass = new HashMap<>();
     public Map<String,String> devclassToType = new HashMap<>();
     public Map<String,String> map_devclass = new HashMap<>();
-    public String[] mTitles = new String[]{"文字", "图片", "视频"};
+    public String[] mTitles = new String[]{"文字描述", "图片视频"};
     public String[] choose = {"全部","合格","不合格","整改合格"};
+    public List<String> chooseList ;
     public String hege = "0";
     public String nohege = "1";
     public String undecided = "2";
@@ -69,6 +72,14 @@ public class SearchUtil {
         return map_devclass;
     }
 
+    public Map<String,String> getMapdevclassReverse(){
+        Map<String,String> helpMapForResult = new HashMap<>();
+        for (int i=0;i<classofdev.length;i++){
+            helpMapForResult.put(deviceType[i],classofdev[i]);
+        }
+        return helpMapForResult;
+    }
+
     public String getNumToQuality(String num){
         String quality = "";
         if (num.equals("0")){
@@ -101,5 +112,21 @@ public class SearchUtil {
         helpMapForResult.put(nohege,nohegeText);
         helpMapForResult.put(recifyQualify,recifyQualifyText);
         return helpMapForResult;
+    }
+
+    public Map<String,String> getHelpMapForResultReverse(){
+        Map<String,String> helpMapForResult = new HashMap<>();
+        helpMapForResult.put(hegeText,hege);
+        helpMapForResult.put(nohegeText,nohege);
+        helpMapForResult.put(recifyQualifyText,recifyQualify);
+        return helpMapForResult;
+    }
+
+    public List<String> getChooseList(){
+        chooseList = new ArrayList<>();
+        for (int i=0;i<choose.length;i++){
+            chooseList.add(choose[i]);
+        }
+        return chooseList;
     }
 }

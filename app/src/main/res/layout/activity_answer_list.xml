@@ -1,58 +1,302 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:expandable="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".activity.AnswerListActivity">
+    android:background="#EEEEEE"
+    android:id="@+id/lin"
+    tools:context=".fragment.ShowSearchedResultFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_searchResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:theme="@style/AppTheme.PopupOverlay"
+        android:background="?attr/colorPrimary">
+
+        <TextView
+            android:text="五号电梯"
+            android:layout_weight="3"
+            android:id="@+id/toolbar_searchResult_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:textColor="@color/white" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/searched_result_title"
+                android:layout_gravity="center_horizontal"
+                android:text="检查情况"
+                android:textSize="18dp"
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="检查时间："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_time"
+                android:text=" "
+                android:textColor="#666666"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="设备种类："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_deviceType"
+                android:text=" "
+                android:textColor="#666666"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="合格情况："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_qualify"
+                android:text=" "
+                android:textColor="#666666"
+                android:theme="@style/MyEditText"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="检查人员："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_user"
+                android:text=" "
+                android:textColor="#666666"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="地址："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_address"
+                android:text=" "
+                android:textColor="#666666"
+                android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="5dp"
+            android:alpha="50"
+            android:background="#F0F5F5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:alpha="50"
+                android:background="@drawable/bg_textview_border"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
+                android:textSize="15dp"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:text="结果筛选: "
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:id="@+id/show_searched_result_spinner"
+                style="@android:style/Widget.Spinner"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textAlignment="center"
+                app:ms_background_selector="@drawable/bg_sp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:text="已整改"
-                android:textColor="@color/black"
-                android:id="@+id/button_answerlist_left"
-                android:background="@drawable/logincode_left"
-                android:layout_alignParentRight="true"
-                android:layout_width="100dp"
-                android:layout_height="50dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        </RelativeLayout>
+                <com.neu.test.layout.MyListView
+                    android:padding="5dp"
+                    android:id="@+id/show_searched_result_listview"
+                    android:divider="@null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_marginLeft="2dp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
+                </com.neu.test.layout.MyListView>
 
-            <Button
-                android:text="未整改"
-                android:textColor="@color/black"
-                android:id="@+id/button_answerlist_right"
-                android:background="@drawable/logincode_right"
-                android:layout_width="100dp"
-                android:layout_height="50dp" />
+            </LinearLayout>
 
-        </RelativeLayout>
+
+            <!--<include-->
+                <!--layout="@layout/result_listview"/>-->
+
+
+        </LinearLayout>
+
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="2dp"
+            android:id="@+id/btn_searchResult_back"
+            android:background="@drawable/bg_button"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:textColor="@color/white"
+            android:text="返回" />
+
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lv_answer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
+    </ScrollView>
 
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.neu.test.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.layout.CircleRelativeLayout;
+import com.neu.test.layout.MyTextView;
 import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
@@ -117,6 +119,7 @@ public class CheckFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         lv_check = view.findViewById(R.id.lv_check);
 //        sp_devid = view.findViewById(R.id.sp_devid);
         sp_devclass = view.findViewById(R.id.sp_devclass);
@@ -130,7 +133,6 @@ public class CheckFragment extends Fragment {
         checkAdapter = new CheckAdapter();
         devclassTasks.addAll(tasks);
         devclassList.add("全部");
-//        devclassList.add("测试");
         devidList.add("设备类别");
 //        map_devclass.put("3000","电梯");
 //        map_devclass.put("8000","压力管道");
@@ -189,7 +191,7 @@ public class CheckFragment extends Fragment {
           String s = task.getUSEUNITNAME();
           String DEVCLASS = task.getDEVCLASS();
 
-          data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+            data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
           sharedPreferences = getActivity().getSharedPreferences(data, Context.MODE_PRIVATE);
           if(task.getRESULT().equals("2")){
             String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
@@ -274,6 +276,9 @@ public class CheckFragment extends Fragment {
       detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
       detectionResult.setLAW(items.get(position).getLAW());
       detectionResults.add(detectionResult);
+        if(!items.get(position).getSHIFOUHEGEQUZHENG().equals("1")){
+            detectionResult.setSTATUS("0");
+        }
     }
     return  detectionResults;
   }
@@ -337,20 +342,7 @@ public class CheckFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-          if (requestCode == CHECKFRAGMENT) {
-            int position = data.getIntExtra("position", 0);
-            boolean isDoing = data.getBooleanExtra("isDoing",false);
-            String where = data.getStringExtra("where");
-            if(where.equals("back")){
-              if(isDoing){
-              }
-            }else{
-              tasks.get(position).setRESULT("2");
-            }
-              lv_check.setAdapter(checkAdapter);
-          }
-        }
+
     }
 
     private void getReDetctionData(final Task task, final int position) {
@@ -448,18 +440,17 @@ public class CheckFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            //如果没有复用的
-            if(convertView == null){
-                //加载item的布局
-                convertView = View.inflate(getActivity(), R.layout.fragment_listview_check_new, null);
 
-            }
+            //加载item的布局
+            convertView = View.inflate(getActivity(), R.layout.fragment_listview_check_new, null);
+
+
 
             //根据position设置对应数据
             //获得当前数据对象
             Task task = devclassTasks.get(position);
             TextView tv_check_device = convertView.findViewById(R.id.tv_check_device);
-            TextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
+            MyTextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
             TextView tv_issave_device = convertView.findViewById(R.id.tv_issave_device);
 //            CircleRelativeLayout circleRelativeLayout = convertView.findViewById(R.id.check_list_imagebutton);

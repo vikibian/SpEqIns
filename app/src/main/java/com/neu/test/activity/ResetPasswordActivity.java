@@ -103,7 +103,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-//                setResult(RESULT_OK);
+                setResult(RESULT_OK);
                 this.finish();
 
                 return true;
@@ -215,12 +215,14 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                 try {
                     result = new JSONObject(reponse);
                     if (result.get("message").equals("更改成功")){
+                        LoginActivity.user.setLOGINPWD(pwd);
                         TipDialog.show(ResetPasswordActivity.this,"修改密码成功！",TipDialog.TYPE.SUCCESS);
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(ResetPasswordActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetPasswordActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

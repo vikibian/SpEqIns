@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_marginRight="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_margin="5dp"
+        android:padding="3dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp">
+        <ImageView
+            android:id="@+id/fujian_gridview_item_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_assignment_returned_blue_a700_24dp"/>
+        <ImageView
+            android:id="@+id/fujian_gridview_item_photo_pre"
+            android:layout_centerInParent="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/zanting"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

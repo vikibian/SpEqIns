@@ -66,14 +66,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <com.neu.test.layout.MyTextView
                         android:layout_marginTop="2dp"
                         android:layout_weight="8"
                         android:id="@+id/detction_item_text_context_2"
-                        android:inputType="textMultiLine"
                         android:textColor="@color/black"
-                        android:textSize="20dp"
+                        android:textSize="?fontsize_1"
+                        android:ellipsize="marquee"
                         android:text="管道安全"
+                        android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content" />
 
@@ -167,30 +168,30 @@
     </LinearLayout>
 
 
-    
+
 
 
     <!--<LinearLayout-->
-        <!--android:layout_weight="4"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent">-->
-        <!---->
+    <!--android:layout_weight="4"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent">-->
+    <!---->
 
-        <!--<RelativeLayout-->
-            <!--android:padding="5dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent">-->
+    <!--<RelativeLayout-->
+    <!--android:padding="5dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent">-->
 
-            <!--<ImageView-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:id="@+id/detction_item_image_right"-->
-                <!--android:layout_gravity="center_horizontal|center_vertical"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:src="@drawable/ic_keyboard_arrow_right_black_24dp"/>-->
+    <!--<ImageView-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:id="@+id/detction_item_image_right"-->
+    <!--android:layout_gravity="center_horizontal|center_vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:src="@drawable/ic_keyboard_arrow_right_black_24dp"/>-->
 
-        <!--</RelativeLayout>-->
+    <!--</RelativeLayout>-->
 
 
 

@@ -49,12 +49,14 @@ import com.neu.test.entity.FilePathResult;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.MyListView;
+import com.neu.test.layout.MyTextView;
 import com.neu.test.layout.SlideLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListCheckListCallBack;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.ToastUtil;
@@ -70,7 +72,7 @@ import es.dmoral.toasty.Toasty;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import okhttp3.Call;
 
-public class ReDetectionActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReDetectionActivity extends BaseActivity implements View.OnClickListener {
 
     private static String TAG = "ReDetectionActivity";
 
@@ -170,7 +172,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
         button_middle.setOnClickListener(this);
         button_right.setOnClickListener(this);
 
-        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
         sp = getSharedPreferences(data, Context.MODE_PRIVATE);
 
         detectionResults = (List<DetectionResult>) getIntent().getSerializableExtra("items");
@@ -213,13 +215,15 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                         @Override
                         public void onResponse(FilePathResult filePathResult, int i) {
                             Log.e("message", filePathResult.getMessage());
-                            SharedPreferences.Editor editor = sp.edit();
-                            editor.clear();
-                            Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
-                            intent.putExtra("listData", (Serializable) detectionResults);
-                            intent.putExtra("task",task);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                            if (filePathResult.getMessage().equals("任务提交成功")){
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.clear();
+                                Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
+                                intent.putExtra("listData", (Serializable) detectionResults);
+                                intent.putExtra("task",task);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
                         }
                     });
                 }
@@ -243,12 +247,20 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onResponse(FilePathResult filePathResult, int i) {
                         Log.e("message",filePathResult.getMessage());
-                        editorSave();
-                        intent1.putExtra("position",pposition);
-                        intent1.putExtra("isDoing",isDoing);
-                        intent1.putExtra("where","finish");
-                        setResult(RESULT_OK,intent1);
-                        finish();
+                        if (filePathResult.getMessage().equals("任务提交成功")){
+                            for(int mm= 0;mm<detectionResults.size();mm++){
+                                if(detectionResults.get(i).getJIANCHAXIANGBIANHAO().contains("?")){
+                                    int size = detectionResults.get(i).getJIANCHAXIANGBIANHAO().length();
+                                    detectionResults.get(i).setJIANCHAXIANGBIANHAO(detectionResults.get(i).getJIANCHAXIANGBIANHAO().substring(0,size-1));
+                                }
+                            }
+                            editorSave();
+                            intent1.putExtra("position",pposition);
+                            intent1.putExtra("isDoing",isDoing);
+                            intent1.putExtra("where","finish");
+                            setResult(RESULT_OK,intent1);
+                            finish();
+                        }
                     }
                 });
             }
@@ -348,6 +360,10 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 EditText add_title = (EditText) textEntryView.findViewById(R.id.add_title);
                 EditText add_schedule = (EditText) textEntryView.findViewById(R.id.add_schedule);
                 EditText add_law = (EditText) textEntryView.findViewById(R.id.add_law);
+                Button btn_add_cancel = textEntryView.findViewById(R.id.btn_add_cancel);
+                Button btn_add_add = textEntryView.findViewById(R.id.btn_add_add);
+                TextView tv_tips = textEntryView.findViewById(R.id.tv_tips);
+                tv_tips.setVisibility(View.GONE);
 
                 listView = textEntryView.findViewById(R.id.lv_search);
                 adapter = new ArrayAdapter<String>(ReDetectionActivity.this,android.R.layout.simple_list_item_1,titleData);
@@ -402,41 +418,52 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 
                 AlertDialog dlg = new AlertDialog.Builder(ReDetectionActivity.this)
                         .setView(textEntryView)
-                        .setPositiveButton("确定",new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DetectionResult detectionResult = new DetectionResult();
-                                detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
-                                detectionResult.setJIANCHAXIANGTITLE(add_title.getText().toString());
-                                detectionResult.setCHECKCONTENT(add_schedule.getText().toString());
-                                detectionResult.setLAW(add_law.getText().toString());
-                                detectionResult.setTASKID(detectionResults.get(0).getTASKID());
-                                detectionResult.setDEVID(detectionResults.get(0).getDEVID());
-                                detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
-                                detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
-                                ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
-                                detectionadd.add(detectionResult);
-                                detectionResults.add(detectionResult);
-                                Log.e(TAG, "onClick: addpositions:"+addpositions.size());
-                                addpositions.put(addpositions.size(),detectionResults.size()-1);
+                        .create();
+                dlg.show();
 
-                                //更新
-                                detectionAdapter.notifyDataSetChanged();
+                btn_add_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dlg.dismiss();
+                    }
+                });
+                btn_add_add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!(add_title.getText().toString().trim().equals("") || add_law.getText().toString().trim().equals("") || add_schedule.getText().toString().trim().equals(""))){
+                            DetectionResult detectionResult = new DetectionResult();
+                            detectionResult.setRUNWATERNUM(detectionResults.get(0).getRUNWATERNUM());
+                            detectionResult.setJIANCHAXIANGBIANHAO("add_"+detectionResults.size()+"?");
+                            detectionResult.setJIANCHAXIANGTITLE(add_title.getText().toString().trim());
+                            detectionResult.setCHECKCONTENT(add_schedule.getText().toString().trim());
+                            detectionResult.setLAW(add_law.getText().toString().trim());
+//                            detectionResult.setLATITUDE(gpsUtil.getLatitude());
+//                            detectionResult.setLONGITUDE(gpsUtil.getLongitude());
+                            detectionResult.setTASKID(detectionResults.get(0).getTASKID());
+                            detectionResult.setDEVID(detectionResults.get(0).getDEVID());
+                            detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
+                            detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
+                            ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
+                            detectionadd.add(detectionResult);
+                            detectionResults.add(detectionResult);
+                            Log.e(TAG, "onClick: addpositions:"+addpositions.size());
+                            addpositions.put(addpositions.size(),detectionResults.size()-1);
+
+                            //更新
+                            detectionAdapter.notifyDataSetChanged();
 
 //                                lv_detection.setAdapter(detectionAdapter);
-                                reflashTotalItem();
-                                setEnable(button_right);
-                                reflashList(detectionadd,add);
-                                select = "right";
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).create();
-                dlg.show();
+                            reflashTotalItem();
+                            setEnable(button_right);
+                            reflashList(detectionadd,add);
+                            select = "right";
+                            dlg.dismiss();
+                        }else{
+                            //未起作用
+                            tv_tips.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
                 return true;
 
         }
@@ -528,8 +555,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
             //加载item的布局
             convertView = View.inflate(ReDetectionActivity.this, R.layout.test_list_item2, null);
             viewHolder = new ViewHolder();
-            viewHolder.detction_item_text_leftnum= (TextView) convertView.findViewById(R.id.detction_item_text_leftnum_2);
-            viewHolder.detction_item_text_context= (TextView) convertView.findViewById(R.id.detction_item_text_context_2);
+            viewHolder.detction_item_text_leftnum=  convertView.findViewById(R.id.detction_item_text_leftnum_2);
+            viewHolder.detction_item_text_context=  convertView.findViewById(R.id.detction_item_text_context_2);
             viewHolder.rectify_item_status_rectified = convertView.findViewById(R.id.rectify_item_status_rectified_2);
             viewHolder.rectify_item_status_rectifyliving = convertView.findViewById(R.id.rectify_item_status_rectifyliving_2);
             viewHolder.rectify_item_status_unrectify = convertView.findViewById(R.id.rectify_item_status_unrectify_2);
@@ -619,7 +646,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                         reflashList(listdetectionresult,flag);
                     }else{
                         //页面跳转  现场整改
-                        jumpToRectifyResultActivity( getIndex(flag,position));
+                        jumpToRectifyResultActivity( getIndex(flag,position),"3");
                         reflashList(listdetectionresult,flag);
                     }
                 }
@@ -631,7 +658,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                     //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
                     if ((listdetectionresult.get(position).getISCHANGED().equals(searchUtil.changed))
                             && listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
-                        jumpToRectifyResultActivity(getIndex(flag,position));
+                        jumpToRectifyResultActivity(getIndex(flag,position),searchUtil.recifyQualify);
                     }else {
                         jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
                     }
@@ -701,7 +728,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
         return index;
     }
 
-    private void jumpToRectifyResultActivity(int position) {
+    private void jumpToRectifyResultActivity(int position,String status) {
         Intent intent = new Intent(ReDetectionActivity.this,RectifyResultActivity.class);
         DetectionResult test = new DetectionResult();
 //        test.setJIANCHAXIANGTITLE("测试");//测试代码
@@ -709,6 +736,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 //        detectionResults.add(test);
         intent.putExtra("detectionResult",  detectionResults.get(position));
         intent.putExtra("position",position);
+        intent.putExtra("status",status);
         intent.putExtra("toolbarTitle",title);
         intent.putExtra("toolbarTaskType",taskType);
         startActivityForResult(intent,RectifyCode);
@@ -717,20 +745,13 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 
 
     private void jumpToSuggesstionActivity(int position,String status) {
-        //listData.get(position).setResultStatus(status);
-        // String isHege = listData.get(position).getResultStatus();
-        //String noItem = listData.get(position).getJIANCHAXIANGCONTENT();
-        //String devclass = listData.get(position).getDEVCLASS();
         Intent intent = new Intent(ReDetectionActivity.this, SuggestionActivity.class);
         intent.putExtra("detectionResult",detectionResults.get(position));
-        //intent.putExtra("suggestion",noItem);
-        //intent.putExtra("path",task.getTASKID());
         intent.putExtra("position",position);
         intent.putExtra("title",title);//需要传递status
         intent.putExtra("taskType",taskType);
         intent.putExtra("status",status);
         Log.e("status1",status);
-        //intent.putExtra("isHege",isHege);
         startActivityForResult(intent,RequestCor);
     }
 
@@ -742,8 +763,13 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
         if (resultCode == RESULT_OK) {
           isDoing = true;
             if(requestCode == RequestCor){
+                DetectionResult getdata = (DetectionResult) data.getSerializableExtra("detectionResult");
+
                 int position = data.getIntExtra("position",0);
                 Log.e("position",position+"-");
+
+                detectionResults.set(position,getdata);
+
                 int imageNumber = data.getIntExtra("imageNumber",0);
                 Log.e("imageNumber",imageNumber+"-");
                 int videoNumber = data.getIntExtra("videoNumber",0);
@@ -776,6 +802,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 detectionResults.get(position).setCHANGEDRESULT("");
                 detectionResults.get(position).setCHANGEDIMAGE("");
                 detectionResults.get(position).setCHANGEDVIDEO("");
+                detectionResults.get(position).setISCHANGED(searchUtil.unchanged);
 
                 if (status.equals(searchUtil.nohege)){
                     String yinhuanlevel = data.getStringExtra("yinhuanlevel");
@@ -795,6 +822,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 Log.e(TAG," 纬度："+latitude);
 
 //                lv_detection.setAdapter(detectionAdapter);
+                String result = new Gson().toJson(detectionResults.get(position));
+                Log.e(TAG,"结果(suggestion)："+result);
                 judgeSelect();
             }
 
@@ -810,8 +839,8 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
                 Log.e(TAG,"videopath: "+detectionResults.get(pos).getCHANGEDVIDEO());
                 Log.e(TAG,"status: "+detectionResults.get(pos).getSTATUS());
                 Log.e(TAG,"pos: "+pos);
-
-//                lv_detection.setAdapter(detectionAdapter);
+                String result = new Gson().toJson(detectionResults.get(pos));
+                Log.e(TAG,"结果(整改合格)："+result);
                 judgeSelect();
             }
         }
@@ -838,7 +867,7 @@ public class ReDetectionActivity extends AppCompatActivity implements View.OnCli
 
 
     static class ViewHolder{
-        public TextView detction_item_text_context;
+        public MyTextView detction_item_text_context;
         public TextView detction_item_text_leftnum;
         public CheckBox rectify_item_status_unrectify;
         public CheckBox rectify_item_status_rectified;

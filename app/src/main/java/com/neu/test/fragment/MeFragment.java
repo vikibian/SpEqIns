@@ -2,6 +2,7 @@ package com.neu.test.fragment;
 
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.neu.test.R;
+import com.neu.test.activity.ChangeFontActivity;
 import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.MeAboutActivity;
@@ -67,7 +69,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.GONE);
-
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         section = new QMUIGroupListView.Section(getContext());
 
         init(view);
@@ -119,6 +121,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item5.setTag(5);
 
+        QMUICommonListItemView Item6 = groupListView.createItemView("字体大小");
+        Item6.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item6.setTag(6);
+
 
         int size = QMUIDisplayHelper.dp2px(view.getContext(), 20);
         QMUIGroupListView.newSection(getContext())
@@ -132,6 +138,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 .addItemView(Item3, this)
                 .addItemView(Item4, this)
                 .addItemView(Item5, this)
+                .addItemView(Item6, this)
                 //   .setOnlyShowStartEndSeparator(true)
                 .addTo(groupListView);
 
@@ -203,6 +210,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                             .show();
 
 
+                    break;
+                case 6:
+                    intent = new Intent(getActivity(), ChangeFontActivity.class);
+                    startActivity(intent);
                     break;
             }
         }

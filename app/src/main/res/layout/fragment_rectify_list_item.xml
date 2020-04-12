@@ -54,12 +54,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.neu.test.layout.MyTextView
                 android:layout_weight="2"
                 android:id="@+id/recify_item_text_context"
-                android:inputType="textMultiLine"
+                android:singleLine="true"
                 android:textColor="@color/black"
-                android:textSize="16dp"
+                android:textSize="?fontsize_1"
                 android:text="管道安全"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

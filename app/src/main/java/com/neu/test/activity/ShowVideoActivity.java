@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShowVideoActivity extends AppCompatActivity {
+    private static final String TAG = "ShowVideoActivity";
     private VideoPlayRecyclerView mRvVideo;
     private ShowVideoAdapter adapter;
     private List<String> videoPath = new ArrayList<>();
@@ -40,14 +41,16 @@ public class ShowVideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_video);
         videoPath = (List<String>) getIntent().getSerializableExtra("video");
+        int position = getIntent().getIntExtra("position",0);
+        Log.e(TAG, "onCreate: position  "+position);
 //        videoPath.add("http://39.97.108.172:8080/pic/yuhang/%20video_1584256348490.mp4");
 //        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584540967093.mp4");
 //        videoPath.add("http://39.97.108.172:8080/pic/yuhang/video_1584582023465.mp4");
 //        videoPath.add("http://39.97.108.172:8080/pic/video_1584240973852.mp4");
-        initView();
+        initView(position);
     }
 
-    private void initView() {
+    private void initView(int position) {
         findViewById(R.id.ibBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +79,7 @@ public class ShowVideoActivity extends AppCompatActivity {
 
 
         mRvVideo = findViewById(R.id.rvVideo);
-        adapter = new ShowVideoAdapter(ShowVideoActivity.this);
+        adapter = new ShowVideoAdapter(ShowVideoActivity.this,position);
         mRvVideo.setAdapter(adapter);
     }
     @Override
@@ -93,11 +96,12 @@ public class ShowVideoActivity extends AppCompatActivity {
         private ViewHolder mCurrentHolder;
         private TextureView textureView;
 
-        public ShowVideoAdapter(Context mContext) {
+        public ShowVideoAdapter(Context mContext, int position) {
             this.mContext = mContext;
             videoPlayer = new VideoPlayer();
             textureView = new TextureView(mContext);
             videoPlayer.setTextureView(textureView);
+            mCurrentPosition = position;
         }
 
         @NonNull
@@ -120,7 +124,8 @@ public class ShowVideoActivity extends AppCompatActivity {
 
         @Override
         public void onPageSelected(int itemPosition, View itemView) {
-            mCurrentPosition = itemPosition;
+            Log.e(TAG, "onPageSelected: "+itemPosition);
+//            mCurrentPosition = itemPosition;
             mCurrentHolder = new ViewHolder(itemView);
             playVideo();
         }
@@ -184,7 +189,7 @@ public class ShowVideoActivity extends AppCompatActivity {
                 }
                 mCurrentHolder.flVideo.addView(textureView);
             }
-//            Log.e("视频测试  ",videoPath.get(mCurrentPosition));
+            Log.e(TAG,"视频测试  "+mCurrentPosition);
             videoPlayer.setDataSource(videoPath.get(mCurrentPosition));
             videoPlayer.prepare();
         }

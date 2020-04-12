@@ -1,11 +1,14 @@
 package com.neu.test.activity;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +31,7 @@ public class ResetPhoneActivity extends AppCompatActivity implements View.OnClic
 
     private TextView toolbar_textview;
     private Toolbar mToolbar;
+    final int code = 404;
 
     private User user = new User();
 
@@ -35,8 +39,6 @@ public class ResetPhoneActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_phone);
-
-        user = LoginActivity.user;
 
         initView();
         initToolbar();
@@ -65,6 +67,7 @@ public class ResetPhoneActivity extends AppCompatActivity implements View.OnClic
 
 
     private void initView() {
+        user = LoginActivity.user;
         toolbar_textview = findViewById(R.id.me_resetphone_toolbar_textview);
         toolbar_textview.setText("更换手机号");
 
@@ -88,7 +91,7 @@ public class ResetPhoneActivity extends AppCompatActivity implements View.OnClic
                     if (checkPhone(newphone.getText().toString())){
                         Intent intent = new Intent(ResetPhoneActivity.this,GetVerificationCodeActivity.class);
                         intent.putExtra("phone",newphone.getText().toString());
-                        startActivity(intent);
+                        startActivityForResult(intent,code);
                     }else {
                         TipDialog.show(ResetPhoneActivity.this,"您输入的手机号格式不正确",TipDialog.TYPE.ERROR);
                     }
@@ -111,5 +114,69 @@ public class ResetPhoneActivity extends AppCompatActivity implements View.OnClic
         m = p.matcher(str);
         b = m.matches();
         return b;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == code){
+            if (resultCode == RESULT_OK){
+                this.finish();
+            }
+        }
+
+    }
+
+    /***
+     * Stop location service
+     */
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.e(TAG," onStart");
+        // TODO Auto-generated method stub
+        super.onStart();
+
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e(TAG," onResume");
+        initView();
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e(TAG," onpause");
+    }
+
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG," onDestroy");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.e(TAG,"onSaveInstanceState");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.e(TAG,"onRestoreInstanceState");
     }
 }

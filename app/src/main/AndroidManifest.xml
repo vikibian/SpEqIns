@@ -48,21 +48,28 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ResetPasswordActivity"
-            android:theme="@style/NoBar"></activity>
-        <activity android:name=".activity.ResetEmailActivity"
-            android:theme="@style/NoBar"/>
-        <activity android:name=".activity.GetVerificationCodeActivity"
-            android:theme="@style/NoBar"/>
-        <activity android:name=".activity.ResetPhoneActivity"
-            android:theme="@style/NoBar"/>
+        <activity android:name=".activity.ChangeFontActivity"></activity>
+        <activity
+            android:name=".activity.ResetPasswordActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.ResetEmailActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.GetVerificationCodeActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.ResetPhoneActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.ShowVideoActivity"
             android:theme="@style/NoBar" />
         <activity
             android:name=".activity.ShowImageActivity"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.AnswerListActivity" />
+        <activity
+            android:name=".activity.ShowSearchedResultActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.RectifyResultActivity"
             android:theme="@style/NoBar" />
@@ -96,8 +103,9 @@
             android:name=".activity.CheckDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.PDFActivity"
-            android:theme="@style/NoBar"/>
+        <activity
+            android:name=".activity.PDFActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.MeAboutActivity"
             android:theme="@style/NoBar" />
@@ -150,7 +158,9 @@
         <activity android:name=".activity.ViewPagerActivity" />
         <activity
             android:name=".activity.FragmentManagerActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/QMNoBar" />
 
         <provider

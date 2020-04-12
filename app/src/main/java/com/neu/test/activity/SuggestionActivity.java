@@ -108,7 +108,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     private String title = "";//接收从DetctionActivity传过来的标题
     private String taskType = "";
     private String Path = "";
-    private String status = "0";
+    private String status = "0";//该属性代表的是点击的哪个状态
     private String phonenumber = "";
     private SuggestionActivitySaveDataUtil saveDataUtil ;
     private SearchUtil searchUtil = new SearchUtil();
@@ -203,6 +203,8 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     private void submit(){
         if (pathlistOfPhoto.size() == 0) {
             Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
+            resetAttribute();
+            intent.putExtra("detectionResult",detectionResult);
             intent.putExtra("position",position);
             intent.putExtra("imageNumber",0);
             intent.putExtra("videoNumber",0);
@@ -266,7 +268,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
         intent = getIntent();
         position = intent.getIntExtra("position",0);
         status = intent.getStringExtra("status");
-        Log.e("status2",status);
+        Log.e(TAG,"  接收的stus："+status);
         detectionResult = (DetectionResult) intent.getSerializableExtra("detectionResult");
         ImagePath = detectionResult.getREFJIM();
         VideoPath = detectionResult.getREFJVI();
@@ -362,12 +364,8 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
 
         Map<String,String> taskItem = new HashMap<String, String>();
         taskItem.put("path",detectionResult.getLOGINNAME());
-//        taskItem.put("CHECKCONTENT",text);
-//        taskItem.put("DEVCLASS",devclass);
-
 
         OkHttp okHttp = new OkHttp();
-        //Log.e(TAG, " pathlistOfPhoto: "+ pathOfPhotos.size());
         okHttp.postFilesByPost(url, taskItem, pathOfPhotos, new FileResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
@@ -382,7 +380,8 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
                     if (response.getMessage().equals("结果上传成功")) {//Result upload Success!
                         Log.d(TAG," 文件上传成功");//文件长传成功
                         Toasty.success(SuggestionActivity.this,"文件上传成功！",Toast.LENGTH_SHORT,true).show();
-
+                        resetAttribute();
+                        intent.putExtra("detectionResult",detectionResult);
                         intent.putExtra("position",position);
                         intent.putExtra("imageNumber",response.imageNumber);
                         intent.putExtra("videoNumber",response.videoNumber);
@@ -390,7 +389,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
                         intent.putExtra("ImagePath",ImagePath);
                         intent.putExtra("VideoPath",VideoPath);
                         intent.putExtra("status",status);
-                        Log.e("status3",status);
+
                         intent.putExtra("phone",phonenumber);
                         intent.putExtra("longitude",gpsUtil.getLongitude());
                         intent.putExtra("laitude",gpsUtil.getLatitude());
@@ -409,6 +408,28 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
+
+    }
+
+    private void resetAttribute() {
+        //已经选择不合格 但是需要重新选择合格
+        if (status.equals(searchUtil.hege)&&(detectionResult.getSTATUS().equals(searchUtil.nohege))){
+            detectionResult.setYINHUANLEVEL("");
+            detectionResult.setCHANGEDWAY("");
+        }
+        //已经选择整改合格 但是需要重新选择合格
+        if (status.equals(searchUtil.hege)&&(detectionResult.getSTATUS().equals(searchUtil.recifyQualify))){
+            detectionResult.setCHANGEDACTION("");
+            detectionResult.setCHANGEDWAY("");
+            detectionResult.setCHANGEDFINISHTIME("");
+            detectionResult.setCHANGEDRESULT("");
+        }
+        //已经选择整改合格 但是需要重新选择不合格
+        if (status.equals(searchUtil.nohege)&&(detectionResult.getSTATUS().equals(searchUtil.recifyQualify))){
+            detectionResult.setCHANGEDACTION("");
+            detectionResult.setCHANGEDFINISHTIME("");
+            detectionResult.setCHANGEDRESULT("");
+        }
 
     }
 

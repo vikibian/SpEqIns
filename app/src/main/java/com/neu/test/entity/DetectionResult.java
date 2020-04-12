@@ -177,7 +177,7 @@ public class DetectionResult implements Serializable {
   //测试
   private String CHANGEDWAY = "" ;
   private String CHANGEDACTION;
-  private String CHANGEDFINISHTIME = "";
+  private String CHANGEDFINISHTIME;
   private String CHANGEDRESULT;
 
   public String getCHANGEDWAY() {

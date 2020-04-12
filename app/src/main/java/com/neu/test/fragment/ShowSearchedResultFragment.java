@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,35 +21,26 @@ import androidx.fragment.app.Fragment;
 import com.google.gson.Gson;
 import com.neu.test.R;
 import com.neu.test.activity.CheckDetailsActivity;
-import com.neu.test.activity.DetctionActivity;
-import com.neu.test.activity.FragmentManagerActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.adapter.DropDownMenuAdapter;
 import com.neu.test.adapter.ListViewAdapter1;
-import com.neu.test.entity.DetectionItem;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
-import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
-import com.neu.test.util.ListContent;
-import com.neu.test.util.ResultBean;
 import com.neu.test.util.SearchUtil;
 import com.yyydjk.library.DropDownMenu;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
 public class ShowSearchedResultFragment extends Fragment implements View.OnClickListener {
@@ -108,16 +98,6 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         devID = task.getDEVID();
 
         listDatas = new ArrayList<DetectionItem1>();
-        listDatas.add(new DetectionItem1("现场人员是否具有有效证件。","不合格"));
-        listDatas.add(new DetectionItem1("是否有使用登记标志，并按规定固定在电梯的显著位置，是否在下次检验期限内。","合格"));
-        listDatas.add(new DetectionItem1("安全注意事项和警示标志是否置于易于为乘客注意的显著位置。","合格"));
-        listDatas.add(new DetectionItem1("电梯内设置的报警装置是否可靠，联系是否畅通。","不合格"));
-        listDatas.add(new DetectionItem1("抽查呼层、楼层等显示信号系统功能是否有效，指示是否正确。","合格"));
-        listDatas.add(new DetectionItem1("门防夹保护装置是否有效。","合格"));
-        listDatas.add(new DetectionItem1("自动扶梯和自动人行道入口处急停开关是否有效。","合格"));
-        listDatas.add(new DetectionItem1("限速器校验报告是否在有效期内。","合格"));
-        listDatas.add(new DetectionItem1("是否有有效的维保合同，维保资质及人员资质是否满足要求。","合格"));
-        listDatas.add(new DetectionItem1("是否有维保记录，并经安全管理人签字确认，维保周期是否符合规定。","合格"));
 
         initView(view);
         getTaskList();
@@ -165,11 +145,12 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
-//        map.put("taskID","123456785");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
-        map.put("taskID",taskID);//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        map.put("username",LoginActivity.inputName);
+        map.put("taskID","1234567891011");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+//        map.put("taskID",taskID);
         Log.e(TAG,"map: "+ map.toString());
-//        map.put("DEVID","五号电梯");//123456  devID
-        map.put("DEVID",devID);//123456  devID
+        map.put("DEVID","五号电梯");//123456  devID
+//        map.put("DEVID",devID);
         Log.e(TAG,"map: "+ map.toString());
 
 

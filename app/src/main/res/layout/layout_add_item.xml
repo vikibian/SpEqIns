@@ -24,9 +24,19 @@
           android:text="检查项添加"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_tips"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="内容不能为空"
+        android:textColor="@color/red"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
       <LinearLayout
@@ -107,6 +117,35 @@
             android:background="@color/white"
             android:padding="5dp" />
       </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        />
+    <LinearLayout
+        android:gravity="right"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+      <Button
+          android:layout_marginLeft="10dp"
+          android:id="@+id/btn_add_cancel"
+          android:layout_width="wrap_content"
+          android:background="@drawable/bg_button_detction"
+          android:layout_height="wrap_content"
+          android:text="取消"/>
+      <Button
+          android:id="@+id/btn_add_add"
+          android:layout_marginLeft="5dp"
+          android:layout_width="wrap_content"
+          android:background="@drawable/bg_button_detction"
+          android:textColor="@color/blue"
+          android:layout_height="wrap_content"
+          android:text="添加"/>
+
     </LinearLayout>
   </LinearLayout>
 </ScrollView>

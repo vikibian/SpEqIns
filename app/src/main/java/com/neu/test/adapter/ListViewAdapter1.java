@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.neu.test.R;
@@ -21,28 +22,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ListViewAdapter1 extends BaseAdapter {
     private final String TAG ="ListViewAdapter1";
     private Context context;
-    private List<DetectionItem1> listDatas;
     private List<DetectionResult> listResult = new ArrayList<>();
     private String stringFlag;
     private SearchUtil searchUtil = new SearchUtil();
 
-
-//
-//    public ListViewAdapter1(Context context,List<DetectionItem> listData,String str){
-//        this.context = context;
-//        this.listDatas = listData;
-//        Log.d(TAG,"构造器");
-//        this.stringFlag = str;
-//
-//
-//    }
-
-//    public ListViewAdapter1(Context context, List<DetectionItem1> listData, String str){
-//        this.context = context;
-//        this.listDatas = listData;
-//        Log.d(TAG,"构造器");
-//        this.stringFlag = str;
-//    }
 
     public ListViewAdapter1(Context context, List<DetectionResult> listResult, String str){
         this.context = context;
@@ -71,35 +54,31 @@ public class ListViewAdapter1 extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        if(convertView==null){
-            convertView = LayoutInflater.from(context).inflate(R.layout.show_searched_result_listview_item,null);
-            viewHolder = new ViewHolder(convertView,position);
 
-            convertView.setTag(viewHolder);
-        }
-        else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
+        convertView = LayoutInflater.from(context).inflate(R.layout.show_searched_result_listview_item,null);
+        viewHolder = new ViewHolder(convertView,position);
+        convertView.setTag(viewHolder);
 
         if (listResult.get(position).getSTATUS().equals(searchUtil.hege)
                 ||listResult.get(position).getSTATUS().equals(searchUtil.hegeText)){
-            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_name.setText(listResult.get(position).getJIANCHAXIANGTITLE());
             viewHolder.mTextView_status.setText(searchUtil.hegeText);
-            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_green);
+            viewHolder.imageView.setImageResource(R.drawable.ic_check_circle_green_800_24dp);
         }else if (listResult.get(position).getSTATUS().equals(searchUtil.nohege)
                 ||listResult.get(position).getSTATUS().equals(searchUtil.nohegeText)){
-            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_name.setText(listResult.get(position).getJIANCHAXIANGTITLE());
             viewHolder.mTextView_status.setText(searchUtil.nohegeText);
-            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_red);
+            viewHolder.imageView.setImageResource(R.drawable.ic_highlight_off_red_600_24dp);
         }else if (listResult.get(position).getSTATUS().equals(searchUtil.undecided)
                 ||listResult.get(position).getSTATUS().equals(searchUtil.undecidedText)){
-            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
+            viewHolder.mTextView_name.setText(listResult.get(position).getJIANCHAXIANGTITLE());
             viewHolder.mTextView_status.setText(searchUtil.undecidedText);
-            viewHolder.circleImageView.setImageResource(R.drawable.circleimageview_blue);
-        } else {
-            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
-            viewHolder.mTextView_name.setText(listResult.get(position).getCHECKCONTENT());
-            viewHolder.mTextView_status.setText(" ");
+            viewHolder.imageView.setImageResource(R.drawable.ic_help_outline_yellow_a200_24dp);
+        } else if (listResult.get(position).getSTATUS().equals(searchUtil.recifyQualify)
+                ||listResult.get(position).getSTATUS().equals(searchUtil.recifyQualifyText)){
+            viewHolder.mTextView_name.setText(listResult.get(position).getJIANCHAXIANGTITLE());
+            viewHolder.mTextView_status.setText(searchUtil.recifyQualifyText);
+            viewHolder.imageView.setImageResource(R.drawable.ic_offline_pin_light_green_700_24dp);
         }
 
         return convertView;
@@ -109,11 +88,13 @@ public class ListViewAdapter1 extends BaseAdapter {
         TextView mTextView_name;
         TextView mTextView_status;
         CircleImageView circleImageView;
+        ImageView imageView;
 
         public ViewHolder(View convertView,int pos){
             mTextView_name = convertView.findViewById(R.id.show_searched_result_listview_item_textview_name);
             mTextView_status = convertView.findViewById(R.id.show_searched_result_listview_item_textview_status);
-            circleImageView = convertView.findViewById(R.id.show_searched_result_listview_item_circleimage);
+//            circleImageView = convertView.findViewById(R.id.show_searched_result_listview_item_circleimage);
+            imageView = convertView.findViewById(R.id.show_searched_result_listview_item_circleimage);
 
         }
 

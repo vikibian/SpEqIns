@@ -117,6 +117,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     private String phonenumber ="";
     private GPSUtil gpsUtil;
     private String way = "立即整改";
+    private String status = "3";
 
 
     @Override
@@ -134,10 +135,12 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
 
 
         intentByPreviousActivity = getIntent();
+        detectionResult = (DetectionResult) getIntent().getSerializableExtra("detectionResult");
+        positionSelected = getIntent().getIntExtra("position",-1);
+        status = getIntent().getStringExtra("status");
         toolbarTitle = getIntent().getStringExtra("toolbarTitle");
         toolbarTaskType = getIntent().getStringExtra("toolbarTaskType");
-        positionSelected = getIntent().getIntExtra("position",-1);
-        detectionResult = (DetectionResult) getIntent().getSerializableExtra("detectionResult");
+
 
         initRecifyContent();
 
@@ -235,29 +238,14 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         textView_finish_time = findViewById(R.id.rectify_result_item_finishtime_textview);
         editText_rectify_result = findViewById(R.id.rectify_result_item_rectifyresult);
         button_submit = findViewById(R.id.rectify_result_item_submit_button);
-//        recify_result_qualified = findViewById(R.id.rectify_result_qualified);
-//        recify_result_unqualified = findViewById(R.id.rectify_result_unqualified);
+
         editText_rectify_content = findViewById(R.id.rectify_result_item_content_edittext);
-//        textView_recify_phonenumber = findViewById(R.id.rectify_result_item_phonenumber_textview);
-//        recify_result_way_textview = findViewById(R.id.rectify_result_item_way_textview);
-//        recify_result_way_limit = findViewById(R.id.rectify_result_way_limit);
-//        recify_result_way_stop = findViewById(R.id.rectify_result_way_stop);
-//        recify_result_way_checkbox_lin = findViewById(R.id.rectify_result_way_checkbox_lin);
+
 
         textView_finish_time.setOnClickListener(this);
         button_submit.setOnClickListener(this);
-//        recify_result_qualified.setOnClickListener(this);
-//        recify_result_unqualified.setOnClickListener(this);
-//        textView_recify_phonenumber.setOnClickListener(this);
-//        recify_result_qualified.setOnClickListener(this);
-//        recify_result_unqualified.setOnClickListener(this);
-//        recify_result_way_limit.setOnClickListener(this);
-//        recify_result_way_stop.setOnClickListener(this);
 
 
-        //默认合格
-//        recify_result_qualified.setChecked(true);
-//        recify_result_way_textview.setText(way);
     }
 
     @Override
@@ -270,26 +258,19 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                 //在点击提交之前把整改的内容 添加到选中的detectionResult的相应属性中取
                 if (!textView_finish_time.getText().toString().isEmpty()){
                     Log.e(TAG, "onClick: 点击"+textView_finish_time.getText().toString());
-//                    if (recify_result_qualified.isChecked()){
-//                        setDetectionResult();
-//                        postFiles("text",pathlistOfPhoto);
-//                    }else if (recify_result_unqualified.isChecked()){
-//                        if ((!recify_result_way_stop.isChecked())&&(!recify_result_way_limit.isChecked())){
-//                            Toasty.info(getApplicationContext(),"对不起，您没有选择整改方式！",Toast.LENGTH_SHORT).show();
-//                        }else {
-//
-//                        }
-//                    }
-                    setDetectionResult();
-                    postFiles("text",pathlistOfPhoto);
+                    if (pathlistOfPhoto.size() == 0){
+                        setDetectionResult();
+                        intentByPreviousActivity.putExtra("detectionResult",detectionResult);
+                        intentByPreviousActivity.putExtra("position",positionSelected);
+                        setResult(RESULT_OK,intentByPreviousActivity);
+                        finish();
+                    }else {
+                        setDetectionResult();
+                        postFiles("text",pathlistOfPhoto);
+                    }
                 }else {
                     Toasty.info(getApplicationContext(),"对不起，您没有选择时间！",Toasty.LENGTH_SHORT).show();
                 }
-//                intentByPreviousActivity.putExtra("detectionResult",detectionResult);
-//                intentByPreviousActivity.putExtra("position",positionSelected);
-//
-//                setResult(RESULT_OK,intentByPreviousActivity);
-//                finish();
                 break;
 //            case R.id.rectify_result_qualified:
 //                recify_result_unqualified.setChecked(false);
@@ -327,7 +308,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
 
 
         OkHttp okHttp = new OkHttp();
-        //Log.e(TAG, " pathlistOfPhoto: "+ pathOfPhotos.size());
+        Log.e(TAG, " pathlistOfPhoto: "+ pathOfPhotos.size());
         okHttp.postFilesByPost(url, taskItem, pathOfPhotos, new FileResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
@@ -361,20 +342,17 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     }
 
     private void setDetectionResult() {
+
+        //已经选择不合格 但是需要重新选择整改合格
+        if (status.equals(searchUtil.recifyQualify)&&(detectionResult.getSTATUS().equals(searchUtil.nohege))){
+            detectionResult.setYINHUANLEVEL("");
+        }
+
         //整改合格默认的整改方式是：立即整改
         detectionResult.setCHANGEDWAY(way);
         //设置地理位置和手机号
         //Log.e(TAG,"   local:  "+gpsUtil.getLocal());  通过这个获取地理位置
 
-//        if (recify_result_qualified.isChecked()){
-//            detectionResult.setCHANGEDWAY(recify_result_way_textview.getText().toString());
-//        }else if (recify_result_unqualified.isChecked()){
-//            if (recify_result_way_limit.isChecked()){
-//                detectionResult.setCHANGEDWAY(recify_result_way_limit.getText().toString());
-//            }else if (recify_result_way_stop.isChecked()){
-//                detectionResult.setCHANGEDWAY(recify_result_way_stop.getText().toString());
-//            }
-//        }
         detectionResult.setCHANGEDACTION(editText_rectify_action.getText().toString());
         detectionResult.setCHANGEDFINISHTIME(textView_finish_time.getText().toString());
         detectionResult.setCHANGEDRESULT(editText_rectify_result.getText().toString());
@@ -390,15 +368,6 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         detectionResult.setLONGITUDE(gpsUtil.getLongitude());
         detectionResult.setLATITUDE(gpsUtil.getLatitude());
 
-
-//        else if (recify_result_unqualified.isChecked()){
-//            detectionResult.setISCHANGED(searchUtil.unchanged);
-//            detectionResult.setSTATUS(searchUtil.nohege);
-//            detectionResult.setREFJIM(ImagePath);
-//            detectionResult.setREFJVI(VideoPath);
-//            Log.e(TAG,"imagepath  refjim: "+ImagePath);
-//            Log.e(TAG,"VideoPath  refjvm: "+VideoPath);
-//        }
 
     }
 

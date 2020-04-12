@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -33,7 +35,9 @@ import com.neu.test.R;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.layout.MyGridView;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.ReloadImageAndVideo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,17 +48,25 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
     private LinearLayout check_image_lin;
     private MyGridView check_image_gridview;
     private LinearLayout check_video_lin;
-//    private MyGridView check_video_gridview;
+    private MyGridView check_video_gridview;
     private RecyclerView check_video_recyclerview;
+    private TextView check_media_title;
     private TextView check_media_content;
+    private TextView check_media_yinhuanlevel;
+    private TextView check_media_changway;
+    private Button check_media_back;
 
     private DetectionResult detectionResult = new DetectionResult();
 
     private List<String> imageList = new ArrayList<>();
     private List<String> videoList = new ArrayList<>();
+    private List<String> mediaList = new ArrayList<>();
 
-    private ChangeImageAdapter changeImageAdapter;
-    private ChangeVideoAdapter changeVideoAdapter;
+//    private ChangeImageAdapter changeImageAdapter;
+//    private ChangeVideoAdapter changeImageAdapter_video;
+//    private ChangeVideoAdapter changeVideoAdapter;
+    private ChangeMediaAdapter changeMediaAdapter;
+
     private Toolbar toolbar;
     private TextView toolbar_title;
     private TextView toolbar_subtitleLeft;
@@ -76,66 +88,122 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
         initToolbar();
         initView();
 
+        ReloadImageAndVideo reloadImageAndVideo = new ReloadImageAndVideo();
 
-        imageList = decodeChaneImagePath(detectionResult);
-        if (imageList.size() == 0){
+        imageList = reloadImageAndVideo.decodeImagePath(detectionResult.getREFJIM(),detectionResult.getLOGINNAME());
+        videoList = reloadImageAndVideo.decodeVideoPath(detectionResult.getREFJVI(),detectionResult.getLOGINNAME());
+
+        for (int i = 0;i<(imageList.size()+videoList.size());i++){
+            if (i<imageList.size()){
+                mediaList.add(imageList.get(i));
+            }else if ((i>=imageList.size())&&(i<(imageList.size()+videoList.size()))){
+                mediaList.add(videoList.get((i-imageList.size())));
+            }
+        }
+        Log.e(TAG,"  media大小："+mediaList.size());
+
+        if (mediaList.size() == 0){
             check_image_lin.setVisibility(View.GONE);
         }else {
-            changeImageAdapter = new ChangeImageAdapter();
-            check_image_gridview.setAdapter(changeImageAdapter);
-        }
-        videoList = decodeChaneVideoPath(detectionResult);
-        if (videoList.size() == 0){
-            check_video_lin.setVisibility(View.GONE);
-        }else {
-            check_video_lin.setVisibility(View.VISIBLE);
-            changeVideoAdapter = new ChangeVideoAdapter(this);
-            check_video_recyclerview.setAdapter(changeVideoAdapter);
+            changeMediaAdapter = new ChangeMediaAdapter(mediaList);
+            check_image_gridview.setAdapter(changeMediaAdapter);
         }
 
         check_image_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                initImageView(position);
+
+                if ((imageList.size()<=position)&&(position<(imageList.size()+videoList.size()))){
+                    Intent intent2 = new Intent(CheckMediaForRectifyActivity.this,ShowVideoActivity.class);
+                    Log.e(TAG, "onClick: 视频地址   "+videoList);
+                    intent2.putExtra("video", (Serializable) videoList);
+                    intent2.putExtra("position",(position-imageList.size()));
+                    startActivity(intent2);
+                }else {
+                    initImageView(position);
+                }
+
+
                 //展示选中图片
                 Toast.makeText(CheckMediaForRectifyActivity.this, ""+position, Toast.LENGTH_SHORT).show();
             }
         });
 
+//        if (imageList.size() == 0){
+//            check_image_lin.setVisibility(View.GONE);
+//        }else {
+//            changeImageAdapter = new ChangeImageAdapter(imageList);
+//            check_image_gridview.setAdapter(changeImageAdapter);
+//        }
+//        Log.e(TAG,"  地址："+detectionResult.getREFJVI());
 
-        check_video_recyclerview.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+//        if (videoList.size() == 0){
+//            check_video_lin.setVisibility(View.GONE);
+//        }else {
+//            check_video_lin.setVisibility(View.VISIBLE);
+//            //下面的代码是以Recyclerview显示饺子视频时的代码
+////            changeVideoAdapter = new ChangeVideoAdapter(this);
+////            check_video_recyclerview.setAdapter(changeVideoAdapter);
+//            changeImageAdapter_video = new ChangeVideoAdapter(videoList);
+//            check_video_gridview.setAdapter(changeImageAdapter_video);
+//        }
+
+//        check_image_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                initImageView(position);
+//                //展示选中图片
+//                Toast.makeText(CheckMediaForRectifyActivity.this, ""+position, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+//        check_video_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(CheckMediaForRectifyActivity.this, ""+position, Toast.LENGTH_SHORT).show();
+//                Intent intent2 = new Intent(CheckMediaForRectifyActivity.this,ShowVideoActivity.class);
+//                Log.e(TAG, "onClick: 视频地址   "+videoList);
+//                intent2.putExtra("video", (Serializable) videoList);
+//                intent2.putExtra("position",position);
+//                startActivity(intent2);
+//            }
+//        });
+
+//        //使用recyclerview播放视频时的监听 目前使用上面video_gridview的监听了
+//        check_video_recyclerview.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+//            @Override
+//            public void onChildViewAttachedToWindow(@NonNull View view) {
+//
+//            }
+//
+//            @Override
+//            public void onChildViewDetachedFromWindow(@NonNull View view) {
+//                Jzvd jzvd = view.findViewById(R.id.jz_video);
+//                if (jzvd != null && Jzvd.CURRENT_JZVD != null &&
+//                        jzvd.jzDataSource.containsTheUrl(Jzvd.CURRENT_JZVD.jzDataSource.getCurrentUrl())) {
+//                    if (Jzvd.CURRENT_JZVD != null && Jzvd.CURRENT_JZVD.screen != Jzvd.SCREEN_FULLSCREEN) {
+//                        Jzvd.releaseAllVideos();
+//                    }
+//                }
+//            }
+//        });
+
+        check_media_back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChildViewAttachedToWindow(@NonNull View view) {
-
-            }
-
-            @Override
-            public void onChildViewDetachedFromWindow(@NonNull View view) {
-                Jzvd jzvd = view.findViewById(R.id.jz_video);
-                if (jzvd != null && Jzvd.CURRENT_JZVD != null &&
-                        jzvd.jzDataSource.containsTheUrl(Jzvd.CURRENT_JZVD.jzDataSource.getCurrentUrl())) {
-                    if (Jzvd.CURRENT_JZVD != null && Jzvd.CURRENT_JZVD.screen != Jzvd.SCREEN_FULLSCREEN) {
-                        Jzvd.releaseAllVideos();
-                    }
-                }
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
+                finish();
             }
         });
+
     }
 
     private void initToolbar() {
         toolbar = findViewById(R.id.toolbar_checkmedia);
         toolbar_title = findViewById(R.id.toolbar_checkmedia_title);
-        toolbar_subtitleLeft = findViewById(R.id.toolbar_checkmedia_subtitle_left);
-        toolabr_subtitleRight = findViewById(R.id.toolbar_checkmedia_subtitle_right);
-
-        toolbar_title.setTextSize(20);
-        toolbar_subtitleLeft.setTextSize(13);
-        toolabr_subtitleRight.setTextSize(13);
-
-        toolbar_title.setText(taskType+"    ");
-        toolbar_subtitleLeft.setText(title);
-        toolabr_subtitleRight.setText(taskType);
-        toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));
+        toolbar_title.setTextSize(18);
+        toolbar.setTitle("");
+        toolbar_title.setText("附件内容显示");
 
         this.setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -146,12 +214,26 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
         check_image_lin = findViewById(R.id.check_image_lin);
         check_image_gridview = findViewById(R.id.check_image_gridview);
 
+        check_video_gridview = findViewById(R.id.check_video_gridview);
+
         check_video_lin = findViewById(R.id.check_video_lin);
         check_video_recyclerview = findViewById(R.id.check_video_recycleview);
         check_video_recyclerview.setLayoutManager(new LinearLayoutManager(this));
 
+        check_media_title = findViewById(R.id.check_media_title_textview);
+        check_media_title.setText(detectionResult.getJIANCHAXIANGTITLE());
+
         check_media_content = findViewById(R.id.check_media_content_textview);
         check_media_content.setText(detectionResult.getSUGGESTION());
+//        check_media_content.setText("整改问题描述整改问题描述整改问题描述整改问题描述整改问题描述");
+
+        check_media_yinhuanlevel = findViewById(R.id.check_media_yinhuanlevel_textview);
+        check_media_yinhuanlevel.setText(detectionResult.getYINHUANLEVEL());
+
+        check_media_changway = findViewById(R.id.check_media_changway_textview);
+        check_media_changway.setText(detectionResult.getCHANGEDWAY());
+
+        check_media_back = findViewById(R.id.check_media_back_button);
 
     }
 
@@ -204,46 +286,8 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
     }
 
 
-    public List<String> decodeChaneImagePath(DetectionResult detectionResult) {
-//        detectionResult.setCHANGEDIMAGE("image_202031610246.jpg,image_202031662445.jpg,image_202031610246.jpg,image_202031662445.jpg");//image_202031610246.jpg,image_202031662445.jpg  image_202031610246.jpg,image_202031662445.jpg,image_202031610246.jpg,image_202031662445.jpg
-        List<String> paths = new ArrayList<>();
-        String imagePath = "";
-        imagePath = detectionResult.getREFJIM();
-        if ((!imagePath.equals(""))&&(!imagePath.equals(null))){
-            String[] splitpath = imagePath.split(",");
-            for (int i=0;i<splitpath.length;i++){
-                String httppath = BaseUrl.pathOfPhotoAndVideo+ detectionResult.getLOGINNAME()+"/"+splitpath[i];
-                paths.add(httppath);
-            }
-        }else {
-
-        }
-        return paths;
-    }
-
-    private List<String> decodeChaneVideoPath(DetectionResult detectionResult) {
-//        detectionResult.setCHANGEDVIDEO("video_1584540967093.mp4,video_1584582023465.mp4,video_1584540967093.mp4,video_1584582023465.mp4");
-        List<String> paths = new ArrayList<>();
-        String videoPath = "";
-        videoPath = detectionResult.getREFJVI();
-        if ((!videoPath.equals(""))&&(!videoPath.equals(null))){
-            String[] splitpath = videoPath.split(",");
-            for (int i=0;i<splitpath.length;i++){
-                String httppath = BaseUrl.pathOfPhotoAndVideo+ detectionResult.getLOGINNAME()+"/"+splitpath[i];
-                paths.add(httppath);
-                Log.e(TAG, "decodeChaneVideoPath: httppath  "+httppath );
-            }
-        }else {
-
-        }
-        return paths;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -259,16 +303,26 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 
 
 
-    class ChangeImageAdapter extends BaseAdapter{
+//
+
+    class ChangeMediaAdapter extends BaseAdapter{
+
+        private List<String> pathlists;
+
+        public ChangeMediaAdapter(List<String> list){
+            pathlists = new ArrayList<>();
+            this.pathlists = list;
+
+        }
 
         @Override
         public int getCount() {
-            return imageList.size();
+            return pathlists.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return imageList.get(position);
+            return pathlists.get(position);
         }
 
         @Override
@@ -278,24 +332,30 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ChangeImageViewHolder changeImageViewHolder;
+            ChangeMediaViewHolder changeMediaViewHolder;
             if (convertView == null){
-
-                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.fujian_layout_redetection,null);
-                changeImageViewHolder = new ChangeImageViewHolder(convertView);
-                convertView.setTag(changeImageViewHolder);
+                convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.fujian_layout_redetection2,null);
+                changeMediaViewHolder = new ChangeMediaViewHolder(convertView);
+                convertView.setTag(changeMediaViewHolder);
             }else{
-                changeImageViewHolder = (ChangeImageViewHolder) convertView.getTag();
+                changeMediaViewHolder = (ChangeMediaViewHolder) convertView.getTag();
+            }
+
+            if ((imageList.size()<=position)&&(position<(imageList.size()+videoList.size()))){
+                changeMediaViewHolder.changeImagePre.setVisibility(View.VISIBLE);
+            }else {
+                changeMediaViewHolder.changeImagePre.setVisibility(View.INVISIBLE);
             }
 
             Glide
                     .with(getApplicationContext())
-                    .load(imageList.get(position))
+                    .load(pathlists.get(position))
                     .centerCrop()
                     .placeholder(R.drawable.loading)
                     .error(R.drawable.error)
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .into(changeImageViewHolder.changeImage);
+                    .into(changeMediaViewHolder.changeImage);
+
 
             return convertView;
         }
@@ -303,51 +363,53 @@ public class CheckMediaForRectifyActivity extends AppCompatActivity {
 
     }
 
-    class ChangeImageViewHolder {
-        private PhotoView changeImage;
+    class ChangeMediaViewHolder {
+        private ImageView changeImage;
+        private ImageView changeImagePre;
 
-        public ChangeImageViewHolder(View view){
+        public ChangeMediaViewHolder(View view){
             changeImage = view.findViewById(R.id.fujian_gridview_item_photo);
+            changeImagePre = view.findViewById(R.id.fujian_gridview_item_photo_pre);
         }
     }
 
 
-    class ChangeVideoAdapter extends RecyclerView.Adapter<ChangeVideoAdapter.ChangeVideoViewHolder>{
-        Context context;
-
-        public ChangeVideoAdapter(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public ChangeVideoAdapter.ChangeVideoViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
-            ChangeVideoViewHolder holder = new ChangeVideoViewHolder(LayoutInflater.from(
-                  context  ).inflate(R.layout.checkmedia_video_layout, parent,
-                    false));
-
-            return holder;
-        }
-
-        @SuppressLint("LongLogTag")
-        @Override
-        public void onBindViewHolder( ChangeVideoAdapter.ChangeVideoViewHolder holder, int position) {
-            holder.jzvd.setUp(videoList.get(position),"",Jzvd.SCREEN_NORMAL);
-        }
-
-        @Override
-        public int getItemCount() {
-            return videoList.size();
-        }
-
-        class ChangeVideoViewHolder extends RecyclerView.ViewHolder {
-            private Jzvd jzvd;
-
-            public ChangeVideoViewHolder(View view){
-                super(view);
-                jzvd = view.findViewById(R.id.jz_video);
-            }
-        }
-    }
+//    class ChangeVideoAdapter extends RecyclerView.Adapter<ChangeVideoAdapter.ChangeVideoViewHolder>{
+//        Context context;
+//
+//        public ChangeVideoAdapter(Context context) {
+//            this.context = context;
+//        }
+//
+//        @Override
+//        public ChangeVideoAdapter.ChangeVideoViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
+//            ChangeVideoViewHolder holder = new ChangeVideoViewHolder(LayoutInflater.from(
+//                  context  ).inflate(R.layout.checkmedia_video_layout, parent,
+//                    false));
+//
+//            return holder;
+//        }
+//
+//        @SuppressLint("LongLogTag")
+//        @Override
+//        public void onBindViewHolder( ChangeVideoAdapter.ChangeVideoViewHolder holder, int position) {
+//            holder.jzvd.setUp(videoList.get(position),"",Jzvd.SCREEN_NORMAL);
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return videoList.size();
+//        }
+//
+//        class ChangeVideoViewHolder extends RecyclerView.ViewHolder {
+//            private Jzvd jzvd;
+//
+//            public ChangeVideoViewHolder(View view){
+//                super(view);
+//                jzvd = view.findViewById(R.id.jz_video);
+//            }
+//        }
+//    }
 
 
 

@@ -18,7 +18,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <!-- 设置Menu菜单的背景色 -->
-        <item name="android:itemBackground">@color/colorPrimary</item>
+        <item name="android:itemBackground">@color/lightblue</item>
         <!-- 设置Menu菜单的字体颜色 -->
         <item name="android:textColorPrimary">@color/white</item>
         <item name="colorControlNormal">@color/white</item><!-- 主要是这个起作用,修改默认返回键的颜色-->
@@ -57,6 +57,48 @@
     <style name="FullScreen" parent="AppTheme">
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Theme_Small" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontsize_1">@dimen/font_size_16sp</item>
+        <item name="fontsize_2">@dimen/font_size_15sp</item>
+        <item name="fontsize_3">@dimen/font_size_14sp</item>
+    </style>
+    <style name="Theme_Medium" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontsize_1">@dimen/font_size_18sp</item>
+        <item name="fontsize_2">@dimen/font_size_17sp</item>
+        <item name="fontsize_3">@dimen/font_size_16sp</item>
+    </style>
+    <style name="Theme_Large" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontsize_1">@dimen/font_size_20sp</item>
+        <item name="fontsize_2">@dimen/font_size_18sp</item>
+        <item name="fontsize_3">@dimen/font_size_17sp</item>
+    </style>
+
+    <style name="Theme_Large_Small" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontsize_1">@dimen/font_size_22sp</item>
+        <item name="fontsize_2">@dimen/font_size_20sp</item>
+        <item name="fontsize_3">@dimen/font_size_18sp</item>
+    </style>
+    <style name="Theme_Large_Media" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/lightblue</item>
+        <item name="colorPrimaryDark">@color/lightblue</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="fontsize_1">@dimen/font_size_24sp</item>
+        <item name="fontsize_2">@dimen/font_size_22sp</item>
+        <item name="fontsize_3">@dimen/font_size_20sp</item>
     </style>
 
 </resources>

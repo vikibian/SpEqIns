@@ -77,7 +77,7 @@ public class PhotoVideoActivity extends AppCompatActivity implements PermissionU
 
 
         if (!PermissionUtils.hasPermissions(getApplicationContext(), permissionsOfGPS)) {
-            PermissionUtils.requestPermissions(PhotoVideoActivity.this, REQUEST_PERMISSION_CODE, permissionsOfGPS);
+            PermissionUtils.requestPermission(PhotoVideoActivity.this, REQUEST_PERMISSION_CODE, permissionsOfGPS);
         } else {
             startLocate();
         }

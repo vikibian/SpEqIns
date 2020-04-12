@@ -54,6 +54,7 @@ public class GetVerificationCodeActivity extends AppCompatActivity implements Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_verification_code);
+        Log.e(TAG, "onCreate: " );
 
         phonenumber = getIntent().getStringExtra("phone");
         user = LoginActivity.user;
@@ -155,7 +156,7 @@ public class GetVerificationCodeActivity extends AppCompatActivity implements Vi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-//                setResult(RESULT_OK);
+                setResult(RESULT_OK);
                 this.finish();
 
                 return true;
@@ -189,13 +190,15 @@ public class GetVerificationCodeActivity extends AppCompatActivity implements Vi
                 try {
                     result = new JSONObject(reponse);
                     if (result.get("message").equals("更改成功")){
-                        Toasty.success(getApplicationContext(),"修改成功").show();
-                        finish();
+                        Toasty.success(getApplicationContext(),"修改密码成功").show();
+                        LoginActivity.user.setPHONE(phonenumber);
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(GetVerificationCodeActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(GetVerificationCodeActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
+                    setResult(RESULT_OK);
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

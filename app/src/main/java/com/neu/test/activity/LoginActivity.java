@@ -111,6 +111,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     private void initParams() {
         promptDialog = new PromptDialog(this);
+        permissionUtils = new PermissionUtils(this,LoginActivity.this,null,null);
         telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         //用户信息缓存
         sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -125,12 +126,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 login();
             }else{
                 //获取权限
-                permissionUtils = new PermissionUtils(this,this,null,null);
                 permissionUtils.getPermission();
             }
         }else{
-            //获取权限
-            permissionUtils = new PermissionUtils(this,this,null,null);
+            //获取权限;
             permissionUtils.getPermission();
         }
     }

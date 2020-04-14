@@ -18,6 +18,7 @@ import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -30,9 +31,10 @@ import java.util.Map;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class GetVerificationCodeActivity extends AppCompatActivity implements View.OnClickListener {
+public class GetVerificationCodeActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "GetVerificationCodeActi";
     private Toolbar mToolbar;
     private TextView toolbar_textview;

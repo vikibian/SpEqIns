@@ -40,6 +40,7 @@ import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 
 import java.io.File;
@@ -55,7 +56,7 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-public class PDFActivity extends AppCompatActivity {
+public class PDFActivity extends BaseActivity {
     private static final String TAG = "PDFActivity";
     private List<DetectionResult> resultData;
     private com.github.barteksc.pdfviewer.PDFView pdfView;

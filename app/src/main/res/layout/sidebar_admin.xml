@@ -73,10 +73,10 @@
                                 android:layout_marginBottom="10dp"
                                 android:id="@+id/select_starttime"
                                 android:gravity="center_horizontal"
-
                                 android:textSize="18dp"
                                 android:text=" "
-                                android:layout_width="wrap_content"
+                                android:textAlignment="textStart"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
 
 
@@ -115,7 +115,8 @@
                                 android:gravity="center_horizontal"
                                 android:textSize="18dp"
                                 android:text=" "
-                                android:layout_width="wrap_content"
+                                android:textAlignment="textStart"
+                                android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
 
 

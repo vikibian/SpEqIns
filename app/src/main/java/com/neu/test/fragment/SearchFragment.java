@@ -46,6 +46,7 @@ import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.SidebarUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
@@ -58,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
 /**
@@ -110,8 +112,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private SearchUtil searchUtil = new SearchUtil();
     private static boolean isSearch = false;
     private SimpleToolbar toolbar;
-
-
+    private PromptDialog promptDialog;
+    private PermissionUtils permissionUtils;
 
 
     public SearchFragment() {
@@ -126,6 +128,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
+        promptDialog = new PromptDialog(getActivity());
+        permissionUtils = new PermissionUtils((AppCompatActivity) getActivity(),getActivity(),null,null);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         initActivity(view);
         if (!isSearch){
@@ -228,11 +232,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     if (SidebarUtils.isStartBeforeEnd(starttime,endtime)){
                         mDrawerLayout.closeDrawer(searchRightDrawer);
                         isSearch = true;
-                        getSearchedData();
-//                        //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
-//                        initFragment();
-//                        isDirection_right = false;
-//                        flag_check=true;
+                        promptDialog.showLoading("搜索数据中...");
+                        if (permissionUtils.canGoNextstep()){
+                            getSearchedData();
+                        }else {
+                            promptDialog.dismiss();
+                            Toast.makeText(getContext(), "没有获取相应权限！", Toast.LENGTH_SHORT).show();
+                        }
+
                     }else {
                         Toasty.warning(getContext(),"结束日期早于开始日期，请重新选择！",Toast.LENGTH_LONG,true).show();
                     }
@@ -283,21 +290,26 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.toString());
                 Log.e(TAG," error: "+e.toString());
+                promptDialog.dismiss();
                 Toasty.warning(getContext(),"客官，网络不给力",Toast.LENGTH_LONG,true).show();
             }
 
             @Override
             public void onResponse(Result<List<Task>> response, int id) {
+                promptDialog.dismiss();
                 if(response.getMessage().equals("获取任务成功")){
                     Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
                     if(response.getContent().size()==0){
-                        Toast.makeText(getContext(),"无数据",Toast.LENGTH_LONG).show();
+                        tasks.clear();
+                        taskSmartTable.setVisibility(View.INVISIBLE);
                         Log.e("TAG"," response.getContent: "+"无数据");
                         showNoData.setVisibility(View.VISIBLE);
+                        noitem_textview.setText("暂无数据！");
 
                     }else {
                         Log.e("TAG"," response.getContent: "+"有数据");
                         showNoData.setVisibility(View.INVISIBLE);
+                        taskSmartTable.setVisibility(View.VISIBLE);
                         tasks.clear();
                         tasks = response.getContent();
 //                        List<Task> taskstest  = new ArrayList<Task>();
@@ -310,14 +322,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         Log.e("TAG"," resultString: "+resultString);
                         Log.e("TAG"," 接收task: "+tasks.size());
                     }
-                    Toast.makeText(getContext(),"成功",Toast.LENGTH_LONG).show();
                     //下面是显示搜索结果 并收起侧滑界面  要放在网络post请求之后
                     isDirection_right = false;
                     flag_check=true;
                 }
                 else {
                     Toasty.error(getContext(),"搜索数据失败!",Toast.LENGTH_LONG,true).show();
-
                 }
             }
         });
@@ -475,11 +485,16 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         Log.e(TAG," onStart");
-//        View view = (View) LayoutInflater.from(getContext()).inflate(R.layout.fragment_panel, null, false);
-//        //初始化
-//        taskSmartTable = view.findViewById(R.id.table);
         if (tasks.size()!=0){
             initTable(tasks);
+        }else {
+            if (!isSearch){
+                showNoData.setVisibility(View.VISIBLE);
+                noitem_textview.setText("您还未开始查询数据");
+            }else {
+                showNoData.setVisibility(View.VISIBLE);
+                noitem_textview.setText("暂无数据！");
+            }
         }
     }
 
@@ -487,6 +502,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         Log.e(TAG," onResume");
+        promptDialog.dismissImmediately();
 
     }
 

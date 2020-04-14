@@ -20,6 +20,7 @@ import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -30,9 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class ResetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
+public class ResetPasswordActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "ResetPasswordActivity";
     private Toolbar mToolbar;
     private TextView toolbar_TextView;
@@ -52,12 +54,13 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
     private Button submit;
 
     private User userInfo = new User();
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
-
+        promptDialog = new PromptDialog(this);
         Log.e(TAG, "onCreate: "+LoginActivity.inputPassword);
         userInfo = LoginActivity.user;
 
@@ -190,6 +193,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
     }
 
     private void resetPassword(String testinputName, String pwd) {
+        promptDialog.showLoading("新密码提交中...");
         String url = BaseUrl.BaseUrl +"resetPasswordServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> user = new HashMap<>();
@@ -206,6 +210,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
+                promptDialog.dismiss();
             }
 
             @Override
@@ -222,11 +227,18 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetPasswordActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
+                    promptDialog.dismiss();
                     finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 }

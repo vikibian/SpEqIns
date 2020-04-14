@@ -34,6 +34,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.neu.test.R;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.layout.MyGridView;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.ReloadImageAndVideo;
 
@@ -43,7 +44,7 @@ import java.util.List;
 
 import cn.jzvd.Jzvd;
 
-public class CheckMediaForRectifyActivity extends AppCompatActivity {
+public class CheckMediaForRectifyActivity extends BaseActivity {
     private static final String TAG = "CheckMediaForRectifyAct";
     private LinearLayout check_image_lin;
     private MyGridView check_image_gridview;

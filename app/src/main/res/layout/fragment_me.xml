@@ -9,6 +9,11 @@
     android:background="#EEEEEE"
     tools:context=".fragment.MeFragment">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
 
     <LinearLayout
         android:orientation="vertical"
@@ -55,22 +60,17 @@
             android:orientation="vertical">
 
 
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
                 <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
                     android:id="@+id/me_fragment_ListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-            </ScrollView>
-
 
         </LinearLayout>
 
     </LinearLayout>
+
+    </ScrollView>
 
 
 </com.qmuiteam.qmui.layout.QMUILinearLayout>

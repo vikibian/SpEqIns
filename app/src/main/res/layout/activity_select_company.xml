@@ -7,6 +7,23 @@
     android:orientation="vertical"
     tools:context=".activity.SelectCompanyActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/select_company_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:theme="@style/AppTheme.PopupOverlay"
+        android:background="?attr/colorPrimary">
+
+        <TextView
+            android:id="@+id/select_company_toolbar_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="标题"
+            android:textColor="@color/white" />
+
+    </androidx.appcompat.widget.Toolbar>
+
     <scut.carson_ho.searchview.SearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"

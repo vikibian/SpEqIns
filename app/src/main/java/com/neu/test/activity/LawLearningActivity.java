@@ -22,6 +22,7 @@ import com.neu.test.entity.FileBean;
 import com.neu.test.entity.Result;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileBeanCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 
 import java.util.ArrayList;
@@ -29,9 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class LawLearningActivity extends AppCompatActivity {
+public class LawLearningActivity extends BaseActivity {
     private static String TAG = "LawLearningActivity";
 
     private Toolbar law_toolbar;
@@ -43,12 +45,13 @@ public class LawLearningActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter ;
     private ListLawAdaper listLawAdaper ;
     private String[] datas ;
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_law_learning);
-
+        promptDialog = new PromptDialog(this);
         initToolbar();
         init();
         getLawFiles();
@@ -90,6 +93,7 @@ public class LawLearningActivity extends AppCompatActivity {
     }
 
     private void getLawFiles() {
+        promptDialog.showLoading("获取数据中...");
         url = BaseUrl.BaseUrl+"getPDFFile";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
@@ -106,6 +110,7 @@ public class LawLearningActivity extends AppCompatActivity {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG," "+e.toString());
+                promptDialog.dismiss();
             }
 
             @Override
@@ -125,8 +130,10 @@ public class LawLearningActivity extends AppCompatActivity {
 
                    listLawAdaper = new ListLawAdaper(getApplicationContext(),fileBeans);
                    listView_law.setAdapter(listLawAdaper);
+                   promptDialog.dismiss();
 
                }else {
+                   promptDialog.dismiss();
                    Toast.makeText(getApplicationContext(), "对不起，网络有问题！", Toast.LENGTH_SHORT).show();
                }
             }

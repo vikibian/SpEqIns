@@ -1,7 +1,9 @@
 package com.neu.test.fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,6 +33,7 @@ import com.neu.test.activity.MeInformActivity;
 import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.CacheUtil;
+import com.neu.test.util.ClickUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
@@ -39,6 +42,7 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import java.io.File;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,6 +57,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private TextView nametext;
     private QMUIGroupListView groupListView ;
     private QMUIGroupListView.Section section ;
+    PromptDialog promptDialog;
 
     int me;
 
@@ -71,7 +76,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         simple_toolbar.setVisibility(View.GONE);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         section = new QMUIGroupListView.Section(getContext());
-
+        promptDialog = new PromptDialog(getActivity());
         init(view);
         initGroupListview(view);
         return view;
@@ -125,6 +130,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         Item6.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item6.setTag(6);
 
+        QMUICommonListItemView Item7 = groupListView.createItemView("退出");
+        Item7.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
+        Item7.setTag(7);
+
 
         int size = QMUIDisplayHelper.dp2px(view.getContext(), 20);
         QMUIGroupListView.newSection(getContext())
@@ -139,6 +148,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 .addItemView(Item4, this)
                 .addItemView(Item5, this)
                 .addItemView(Item6, this)
+                .addItemView(Item7, this)
                 //   .setOnlyShowStartEndSeparator(true)
                 .addTo(groupListView);
 
@@ -156,9 +166,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         Intent intent;
 
         if(v instanceof QMUICommonListItemView){
+            if(ClickUtil.isFastClick()){
+                Log.e("ttttt",true+"fast");
+                return;
+            }else{
+                Log.e("ttttt",false+"notfast");
+            }
             switch ((int)v.getTag()){
                 case 0:
-                    Toast.makeText(getContext(), "click", Toast.LENGTH_SHORT).show();
                     intent = new Intent(getActivity(), MeInformActivity.class);
                     getActivity().startActivityForResult(intent,REQUEST_CODE_MEINFORM);
                     //startActivity(intent);
@@ -215,6 +230,16 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     intent = new Intent(getActivity(), ChangeFontActivity.class);
                     startActivity(intent);
                     break;
+                case 7:
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("isAuto",false);
+                    editor.commit();
+                    intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    getActivity().finish();
+                    break;
             }
         }
     }
@@ -224,6 +249,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         if (!cacheFile.exists()){
             Toasty.info(getContext(),"您没有缓存！",Toasty.LENGTH_SHORT).show();
         }else {
+            promptDialog.showLoading("缓存清理中...");
             for (File file : cacheFile.listFiles()) {
                 if (file.isFile())
                     file.delete(); // 删除所有文件
@@ -231,6 +257,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     clearAppCache(file); // 递规的方式删除文件夹
             }
             cacheFile.delete();// 删除目录本身
+            promptDialog.dismiss();
             Toasty.info(getContext(),"缓存已清空！",Toasty.LENGTH_SHORT).show();
         }
 
@@ -255,5 +282,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+        promptDialog.dismissImmediately();
     }
 }

@@ -16,6 +16,7 @@ import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.neu.test.R;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
@@ -23,7 +24,7 @@ import java.io.File;
 
 import okhttp3.Call;
 
-public class FileReadActivity extends AppCompatActivity {
+public class FileReadActivity extends BaseActivity {
     private static String TAG = "FileReadActivity";
     private Toolbar fileread_toolbar;
     private TextView fileread_toolbar_textview;

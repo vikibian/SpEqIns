@@ -45,6 +45,7 @@ import com.neu.test.layout.SlideLayout;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
 
@@ -59,7 +60,7 @@ import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
 @Deprecated
-public class DetctionActivity extends AppCompatActivity {
+public class DetctionActivity extends BaseActivity {
     private static String TAG = "DetctionActivity";
 
     private LinearLayout detection_nocontent;

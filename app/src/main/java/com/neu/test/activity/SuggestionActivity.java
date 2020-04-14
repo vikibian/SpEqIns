@@ -34,8 +34,10 @@ import com.neu.test.entity.LocationService;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
 
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.GPSUtil;
+import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.PhoneInfoUtils;
 import com.neu.test.util.ReloadImageAndVideo;
 import com.neu.test.util.SearchUtil;
@@ -51,9 +53,10 @@ import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class SuggestionActivity extends AppCompatActivity implements View.OnClickListener {
+public class SuggestionActivity extends BaseActivity implements View.OnClickListener {
     private static String TAG = "SuggestionActivity";
     private static final int REQUEST_CODE_CHOOSE = 23;
 
@@ -113,11 +116,15 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     private SuggestionActivitySaveDataUtil saveDataUtil ;
     private SearchUtil searchUtil = new SearchUtil();
     private GPSUtil gpsUtil;
+    private PermissionUtils permissionUtils;
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
+        promptDialog = new PromptDialog(this);
+        permissionUtils = new PermissionUtils(this,SuggestionActivity.this,null,null);
         gpsUtil = new GPSUtil(this);
         gpsUtil.startLocate();
         saveDataUtil = new SuggestionActivitySaveDataUtil(SuggestionActivity.this);
@@ -223,6 +230,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             setResult(RESULT_OK,intent);
             finish();
         }else {
+            promptDialog.showLoading("上传图片中...");
             //提交数据   上传图片
             postFiles(et_suggestion.getText().toString(),pathlistOfPhoto);
         }
@@ -370,6 +378,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.getMessage());
+                promptDialog.dismiss();
                 Toasty.warning(SuggestionActivity.this,"客官，网络不给力",Toast.LENGTH_LONG,true).show();
             }
 
@@ -402,6 +411,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
                         setResult(RESULT_OK,intent);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
+                        promptDialog.dismiss();
                         Toasty.error(SuggestionActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -465,9 +475,13 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
                 startPhotoGallery();
                 break;
             case 2:
-                Intent intentall = new Intent(SuggestionActivity.this,PhotoVideoActivity.class);
-                intentall.putExtra("username",detectionResult.getLOGINNAME());
-                startActivityForResult(intentall,REQUEST_TEST);
+                if(permissionUtils.canGoNextstep()){
+                    Intent intentall = new Intent(SuggestionActivity.this,PhotoVideoActivity.class);
+                    intentall.putExtra("username",detectionResult.getLOGINNAME());
+                    startActivityForResult(intentall,REQUEST_TEST);
+                }else{
+                    permissionUtils.getPermission();
+                }
                 break;
             case 3:
                 break;
@@ -602,6 +616,7 @@ public class SuggestionActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onResume() {
         super.onResume();
+        promptDialog.dismissImmediately();
         Log.e(TAG," onResume");
     }
 

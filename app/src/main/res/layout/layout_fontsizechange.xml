@@ -16,6 +16,8 @@
       android:background="?attr/colorPrimary"
       app:titleTextColor="@color/white"
       android:gravity="center"
+        app:theme="@style/AppTheme.PopupOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
       >
 
       <TextView
@@ -39,6 +41,7 @@
   android:layout_weight="1"
   android:orientation="vertical">
   <TextView
+      android:layout_marginRight="10dp"
     android:layout_marginTop="10dp"
     android:layout_gravity="right"
     android:id="@+id/tv_message"
@@ -49,6 +52,7 @@
     android:layout_height="wrap_content"/>
 
   <TextView
+      android:layout_marginLeft="10dp"
     android:id="@+id/tv_message2"
     android:layout_marginTop="40dp"
     android:textSize="?fontsize_1"
@@ -58,6 +62,7 @@
     android:layout_height="wrap_content"/>
 
   <TextView
+      android:layout_marginLeft="10dp"
     android:id="@+id/tv_message3"
     android:layout_marginTop="20dp"
     android:textSize="?fontsize_1"

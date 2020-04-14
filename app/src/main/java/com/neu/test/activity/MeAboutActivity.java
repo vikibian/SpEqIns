@@ -9,8 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.neu.test.R;
+import com.neu.test.util.BaseActivity;
 
-public class MeAboutActivity extends AppCompatActivity {
+public class MeAboutActivity extends BaseActivity {
     private Toolbar mToolbar;
     private TextView mTextView;
 

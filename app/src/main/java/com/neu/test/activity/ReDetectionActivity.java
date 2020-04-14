@@ -58,6 +58,8 @@ import com.neu.test.net.callback.ListDetectionResultCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.ClickUtil;
+import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.ToastUtil;
 
@@ -68,8 +70,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import cn.richinfo.dualsim.TelephonyManagement;
 import es.dmoral.toasty.Toasty;
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
 public class ReDetectionActivity extends BaseActivity implements View.OnClickListener {
@@ -133,13 +137,16 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     String data ;
     SharedPreferences sp;
     Dialog dlg;
+    PromptDialog promptDialog;
+    private PermissionUtils permissionUtils;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detction);
-
+        promptDialog = new PromptDialog(this);
+        permissionUtils = new PermissionUtils(this,ReDetectionActivity.this,null,null);
         intent1 = getIntent();
         task = (Task) getIntent().getSerializableExtra("task");
         pposition =  getIntent().getIntExtra("position",0);
@@ -160,8 +167,8 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onRefresh() {
                 //mWaveSwipeRefreshLayout.setRefreshing(false);
-
-                mWaveSwipeRefreshLayout.setRefreshing(false);
+                getSaveData(task);
+//                mWaveSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -179,7 +186,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         splitDatas();
         Log.e(TAG," detectionResults: "+detectionResults.size());
 
-        ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
+//        ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
 
         reflashTotalItem();
         setEnable(button_left);//默认选择未操作的
@@ -191,6 +198,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
+                promptDialog.showLoading("提交结果中...");
                 List<DetectionResult> list = new ArrayList<>();
                 for(int i=0;i<detectionResults.size();i++){
                     if (detectionResults.get(i).getSTATUS().equals("2")){
@@ -200,6 +208,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
 //                List<DetectionResult> list = detectionResults.stream().filter(dete -> dete.getSTATUS().equals("2")).collect(Collectors.toList());
                 if (list.size() != 0) {
+                    promptDialog.dismiss();
                     Toasty.warning(ReDetectionActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
                 } else {
                     String string = new Gson().toJson(detectionResults);
@@ -210,19 +219,29 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                         @Override
                         public void onError(Call call, Exception e, int i) {
                             Log.e("error", e.toString());
+                            promptDialog.dismiss();
                         }
 
                         @Override
                         public void onResponse(FilePathResult filePathResult, int i) {
                             Log.e("message", filePathResult.getMessage());
                             if (filePathResult.getMessage().equals("任务提交成功")){
-                                SharedPreferences.Editor editor = sp.edit();
-                                editor.clear();
-                                Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
-                                intent.putExtra("listData", (Serializable) detectionResults);
-                                intent.putExtra("task",task);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
+//                                SharedPreferences.Editor editor = sp.edit();
+//                                editor.clear();
+                                Toasty.success(getApplicationContext(),"提交成功！").show();
+//                                Intent intent = new Intent(ReDetectionActivity.this, PDFActivity.class);
+//                                intent.putExtra("listData", (Serializable) detectionResults);
+//                                intent.putExtra("task",task);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                startActivity(intent);
+                                getDataBypost();
+
+//                                setResult(RESULT_CANCELED);
+//                                finish();
+
+                            }else {
+                                promptDialog.dismiss();
+                                Toasty.error(ReDetectionActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -233,6 +252,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         btn_save_detection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                promptDialog.showLoading("保存中...");
                 String string = new Gson().toJson(detectionResults);
                 Log.e(TAG,"detectionResults: "+string);
                 System.out.println(string);
@@ -242,6 +262,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     @Override
                     public void onError(Call call, Exception e, int i) {
                         Log.e("error",e.toString());
+                        promptDialog.dismiss();
                     }
 
                     @Override
@@ -255,11 +276,15 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                 }
                             }
                             editorSave();
+                            Toasty.success(getApplicationContext(),"保存成功！").show();
                             intent1.putExtra("position",pposition);
                             intent1.putExtra("isDoing",isDoing);
                             intent1.putExtra("where","finish");
                             setResult(RESULT_OK,intent1);
                             finish();
+                        }else {
+                            promptDialog.dismiss();
+                            Toasty.error(ReDetectionActivity.this, "保存失败！", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -443,7 +468,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             detectionResult.setDEVID(detectionResults.get(0).getDEVID());
                             detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
                             detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
-                            ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
+//                            ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
                             detectionadd.add(detectionResult);
                             detectionResults.add(detectionResult);
                             Log.e(TAG, "onClick: addpositions:"+addpositions.size());
@@ -551,6 +576,8 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
+            String result = new Gson().toJson(listdetectionresult.get(position));
+            Log.e(TAG,"positon:"+position+"  result:"+result);
 
             //加载item的布局
             convertView = View.inflate(ReDetectionActivity.this, R.layout.test_list_item2, null);
@@ -599,118 +626,95 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                 viewHolder.rectify_item_status_rectifyliving.setChecked(true);
             }
 
-
-            viewHolder.rectify_item_status_unrectify.setOnClickListener(new View.OnClickListener() {
+            View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(listdetectionresult.get(position).getSTATUS().equals("0")){
-                        viewHolder.rectify_item_status_unrectify.setChecked(true);
-                        viewHolder.rectify_item_status_rectified.setChecked(false);
-                        viewHolder.rectify_item_status_rectifyliving.setChecked(false);
-                        Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
-                        reflashList(listdetectionresult,flag);
-                    }else{
-
-                        jumpToSuggesstionActivity(getIndex(flag,position),"0");
+                    if (ClickUtil.isFastClick()){
+                        return;
                     }
-                }
-            });
-
-
-            viewHolder.rectify_item_status_rectified.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listdetectionresult.get(position).getSTATUS().equals("1")){
-                        viewHolder.rectify_item_status_unrectify.setChecked(false);
-                        viewHolder.rectify_item_status_rectified.setChecked(true);
-                        viewHolder.rectify_item_status_rectifyliving.setChecked(false);
-                        Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
-                        reflashList(listdetectionresult,flag);
-                    }else{
-                        //页面跳转
-                        //detectionResults.get(position).setSTATUS("1");
-
-                        jumpToSuggesstionActivity( getIndex(flag,position),"1");
-                    }
-                }
-            });
-
-            viewHolder.rectify_item_status_rectifyliving.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(listdetectionresult.get(position).getSTATUS().equals("3")){
-                        viewHolder.rectify_item_status_unrectify.setChecked(false);
-                        viewHolder.rectify_item_status_rectified.setChecked(false);
-                        viewHolder.rectify_item_status_rectifyliving.setChecked(true);
-                        Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
-                        reflashList(listdetectionresult,flag);
-                    }else{
-                        //页面跳转  现场整改
-                        jumpToRectifyResultActivity( getIndex(flag,position),"3");
-                        reflashList(listdetectionresult,flag);
-                    }
-                }
-            });
-            //跳转至 已操作界面
-            viewHolder.detction_item_image_right.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
-                    if ((listdetectionresult.get(position).getISCHANGED().equals(searchUtil.changed))
-                            && listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify)){
-                        jumpToRectifyResultActivity(getIndex(flag,position),searchUtil.recifyQualify);
-                    }else {
-                        jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
-                    }
-                }
-            });
-
-            viewHolder.detction_item_image_error.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
-                    View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
-                    TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
-                    TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
-                    Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
-                    btn_cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dlg.dismiss();
-                        }
-                    });
+                    switch (v.getId()){
+                        case R.id.rectify_item_status_unrectify_2:
+                            if(listdetectionresult.get(position).getSTATUS().equals("0")){
+                                viewHolder.rectify_item_status_unrectify.setChecked(true);
+                                viewHolder.rectify_item_status_rectified.setChecked(false);
+                                viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+                                Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
+                                reflashList(listdetectionresult,flag);
+                            }else{
+                                promptDialog.showLoading("加载中 ... ");
+                                jumpToSuggesstionActivity(getIndex(flag,position),"0");
+                            }
+                            break;
+                        case R.id.rectify_item_status_rectified_2:
+                            if(listdetectionresult.get(position).getSTATUS().equals("1")){
+                                viewHolder.rectify_item_status_unrectify.setChecked(false);
+                                viewHolder.rectify_item_status_rectified.setChecked(true);
+                                viewHolder.rectify_item_status_rectifyliving.setChecked(false);
+                                Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
+                                reflashList(listdetectionresult,flag);
+                            }else{
+                                //页面跳转
+                                //detectionResults.get(position).setSTATUS("1");
+                                promptDialog.showLoading("加载中 ... ");
+                                jumpToSuggesstionActivity( getIndex(flag,position),"1");
+                            }
+                            break;
+                        case  R.id.rectify_item_status_rectifyliving_2:
+                            if(listdetectionresult.get(position).getSTATUS().equals("3")){
+                                viewHolder.rectify_item_status_unrectify.setChecked(false);
+                                viewHolder.rectify_item_status_rectified.setChecked(false);
+                                viewHolder.rectify_item_status_rectifyliving.setChecked(true);
+                                Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
+                                reflashList(listdetectionresult,flag);
+                            }else{
+                                //页面跳转  现场整改
+                                promptDialog.showLoading("加载中 ... ");
+                                jumpToRectifyResultActivity( getIndex(flag,position),"3");
+                                reflashList(listdetectionresult,flag);
+                            }
+                            break;
+                        case R.id.detction_item_image_right_2:
+                            //显示箭头后判断跳转的是SuggestionActivity界面还是整改界面
+                            if ((listdetectionresult.get(position).getISCHANGED().trim().equals("1"))
+                                    &&(listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify))){
+                                promptDialog.showLoading("加载中 ... ");
+                                jumpToRectifyResultActivity(getIndex(flag,position),searchUtil.recifyQualify);
+                            }else if (listdetectionresult.get(position).getISCHANGED().equals(searchUtil.unchanged)){
+                                promptDialog.showLoading("加载中 ... ");
+                                jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
+                            }
+                            break;
+                        case R.id.detction_item_imageview_error_2:
+                            dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
+                            View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
+                            TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
+                            TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
+                            Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
+                            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dlg.dismiss();
+                                }
+                            });
 //                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
 //                    tv_laws.setText(detectionResults.get(position).getLAW());
-                    tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
-                    tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
-                    dlg.setContentView(textEntryView);
-                    dlg.show();
-                }
-            });
+                            tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
+                            tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
+                            dlg.setContentView(textEntryView);
+                            dlg.show();
+                            break;
 
-//            viewHolder.detction_item_text_context.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
-//                    View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
-//                    TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
-//                    TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
-//                    Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
-//                    btn_cancel.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            dlg.dismiss();
-//                        }
-//                    });
-////                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
-////                    tv_laws.setText(detectionResults.get(position).getLAW());
-//                    tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
-//                    tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
-//                    dlg.setContentView(textEntryView);
-//                    dlg.show();
-//                    return true;
-//                }
-//            });
+                    }
+                }
+            };
+
+            viewHolder.rectify_item_status_unrectify.setOnClickListener(clickListener);
+            viewHolder.rectify_item_status_rectified.setOnClickListener(clickListener);
+            viewHolder.rectify_item_status_rectifyliving.setOnClickListener(clickListener);
+            //跳转至 已操作界面
+            viewHolder.detction_item_image_right.setOnClickListener(clickListener);
+            viewHolder.detction_item_image_error.setOnClickListener(clickListener);
+
             return convertView;
         }
     }
@@ -729,30 +733,42 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void jumpToRectifyResultActivity(int position,String status) {
-        Intent intent = new Intent(ReDetectionActivity.this,RectifyResultActivity.class);
-        DetectionResult test = new DetectionResult();
+      if (permissionUtils.canGoNextstep()){
+          Intent intent = new Intent(ReDetectionActivity.this,RectifyResultActivity.class);
+          DetectionResult test = new DetectionResult();
 //        test.setJIANCHAXIANGTITLE("测试");//测试代码
 //        test.setLOGINNAME(LoginActivity.inputName);//测试代码
 //        detectionResults.add(test);
-        intent.putExtra("detectionResult",  detectionResults.get(position));
-        intent.putExtra("position",position);
-        intent.putExtra("status",status);
-        intent.putExtra("toolbarTitle",title);
-        intent.putExtra("toolbarTaskType",taskType);
-        startActivityForResult(intent,RectifyCode);
+          intent.putExtra("detectionResult",  detectionResults.get(position));
+          intent.putExtra("position",position);
+          intent.putExtra("status",status);
+          intent.putExtra("toolbarTitle",title);
+          intent.putExtra("toolbarTaskType",taskType);
+          startActivityForResult(intent,RectifyCode);
+      }else {
+          promptDialog.dismiss();
+          Toast.makeText(this, "没有获取相应权限！", Toast.LENGTH_SHORT).show();
+      }
+
     }
 
 
 
     private void jumpToSuggesstionActivity(int position,String status) {
-        Intent intent = new Intent(ReDetectionActivity.this, SuggestionActivity.class);
-        intent.putExtra("detectionResult",detectionResults.get(position));
-        intent.putExtra("position",position);
-        intent.putExtra("title",title);//需要传递status
-        intent.putExtra("taskType",taskType);
-        intent.putExtra("status",status);
-        Log.e("status1",status);
-        startActivityForResult(intent,RequestCor);
+        if(permissionUtils.canGoNextstep()){
+            Intent intent = new Intent(ReDetectionActivity.this, SuggestionActivity.class);
+            intent.putExtra("detectionResult",detectionResults.get(position));
+            intent.putExtra("position",position);
+            intent.putExtra("title",title);//需要传递status
+            intent.putExtra("taskType",taskType);
+            intent.putExtra("status",status);
+            Log.e("status1",status);
+            startActivityForResult(intent,RequestCor);
+        }else{
+            promptDialog.dismiss();
+            Toast.makeText(this, "没有获取相应权限！", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -883,6 +899,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onResume() {
         super.onResume();
+        promptDialog.dismissImmediately();
         lv_detection.setAdapter(detectionAdapter);
         reflashTotalItem();
         Log.e(TAG," onResume");
@@ -974,6 +991,117 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     adapter = new ArrayAdapter<String>(ReDetectionActivity.this,android.R.layout.simple_list_item_1,titleData);
                     listView.setAdapter(adapter);
                     listView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+    private void getSaveData(final Task task) {
+        Map<String, String> map = new HashMap<>();
+        map.put("taskID",task.getTASKID());
+        map.put("DEVID",task.getDEVID());
+        map.put("USERNAME",task.getLOGINNAME());
+        map.put("RUNWATERNUM",task.getRUNWATERNUM());
+        String url = BaseUrl.BaseUrl+"getSaveResult";
+        Log.e(TAG,"url: "+url);
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                mWaveSwipeRefreshLayout.setRefreshing(false);
+                Log.e(TAG,"onError: "+e.toString());
+                Toasty.warning(ReDetectionActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(Result<List<DetectionResult>> listResult, int i) {
+                Log.e(TAG,listResult.getMessage());
+                if (listResult.getMessage().equals("获取成功")) {
+                    Log.e("ssssize",listResult.getContent().size()+"");
+                    if(listResult.getContent().size() == 0){
+                        //不变化
+                        Toasty.warning(ReDetectionActivity.this,"无变化");
+                    }else{
+                        editorSharedPreferences(listResult.getContent(),"detectionResultList");
+
+                        detectionResults.clear();
+                        detectiondone.clear();
+                        detectionundo.clear();
+                        detectionadd.clear();
+                        undopositions.clear();
+                        donepositions.clear();
+                        addpositions.clear();
+
+                        Log.e("ssssize",detectionResults.size()+"");
+                        detectionResults.addAll(listResult.getContent());
+                        Log.e("ssssize",detectionResults.size()+"");
+                        splitDatas();
+                        reflashTotalItem();
+//                        setEnable(button_left);
+
+                        detectionAdapter.notifyDataSetChanged();
+                        lv_detection.setAdapter(detectionAdapter);
+                    }
+                }
+                mWaveSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
+
+    private void getDataBypost() {
+        String url = BaseUrl.BaseUrl+"getTaskServlet";
+        Log.d(TAG,"POST url: "+url);
+        Map<String, String> map = new HashMap<>();
+        map.put("username",LoginActivity.inputName);
+//        map.put("password",inputPassword);
+        Log.e(TAG,"map: "+ map.toString());
+
+
+        String gson = new Gson().toJson(map);
+        Log.e(TAG,"gson: "+ gson);
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, gson, new ListTaskCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                System.out.println(e.getMessage());
+                Log.e("error"," "+e.toString());
+//                Toast.makeText(LoginActivity.this,"客官，网络不给力",Toast.LENGTH_LONG).show();
+                Toasty.warning(ReDetectionActivity.this,"客官，网络不给力!", Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(Result<List<Task>> response, int id) {
+                if(response.getMessage().equals("获取任务成功")){
+
+                    Toasty.success(ReDetectionActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
+                    List<Task> tasks = response.getContent();
+                    if(response.getContent().size()==0){
+//                        Toast.makeText(LoginActivity.this,"无数据",Toast.LENGTH_LONG).show();
+                        Log.e("TAG"," response.getContent: "+"无数据");
+                        tasks = new ArrayList<Task>();
+                    }
+//                    Toast.makeText(ReDetectionActivity.this,"成功",Toast.LENGTH_LONG).show();
+//                    Intent intent = new Intent(ReDetectionActivity.this,FragmentManagerActivity.class);
+//                    intent.putExtra("userTask", (Serializable) tasks);
+//                    Log.e("TAG"," tasks: "+tasks.size());
+//                    intent.putExtra("userName",LoginActivity.inputName);
+//                    startActivity(intent);
+//                    finish();
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.clear();
+                    Toasty.success(getApplicationContext(),"提交成功！").show();
+                    Intent intent = new Intent(ReDetectionActivity.this, FragmentManagerActivity.class);
+                    intent.putExtra("userTask", (Serializable) tasks);
+                    String result = new Gson().toJson(tasks);
+                    Log.e(TAG, "onResponse: "+result );
+                    intent.putExtra("userName",LoginActivity.inputName);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else {
+                    Toasty.error(ReDetectionActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
+
                 }
             }
         });

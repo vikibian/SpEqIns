@@ -1,14 +1,18 @@
 package com.neu.test.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -16,6 +20,7 @@ import com.neu.test.R;
 import com.neu.test.entity.Result;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListStringCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 
 import java.util.ArrayList;
@@ -28,7 +33,7 @@ import scut.carson_ho.searchview.ICallBack;
 import scut.carson_ho.searchview.SearchView;
 import scut.carson_ho.searchview.bCallBack;
 
-public class SelectCompanyActivity extends AppCompatActivity {
+public class SelectCompanyActivity extends BaseActivity {
     private static String TAG = "SelectCompany";
 
     // 1. 初始化搜索框变量
@@ -37,6 +42,8 @@ public class SelectCompanyActivity extends AppCompatActivity {
 //    private String data[] = {"aa","bb","cc","dd","aa","bb","cc","dd","aa","bb","cc","dd","aa","bb","cc","dd"};//假数据
     private String url;
     private List<String> unitname = new ArrayList<>();
+    private Toolbar toolbar;
+    private TextView toolbar_textview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +53,15 @@ public class SelectCompanyActivity extends AppCompatActivity {
         // 3. 绑定组件
         searchView = (SearchView) findViewById(R.id.search_view);
         listView = findViewById(R.id.select_company_listview);
+        toolbar = findViewById(R.id.select_company_toolbar);
+        toolbar_textview = findViewById(R.id.select_company_toolbar_textview);
+        toolbar_textview.setText("搜索单位名称");
+        initToolbar();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(SelectCompanyActivity.this,unitname.get(position)+" "+position,Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SelectCompanyActivity.this,unitname.get(position)+" "+position,Toast.LENGTH_SHORT).show();
 
                 Intent intent = getIntent();
                 intent.putExtra("company",unitname.get(position));
@@ -77,6 +88,27 @@ public class SelectCompanyActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void initToolbar() {
+        toolbar = findViewById(R.id.select_company_toolbar);
+        toolbar.setTitle(" ");
+        toolbar.setTitleTextColor(Color.WHITE);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//显示箭头
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+//                setResult(RESULT_OK);
+                this.finish();
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getUnitName(String string) {

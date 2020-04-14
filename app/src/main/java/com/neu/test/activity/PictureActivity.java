@@ -22,13 +22,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.nanchen.compresshelper.CompressHelper;
 import com.neu.test.R;
+import com.neu.test.util.BaseActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class PictureActivity extends AppCompatActivity {
+public class PictureActivity extends BaseActivity {
 
     private ImageButton btn_takepicture;
     private Button btn_preview;

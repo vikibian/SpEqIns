@@ -10,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.neu.test.R;
 import com.neu.test.entity.DetectionItem;
+import com.neu.test.util.BaseActivity;
 
 import java.util.List;
 
-public class ResultActivity extends AppCompatActivity {
+public class ResultActivity extends BaseActivity {
 
     List<DetectionItem> resultData;
     private ScrollView sv_result;

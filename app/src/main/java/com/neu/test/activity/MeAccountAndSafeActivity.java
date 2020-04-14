@@ -22,6 +22,7 @@ import com.neu.test.entity.Task;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -36,7 +37,7 @@ import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 import top.androidman.SuperButton;
 
-public class MeAccountAndSafeActivity extends AppCompatActivity implements View.OnClickListener{
+public class MeAccountAndSafeActivity extends BaseActivity implements View.OnClickListener{
     private static final String TAG = "MeAccAndSafeActivity";
     private QMUIGroupListView groupListView ;
     private Toolbar mToolbar;

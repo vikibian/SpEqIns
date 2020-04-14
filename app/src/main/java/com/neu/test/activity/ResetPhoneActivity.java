@@ -18,11 +18,12 @@ import android.widget.TextView;
 import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.User;
+import com.neu.test.util.BaseActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ResetPhoneActivity extends AppCompatActivity implements View.OnClickListener {
+public class ResetPhoneActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "ResetPhoneActivity";
     private EditText phone;

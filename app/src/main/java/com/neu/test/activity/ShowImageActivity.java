@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import com.neu.test.R;
 import com.neu.test.layout.SwipeFlingAdapterView;
+import com.neu.test.util.BaseActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-public class ShowImageActivity extends AppCompatActivity implements SwipeFlingAdapterView.onFlingListener,
+public class ShowImageActivity extends BaseActivity implements SwipeFlingAdapterView.onFlingListener,
         SwipeFlingAdapterView.OnItemClickListener, View.OnClickListener{
 
     Random ran = new Random();

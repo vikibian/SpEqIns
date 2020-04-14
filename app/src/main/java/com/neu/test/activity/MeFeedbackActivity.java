@@ -18,6 +18,7 @@ import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -27,10 +28,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 import top.androidman.SuperButton;
 
-public class MeFeedbackActivity extends AppCompatActivity implements View.OnClickListener {
+public class MeFeedbackActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "MeFeedbackActivity";
     private Toolbar mToolbar;
     private TextView mTextView;
@@ -40,12 +42,13 @@ public class MeFeedbackActivity extends AppCompatActivity implements View.OnClic
     private String string_feedback;
 
     private User user = new User();
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_me_feedback);
-
+        promptDialog = new PromptDialog(this);
         user = LoginActivity.user;
 
         initToolBar();
@@ -98,24 +101,24 @@ public class MeFeedbackActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void postFeedback(String testinputName, String feedback) {
+        promptDialog.showLoading("反馈提交中...");
         String url = BaseUrl.BaseUrl +"postFeedbackServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> feed = new HashMap<>();
         feed.put("LOGINNAME",testinputName);
         feed.put("feedback",feedback);
 
-
-
-
         OkHttp okHttp = new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(feed), new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
+                promptDialog.dismiss();
             }
 
             @Override
             public void onResponse(String reponse, int i) {
+                promptDialog.dismiss();
                 Log.e(TAG, "onResponse: "+reponse);
                 JSONObject result = null;
                 try {
@@ -133,5 +136,11 @@ public class MeFeedbackActivity extends AppCompatActivity implements View.OnClic
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 }

@@ -9,17 +9,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.gson.Gson;
+import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
+import com.kongzue.dialog.util.BaseDialog;
+import com.kongzue.dialog.util.DialogSettings;
+import com.kongzue.dialog.v3.MessageDialog;
 import com.neu.test.R;
 import com.neu.test.entity.Task;
 import com.neu.test.fragment.CheckFragment;
@@ -29,6 +36,7 @@ import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.util.BaseActivity;
+import com.neu.test.util.PermissionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +66,9 @@ public class FragmentManagerActivity extends BaseActivity {
     String userName;
 
     private SimpleToolbar simpleToolbar;
-
-
-
-
     private Handler mHandler = new Handler();
-
-
+    private PermissionUtils permissionUtils;
+    private Intent intent;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -76,6 +80,7 @@ public class FragmentManagerActivity extends BaseActivity {
         setContentView(R.layout.activity_fragment_manager);
 
         initView();
+        intent = getIntent();
         //获得任务
 //        getTaskByPost();
 
@@ -104,14 +109,20 @@ public class FragmentManagerActivity extends BaseActivity {
 
 
     private void initData() {
-
+        mFragmentList.clear();
         allTasks = new ArrayList<>();
+        permissionUtils = new PermissionUtils(this,this,null,null);
+        permissionUtils.getPermission();
 
-
-        Intent intent = getIntent();
         String[] taskType = {"自查","整改","下派","临时"};
         allTasks = (List<Task>) intent.getSerializableExtra("userTask");
+        String all = new Gson().toJson(allTasks);
+        Log.e(TAG, "initData: "+all+"  "+allTasks.size() );
         userName = intent.getStringExtra("userName");
+        selfTasks.clear();
+        reselfTasks.clear();
+        kingTasks.clear();
+        randomTasks.clear();
         for (int i=0; i<allTasks.size();i++){
             if (allTasks.get(i).getTASKTYPE().equals("自查")){
                 selfTasks.add(allTasks.get(i));
@@ -159,82 +170,10 @@ public class FragmentManagerActivity extends BaseActivity {
     private void initListener() {
 
         mBottomBarLayout.setOnItemSelectedListener(new BottomBarLayout.OnItemSelectedListener() {
-
             @Override
-
             public void onItemSelected(final BottomBarItem bottomBarItem, int previousPosition, final int currentPosition) {
                 Log.i("MainActivity", "position: " + currentPosition);
                 changeFragment(currentPosition);
-                if (currentPosition == 0) {
-                    //如果是第一个，即首页
-                    if (previousPosition == currentPosition) {
-                        //如果是在原来位置上点击,更换首页图标并播放旋转动画
-                        if (mRotateAnimation != null && !mRotateAnimation.hasEnded()){
-                            //如果当前动画正在执行
-                            return;
-                        }
-
-                        bottomBarItem.setSelectedIcon(R.mipmap.tab_loading);//更换成加载图标 setResId
-
-
-
-                        //播放旋转动画
-
-                        if (mRotateAnimation == null) {
-
-                            mRotateAnimation = new RotateAnimation(0, 360,
-
-                                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-
-                                    0.5f);
-
-                            mRotateAnimation.setDuration(800);
-
-                            mRotateAnimation.setRepeatCount(-1);
-
-                        }
-
-                        ImageView bottomImageView = bottomBarItem.getImageView();
-
-                        bottomImageView.setAnimation(mRotateAnimation);
-
-                        bottomImageView.startAnimation(mRotateAnimation);//播放旋转动画
-
-
-
-                        //模拟数据刷新完毕
-
-                        mHandler.postDelayed(new Runnable() {
-
-                            @Override
-
-                            public void run() {
-
-                                boolean tabNotChanged = mBottomBarLayout.getCurrentItem() == currentPosition; //是否还停留在当前页签
-
-                                bottomBarItem.setSelectedIcon(R.mipmap.tab_home_selected);//更换成首页原来选中图标
-
-                                cancelTabLoading(bottomBarItem);
-
-                            }
-
-                        }, 3000);
-
-                        return;
-
-                    }
-
-                }
-
-
-
-                //如果点击了其他条目
-
-                BottomBarItem bottomItem = mBottomBarLayout.getBottomItem(0);
-
-                bottomItem.setSelectedIcon(R.mipmap.tab_home_selected);//更换为原来的图标
-
-                cancelTabLoading(bottomItem);//停止旋转动画
 
             }
 
@@ -346,11 +285,43 @@ public class FragmentManagerActivity extends BaseActivity {
         }
     }
 
-    @TargetApi(23)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        this.intent = intent;
+        initData();
+        initListener();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        initData();
+//        initListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        MessageDialog.build(FragmentManagerActivity.this)
+                .setStyle(DialogSettings.STYLE.STYLE_IOS)
+                .setTitle("提示")
+                .setMessage("你要退出当前应用吗？")
+                .setOkButton("确定", new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v) {
+                        FragmentManagerActivity.super.onBackPressed();
+                        return false;
+                    }
+                })
+                .setCancelButton("取消", new OnDialogButtonClickListener() {
+                    @Override
+                    public boolean onClick(BaseDialog baseDialog, View v) {
+                        return false;
+                    }
+                })
+                .show();
 
     }
 
@@ -391,4 +362,12 @@ public class FragmentManagerActivity extends BaseActivity {
         }
 
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
 }

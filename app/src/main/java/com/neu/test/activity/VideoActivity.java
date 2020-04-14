@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.neu.test.R;
+import com.neu.test.util.BaseActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,7 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class VideoActivity extends AppCompatActivity {
+public class VideoActivity extends BaseActivity {
     private static String TAG = "VideoActivity";
 
     private boolean mStartedFlag = false; //录像中标志

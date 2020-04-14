@@ -22,6 +22,7 @@ import com.neu.test.R;
 
 import com.neu.test.adapter.SuggestionGridViewAdapter1;
 import com.neu.test.entity.DetectionResult;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.SidebarUtils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -32,7 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RectifyItemActivity extends AppCompatActivity implements View.OnClickListener {
+public class RectifyItemActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "RectifyItemActivity";
     private static final int REQUEST_CODE_CHOOSE = 23;

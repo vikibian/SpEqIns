@@ -21,6 +21,7 @@ import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -32,9 +33,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class ResetEmailActivity extends AppCompatActivity implements View.OnClickListener {
+public class ResetEmailActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "ResetEmailActivity";
 
     private Toolbar mToolbar;
@@ -51,11 +53,13 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
 
     private User userInfo = new User();
 
+    private PromptDialog promptDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_email);
-
+        promptDialog = new PromptDialog(this);
         userInfo = LoginActivity.user;
 
         initView();
@@ -151,6 +155,7 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void resetEmail(String testinputName, String email) {
+        promptDialog.showLoading("新邮箱提交中...");
         String url = BaseUrl.BaseUrl +"resetEmailServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> user = new HashMap<>();
@@ -167,6 +172,7 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
+                promptDialog.dismiss();
             }
 
             @Override
@@ -183,6 +189,7 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetEmailActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
+                    promptDialog.dismiss();
                     setResult(RESULT_OK);
                     finish();
                 } catch (JSONException e) {
@@ -199,5 +206,11 @@ public class ResetEmailActivity extends AppCompatActivity implements View.OnClic
         Pattern pattern = Pattern.compile("^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 }

@@ -30,6 +30,7 @@ import com.neu.test.fragment.ShowSearchedResultFragment;
 import com.neu.test.layout.MyListView;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
 import com.yyydjk.library.DropDownMenu;
@@ -41,9 +42,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class ShowSearchedResultActivity extends AppCompatActivity implements View.OnClickListener {
+public class ShowSearchedResultActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "ShowSearchedResult";
     private TextView textView_time;
     private TextView textView_deviceType;
@@ -73,18 +76,20 @@ public class ShowSearchedResultActivity extends AppCompatActivity implements Vie
 
     private List<Task> tasks;
     private Task task;
-    private List<DetectionResult> listResult;
+    private List<DetectionResult> listResult = new ArrayList<>();
     private String taskID;
     private String devID;
     private SearchUtil searchUtil = new SearchUtil();
     private List<DetectionResult> listDatas_qualified = new ArrayList<>();
     private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
     private List<DetectionResult> listDatas_undecied = new ArrayList<>();//代表的是整改合格
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_answer_list);
+        promptDialog = new PromptDialog(this);
         task = (Task) getIntent().getSerializableExtra("tasks");
         Log.e(TAG,"获取数据");
         Log.e(TAG,"获取数据"+task.toString());
@@ -219,6 +224,8 @@ public class ShowSearchedResultActivity extends AppCompatActivity implements Vie
                             initListViewAdapter1();
                         }
                     }
+                }else {
+                    Toasty.error(getApplicationContext(),"获取数据失败!",Toasty.LENGTH_SHORT,true).show();
                 }
             }
         });
@@ -285,8 +292,11 @@ public class ShowSearchedResultActivity extends AppCompatActivity implements Vie
 
     //对ListViewAdapter1进行适配
     private void initListViewAdapter1() {
+        promptDialog.showLoading("加载数据中...");
+        Log.e(TAG, "getTaskList: promptDialog");
         listViewAdapter1 = new ListViewAdapter1(getApplicationContext(),listResult,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
+        promptDialog.dismiss();
 
     }
 
@@ -320,6 +330,12 @@ public class ShowSearchedResultActivity extends AppCompatActivity implements Vie
                 this.finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 
     //Menu的点击事件

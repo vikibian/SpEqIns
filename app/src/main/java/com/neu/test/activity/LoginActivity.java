@@ -37,6 +37,7 @@ import com.neu.test.entity.User;
 import com.neu.test.net.callback.ListTaskAndUserCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.net.OkHttp;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.SuggestionActivitySaveDataUtil;
@@ -52,12 +53,14 @@ import java.util.List;
 import java.util.Map;
 
 
+import cn.richinfo.dualsim.TelephonyManagement;
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener,OnRequestPermissionsResultCallback{
+public class LoginActivity extends BaseActivity implements View.OnClickListener,OnRequestPermissionsResultCallback{
     // 定义 字段
     //region
     private static String TAG = "LoginActivity";
@@ -79,6 +82,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TelephonyManager telephonyManager;
     PermissionUtils permissionUtils;
 
+    PromptDialog promptDialog;
+    boolean autoLogin = false;
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //获取权限
         permissionUtils = new PermissionUtils(this,this,null,null);
         permissionUtils.getPermission();
-        //getPersimmions();
+
     }
 
     private void initView() {
@@ -104,14 +110,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initParams() {
+        promptDialog = new PromptDialog(this);
         telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
         //用户信息缓存
         sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         String name = sharedPreferences.getString("name", ""); //姓名
         String password = sharedPreferences.getString("password", ""); //密码
+        autoLogin = sharedPreferences.getBoolean("isAuto",false);
         if (name != "" || password != "") { //不为空，即有缓存，从缓存提取
             input_name.setText(name);
             input_password.setText(password);
+            if(autoLogin){
+                promptDialog.showLoading("正在登录 ... ");
+                login();
+            }else{
+                //获取权限
+                permissionUtils = new PermissionUtils(this,this,null,null);
+                permissionUtils.getPermission();
+            }
+        }else{
+            //获取权限
+            permissionUtils = new PermissionUtils(this,this,null,null);
+            permissionUtils.getPermission();
         }
     }
 
@@ -120,78 +140,32 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         bt_signin.setOnClickListener(this);
     }
 
-    //获取权限
-    //region
-    @TargetApi(23)
-    private void getPersimmions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ArrayList<String> permissions = new ArrayList<String>();
-            /***
-             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
-             */
-            // 定位精确位置
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-            }
-
-            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.RECORD_AUDIO);
-            }
-
-            if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.INTERNET);
-            }
-            /*
-             * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
-             */
-            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.READ_PHONE_STATE);
-            }
-
-            //摄像头权限
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.CAMERA);
-            }
-
-            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
-            }
-            if (permissions.size() > 0) {
-                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
-            }
-        }
-    }
-
-    @TargetApi(23)
-    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
-            if (shouldShowRequestPermissionRationale(permission)) {
-                return true;
-            } else {
-                permissionsList.add(permission);
-                return false;
-            }
-
-        } else {
-            return true;
-        }
-    }
-    //监听点击事件
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_login:
+                bt_signin.setClickable(false);
+                bt_login.setClickable(false);
                 if(permissionUtils.canGoNextstep()){
+                    promptDialog.showLoading("正在登录 ... ");
+                    TelephonyManagement telephonyManagement = TelephonyManagement.getInstance();
+                    TelephonyManagement.TelephonyInfo telephonyInfo = telephonyManagement.getTelephonyInfo(LoginActivity.this);
+                    String simInfo = telephonyInfo.getSubscriberIdBySlotId(0)+","+telephonyInfo.getSubscriberIdBySlotId(1);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("simInfo",simInfo);
+                    editor.putBoolean("isAuto",true);
+                    editor.commit();
                     login();//登陆
                 }else{
                     permissionUtils.getPermission();
                 }
                 break;
             case R.id.bt_signin:
+                bt_login.setClickable(false);
+                bt_signin.setClickable(false);
+//                promptDialog.showLoading("加载中 ... ");
                 sinup(); //注册
+                Log.e("tttttt1","6666");
                 break;
         }
     }
@@ -209,17 +183,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //注册
     private void sinup() {
-//    Intent intent = new Intentntent(LoginActivity.this, SignupActivity.class);
-//    startActivity(intent);
-        String sss1 = "";
-        permissionUtils = new PermissionUtils(this,this,null,null);
-        permissionUtils.getPermission();
+        Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+        startActivity(intent);
+        //String sss1 = "";
     /*TelephonyManagement telephonyManagement = TelephonyManagement.getInstance();
     TelephonyManagement.TelephonyInfo telephonyInfo = telephonyManagement.getTelephonyInfo(LoginActivity.this);
 
       sss1 = telephonyInfo.isDualSIM()+"-"+telephonyInfo.getSubscriberIdBySlotId(0)+"-"+telephonyInfo.getSubscriberIdBySlotId(1);
     input_name.setText(sss1);*/
-        input_name.setText(permissionUtils.canGoNextstep()+"");
+
     }
 
     //获取用户信息和任务list
@@ -234,6 +206,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         okHttp.postBypostString(url, gson, new ListTaskAndUserCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
+                promptDialog.dismiss();
+                bt_login.setClickable(true);
+                bt_signin.setClickable(true);
                 Log.e("error"," "+e.toString());
                 Toasty.warning(LoginActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
@@ -252,20 +227,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         tasks = new ArrayList<Task>();
                     }
                     user = response.getUserInfo();
-                    Toast.makeText(LoginActivity.this,"成功",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
                     intent.putExtra("userTask", (Serializable) tasks);
-                    Log.e("TAG"," tasks: "+tasks.size());
-                    Log.e("TAG"," user: "+user.getLOGINNAME());
-                    Log.e("TAG"," user: "+user.getLOGINPWD());
-                    Log.e("TAG"," user: "+user.getUSERNAME());
-                    Log.e("TAG"," user: "+user.getUSERID());
-                    Log.e("TAG"," user: "+user.getUSEUNITNAME());
                     intent.putExtra("userName",inputName);
                     startActivity(intent);
                     finish();
                 }
                 else {
+                    promptDialog.dismiss();
+                    bt_login.setClickable(true);
+                    bt_signin.setClickable(true);
                     Toasty.error(LoginActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
                 }
             }
@@ -309,5 +280,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+
+    //按键可点击
+    @Override
+    protected void onResume() {
+        if(!autoLogin){
+            promptDialog.dismissImmediately();
+            super.onResume();
+            Log.e("tttt","onstart");
+            bt_login.setClickable(true);
+            bt_signin.setClickable(true);
+        }else{
+            super.onResume();
+        }
     }
 }

@@ -58,19 +58,22 @@ import java.util.Map;
 import java.util.Set;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class CheckFragment extends Fragment {
 
     private static String TAG = "CheckFragment";
     private int CHECKFRAGMENT =123;
+    private int rectifylist =124;
 
-    private ListView lv_check;
+    public ListView lv_check;
     private LinearLayout check_noitem;
 //    private Map<String,String> map_devclass;
-    CheckAdapter checkAdapter;
+    public CheckAdapter checkAdapter;
     List<Task> tasks = new ArrayList<Task>();
     BottomBarLayout mBottomBarLayout;
     private String taskType;
@@ -88,6 +91,8 @@ public class CheckFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private String data;//保存 缓存的字段名
+
+    PromptDialog promptDialog;
 
     public CheckFragment(){
 
@@ -120,10 +125,13 @@ public class CheckFragment extends Fragment {
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         lv_check = view.findViewById(R.id.lv_check);
 //        sp_devid = view.findViewById(R.id.sp_devid);
         sp_devclass = view.findViewById(R.id.sp_devclass);
         check_noitem = view.findViewById(R.id.check_noitem);
+
+        promptDialog = new PromptDialog(getActivity());
 
         devclassList = new ArrayList<>();
         devidList = new ArrayList<>();
@@ -187,6 +195,7 @@ public class CheckFragment extends Fragment {
       lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            promptDialog.showLoading("任务获取中 ... ");
           Task task = tasks.get(position);
           String s = task.getUSEUNITNAME();
           String DEVCLASS = task.getDEVCLASS();
@@ -250,6 +259,7 @@ public class CheckFragment extends Fragment {
     intent.putExtra("position",position);
     intent.putExtra("task", task);
     startActivityForResult(intent,CHECKFRAGMENT);
+      promptDialog.dismiss();
   }
 
     public void goRectifyListActivity(List<DetectionResult> list ,int position,Task task){
@@ -257,8 +267,9 @@ public class CheckFragment extends Fragment {
         intent.putExtra("items", (Serializable) list);
         intent.putExtra("position",position);
         intent.putExtra("task", task);
-        startActivity(intent);
-//        startActivityForResult(intent,CHECKFRAGMENT);
+//        startActivity(intent);
+        startActivityForResult(intent,rectifylist);
+        promptDialog.dismiss();
     }
 
   public List<DetectionResult> creatDetectionResultList(List<DetailTask> items,Task task){
@@ -323,6 +334,7 @@ public class CheckFragment extends Fragment {
         okHttp.postBypostString(url, new Gson().toJson(map), new ListIDetailTaskCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
+                promptDialog.dismiss();
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
@@ -334,6 +346,9 @@ public class CheckFragment extends Fragment {
                     editorSharedPreferences(items,"listDetailTask");
                     editorSharedPreferences(detectionResults,"detectionResultList");
                     goReDetectionActivity(detectionResults,position,task);
+                }else {
+                    promptDialog.dismiss();
+                    Toasty.error(getContext(),"获取失败！").show();
                 }
             }
         });
@@ -342,6 +357,40 @@ public class CheckFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CHECKFRAGMENT) {
+                int position = data.getIntExtra("position", 0);
+                boolean isDoing = data.getBooleanExtra("isDoing",false);
+                String where = data.getStringExtra("where");
+                if(where.equals("back")){
+                    if(isDoing){
+                    }
+                }else{
+                    tasks.get(position).setRESULT("2");
+                }
+                lv_check.setAdapter(checkAdapter);
+            }
+
+            if (requestCode == rectifylist){
+                int pos = data.getIntExtra("position",-1);
+
+                tasks.remove(pos);
+                devclassTasks.remove(pos);
+                BottomBarLayout bottomBarLayout = getActivity().findViewById(R.id.bbl);
+                bottomBarLayout.setUnread(1,tasks.size());
+                checkAdapter.notifyDataSetChanged();
+                lv_check.setAdapter(checkAdapter);
+                if(devclassTasks.size() == 0){
+                    check_noitem.setVisibility(View.VISIBLE);
+                    lv_check.setVisibility(View.GONE);
+                }else{
+                    check_noitem.setVisibility(View.GONE);
+                    lv_check.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+
 
     }
 
@@ -357,6 +406,7 @@ public class CheckFragment extends Fragment {
         okHttp.postBypostString(url, new Gson().toJson(map), new ListDetectionResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
+                promptDialog.dismiss();
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
@@ -373,6 +423,9 @@ public class CheckFragment extends Fragment {
                       editorSharedPreferences(list,"detectionResultList");
                       goRectifyListActivity(list,position,task);
                     }
+                }else {
+                    promptDialog.dismiss();
+                    Toasty.error(getContext(),"获取失败！").show();
                 }
             }
         });
@@ -384,6 +437,7 @@ public class CheckFragment extends Fragment {
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("USERNAME",task.getLOGINNAME());
+        map.put("RUNWATERNUM",task.getRUNWATERNUM());
         String url = BaseUrl.BaseUrl+"getSaveResult";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
@@ -391,6 +445,7 @@ public class CheckFragment extends Fragment {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG,"onError: "+e.toString());
+                promptDialog.dismiss();
                 Toasty.warning(getActivity(),"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
@@ -405,9 +460,17 @@ public class CheckFragment extends Fragment {
                     intent.putExtra("task", task);
 
                     startActivityForResult(intent,CHECKFRAGMENT);
+                }else {
+                    promptDialog.dismiss();
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 
     class CheckAdapter extends BaseAdapter{

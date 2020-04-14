@@ -22,12 +22,13 @@ import com.lmx.library.media.VideoPlayAdapter;
 import com.lmx.library.media.VideoPlayRecyclerView;
 import com.neu.test.R;
 import com.neu.test.layout.VideoLoadingProgressbar;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.VideoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowVideoActivity extends AppCompatActivity {
+public class ShowVideoActivity extends BaseActivity {
     private static final String TAG = "ShowVideoActivity";
     private VideoPlayRecyclerView mRvVideo;
     private ShowVideoAdapter adapter;

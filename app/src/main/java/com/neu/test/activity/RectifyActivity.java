@@ -28,8 +28,10 @@ import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.GPSUtil;
+import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.PhoneInfoUtils;
 import com.neu.test.util.ReloadImageAndVideo;
 import com.neu.test.util.SearchUtil;
@@ -46,9 +48,10 @@ import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class RectifyActivity extends AppCompatActivity implements View.OnClickListener {
+public class RectifyActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "RectifyActivity";
     private static final int REQUEST_CODE_CHOOSE = 23;
     private GridView gridView;
@@ -96,12 +99,15 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
     private GPSUtil gpsUtil;
     private String way = "立即整改";
     private String isHege ="";
+    private PromptDialog promptDialog;
+    private PermissionUtils permissionUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rectify);
-
+        promptDialog = new PromptDialog(this);
+        permissionUtils = new PermissionUtils(this,RectifyActivity.this,null,null);
         gpsUtil = new GPSUtil(this);
         gpsUtil.startLocate();
         deleteIndex = -1;
@@ -237,21 +243,22 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.rectify_result_item_submit_button:
                 //在点击提交之前把整改的内容 添加到选中的detectionResult的相应属性中取
                 if (!textView_finish_time.getText().toString().isEmpty()){
-                    setDetectionResult();
-//                    postFiles("text",pathlistOfPhoto);
+
+                    if (pathlistOfPhoto.size() == 0){
+                        setDetectionResult();
+                        intentByPreviousActivity.putExtra("detectionResult",detectionResult);
+                        intentByPreviousActivity.putExtra("position",positionSelected);
+                        setResult(RESULT_OK,intentByPreviousActivity);
+                        finish();
+                    }else {
+                        promptDialog.showLoading("上传图片中...");
+                        setDetectionResult();
+                        postFiles("text",pathlistOfPhoto);
+                    }
 
                 }else {
                     Toasty.info(getApplicationContext(),"对不起，您没有选择时间！",Toasty.LENGTH_SHORT).show();
                 }
-                intentByPreviousActivity.putExtra("detectionResult",detectionResult);
-                intentByPreviousActivity.putExtra("position",positionSelected);
-                Log.e(TAG, "onClick: photo  "+detectionResult.getCHANGEDIMAGE() );
-                Log.e(TAG, "onClick: video  "+detectionResult.getCHANGEDVIDEO() );
-                Log.e(TAG, "onClick: status  "+detectionResult.getSTATUS() );
-                Log.e(TAG, "onClick: changed  "+detectionResult.getISCHANGED() );
-
-                setResult(RESULT_OK,intentByPreviousActivity);
-                finish();
                 break;
             default:
                 break;
@@ -273,6 +280,7 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
         okHttp.postFilesByPost(url, taskItem, pathOfPhotos, new FileResultCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
+                promptDialog.dismiss();
                 System.out.println(e.getMessage());
                 Toasty.warning(RectifyActivity.this,"客官，网络不给力",Toast.LENGTH_SHORT,true).show();
             }
@@ -292,6 +300,7 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
                         setResult(RESULT_OK,intentByPreviousActivity);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
+                        promptDialog.dismiss();
                         Toasty.error(RectifyActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -340,9 +349,14 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
                 Log.e(TAG," item  "+item.getTitle());
                 break;
             case 2:
-                Intent intentall = new Intent(RectifyActivity.this,PhotoVideoActivity.class);
-                intentall.putExtra("username",detectionResult.getLOGINNAME());
-                startActivityForResult(intentall,REQUEST_TEST);
+                if (permissionUtils.canGoNextstep()){
+                    Intent intentall = new Intent(RectifyActivity.this,PhotoVideoActivity.class);
+                    intentall.putExtra("username",detectionResult.getLOGINNAME());
+                    startActivityForResult(intentall,REQUEST_TEST);
+                }else {
+                    permissionUtils.getPermission();
+                }
+
                 break;
             case 3:
                 break;
@@ -380,7 +394,11 @@ public class RectifyActivity extends AppCompatActivity implements View.OnClickLi
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

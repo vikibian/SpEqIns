@@ -8,10 +8,11 @@ import android.widget.FrameLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.neu.test.R;
+import com.neu.test.util.BaseActivity;
 
 import me.wangyuwei.particleview.ParticleView;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
     ParticleView mPvSplash;
     private FrameLayout frameLayout_splash;
     //public static String baseurl = "http://localhost:8080/WEB1010";

@@ -117,6 +117,7 @@ public class ChangeFontActivity extends BaseActivity {
                                 Intent intent =getPackageManager().getLaunchIntentForPackage(getPackageName());
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
+                                finish();
                                 return false;
                             }
                         })

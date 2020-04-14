@@ -30,6 +30,7 @@ import com.neu.test.entity.Task;
 import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 
 import org.json.JSONObject;
@@ -43,9 +44,10 @@ import java.util.regex.Pattern;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignupActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "SignupActivity";
     private static int userId = 0;
@@ -78,12 +80,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EventHandler eh; //事件接收器
     private TimeCount mTimeCount;
     private boolean isGetValidatenum = false;
+    private PromptDialog promptDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        promptDialog = new PromptDialog(this);
         init();
         getContent();
         initSms();
@@ -210,6 +213,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void getDataByPost() {
+        promptDialog.showLoading("用户注册中...");
         String url = BaseUrl.BaseUrl +"registerServlet";
         Log.d(TAG,"POST url: "+url);
 
@@ -239,6 +243,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 System.out.println(e.getMessage());
                 Log.e("error"," "+e.getMessage());
 //                Toast.makeText(LoginActivity.this,"客官，网络不给力",Toast.LENGTH_LONG).show();
+                promptDialog.dismiss();
                 Toasty.warning(SignupActivity.this,"客官，网络不给力!",Toast.LENGTH_LONG,true).show();
             }
 
@@ -248,10 +253,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 //                    Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_LONG).show();
                     Toasty.success(SignupActivity.this,"注册成功!",Toast.LENGTH_LONG,true).show();
                     successCreated();
-                    Toasty.success(getBaseContext(),"注册成功！",Toast.LENGTH_SHORT,true).show();
+
                 } else if (response.getMessage().equals("用户名已注册")){
+                    promptDialog.dismiss();
                     Toasty.warning(getBaseContext(), "该用户名已注册！",Toast.LENGTH_SHORT,true).show();
                 } else if (response.getMessage().equals("提交失败")){
+                    promptDialog.dismiss();
                     Toasty.warning(getBaseContext(), "创建用户信息失败！",Toast.LENGTH_SHORT,true).show();
                 }
 
@@ -349,13 +356,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private void onSignupSuccess() {
         //bt_signup.setEnabled(true);
+        promptDialog.dismiss();
         setResult(RESULT_OK, null);
         finish();
     }
 
     private void login() {
+        promptDialog.dismiss();
         Intent intent = new Intent(SignupActivity.this,LoginActivity.class);
         startActivity(intent);
+
         finish();
         overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
@@ -393,6 +403,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     protected void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterEventHandler(eh);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
     }
 
     /**

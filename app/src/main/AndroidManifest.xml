@@ -43,7 +43,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/tubiao"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -90,7 +90,8 @@
         <activity
             android:name=".activity.ReDetectionActivity"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.SelectCompanyActivity" />
+        <activity android:name=".activity.SelectCompanyActivity"
+            android:theme="@style/NoBar"/>
         <activity
             android:name=".activity.PhotoVideoActivity"
             android:theme="@style/NoBar" />
@@ -118,7 +119,8 @@
         <activity
             android:name=".activity.MeInformActivity"
             android:theme="@style/QMNoBar" />
-        <activity android:name=".activity.SignupActivity" />
+        <activity android:name=".activity.SignupActivity"
+            android:theme="@style/NoBar"/>
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/NoBar" />
@@ -158,6 +160,7 @@
         <activity android:name=".activity.ViewPagerActivity" />
         <activity
             android:name=".activity.FragmentManagerActivity"
+            android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

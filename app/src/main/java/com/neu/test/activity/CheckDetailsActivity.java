@@ -17,9 +17,10 @@ import com.neu.test.adapter.MyFragmentPagerAdapter;
 import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Task;
+import com.neu.test.util.BaseActivity;
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
 
-public class CheckDetailsActivity extends AppCompatActivity {
+public class CheckDetailsActivity extends BaseActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MyFragmentPagerAdapter myFragmentPagerAdapter;

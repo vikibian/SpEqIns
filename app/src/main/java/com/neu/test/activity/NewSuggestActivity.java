@@ -22,6 +22,7 @@ import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 
 import java.io.File;
@@ -33,7 +34,7 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-public class NewSuggestActivity extends AppCompatActivity implements View.OnClickListener{
+public class NewSuggestActivity extends BaseActivity implements View.OnClickListener{
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private TextView tv_pcxmmc;

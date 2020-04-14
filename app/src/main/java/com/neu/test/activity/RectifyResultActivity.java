@@ -47,6 +47,7 @@ import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.FilePathResult;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.FileResultCallBack;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.GPSUtil;
 import com.neu.test.util.PermissionUtils;
@@ -68,9 +69,10 @@ import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
-public class RectifyResultActivity extends AppCompatActivity implements View.OnClickListener {
+public class RectifyResultActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "RectifyResultActivity";
     private static final int REQUEST_CODE_CHOOSE = 23;
     private GridView gridView;
@@ -118,12 +120,16 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
     private GPSUtil gpsUtil;
     private String way = "立即整改";
     private String status = "3";
+    private PromptDialog promptDialog;
+    private PermissionUtils permissionUtils;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rectify_result);
+        promptDialog = new PromptDialog(this);
+        permissionUtils = new PermissionUtils(this,RectifyResultActivity.this,null,null);
         gpsUtil = new GPSUtil(this);
         gpsUtil.startLocate();
         deleteIndex = -1;
@@ -191,7 +197,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         //对保存的内容进行查看
         if (detectionResult.getSTATUS().equals(searchUtil.recifyQualify)){
             if ((detectionResult.getISHAVEDETAIL().equals(searchUtil.haveDetail))
-                    &&(detectionResult.getISCHANGED().equals(searchUtil.changed))){
+                    &&(detectionResult.getISCHANGED().trim().equals(searchUtil.changed))){
 //                editText_rectify_way.setText(detectionResult.getCHANGEDWAY());
                 //设置建议的内容
                 editText_rectify_content.setText(detectionResult.getSUGGESTION());
@@ -265,6 +271,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                         setResult(RESULT_OK,intentByPreviousActivity);
                         finish();
                     }else {
+                        promptDialog.showLoading("上传图片中...");
                         setDetectionResult();
                         postFiles("text",pathlistOfPhoto);
                     }
@@ -313,6 +320,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onError(Call call, Exception e, int i) {
                 System.out.println(e.getMessage());
+                promptDialog.dismiss();
                 Toasty.warning(RectifyResultActivity.this,"客官，网络不给力",Toast.LENGTH_SHORT,true).show();
             }
 
@@ -332,6 +340,7 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                         setResult(RESULT_OK,intentByPreviousActivity);
                         finish();
                     } else if (response.getMessage().equals("结果上传失败")){
+                        promptDialog.dismiss();
                         Toasty.error(RectifyResultActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -384,9 +393,13 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
                 startPhotoGallery();
                 break;
             case 2:
-                Intent intentall = new Intent(RectifyResultActivity.this,PhotoVideoActivity.class);
-                intentall.putExtra("username",detectionResult.getLOGINNAME());
-                startActivityForResult(intentall,REQUEST_TEST);
+                if (permissionUtils.canGoNextstep()){
+                    Intent intentall = new Intent(RectifyResultActivity.this,PhotoVideoActivity.class);
+                    intentall.putExtra("username",detectionResult.getLOGINNAME());
+                    startActivityForResult(intentall,REQUEST_TEST);
+                }else {
+                    permissionUtils.getPermission();
+                }
                 break;
             case 3:
                 break;
@@ -424,6 +437,11 @@ public class RectifyResultActivity extends AppCompatActivity implements View.OnC
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        promptDialog.dismissImmediately();
+    }
 
     /**
      * @date : 2020/2/23

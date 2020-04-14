@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.cjt2325.cameralibrary.JCameraView;
 import com.cjt2325.cameralibrary.lisenter.JCameraLisenter;
 import com.neu.test.R;
+import com.neu.test.util.BaseActivity;
 import com.neu.test.util.ImageUtil;
 import com.neu.test.util.PermissionUtils;
 
@@ -37,7 +38,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
-public class PhotoVideoActivity extends AppCompatActivity implements PermissionUtils.PermissionCallbacks {
+public class PhotoVideoActivity extends BaseActivity implements PermissionUtils.PermissionCallbacks {
     private static String TAG = "PhotoVideoActivity";
     private final int GET_PERMISSION_REQUEST = 100; //权限申请自定义码
     private JCameraView jCameraView;

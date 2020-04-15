@@ -30,13 +30,14 @@
 
         <!--  Email Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp">
 
             <EditText
-                android:focusable="false"
                 android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,13 +47,14 @@
 
         <!--  Password Label -->
         <com.google.android.material.textfield.TextInputLayout
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp">
 
             <EditText
-                android:focusable="false"
                 android:id="@+id/input_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

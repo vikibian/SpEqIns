@@ -123,10 +123,6 @@ public class CheckMediaForRectifyActivity extends BaseActivity {
                 }else {
                     initImageView(position);
                 }
-
-
-                //展示选中图片
-                Toast.makeText(CheckMediaForRectifyActivity.this, ""+position, Toast.LENGTH_SHORT).show();
             }
         });
 

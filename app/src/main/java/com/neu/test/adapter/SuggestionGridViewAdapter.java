@@ -115,7 +115,7 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
             if (suffix.equals("mp4")) {
                 Log.e (TAG," 视频地址: "+photoList.get(position));
-
+                    viewHolder.pre_imageview.setVisibility(View.VISIBLE);
                     Glide
                             .with(context)
                             .load(photoList.get(position))
@@ -208,9 +208,11 @@ public class SuggestionGridViewAdapter extends BaseAdapter {
 
     class ViewHolder{
         ImageView imageView;
+        ImageView pre_imageview;
 
         public ViewHolder(View view){
             imageView = view.findViewById(R.id.gridview_item_photo);
+            pre_imageview = view.findViewById(R.id.gridview_item_photo_pre);
         }
     }
 

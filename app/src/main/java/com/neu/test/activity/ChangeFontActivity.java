@@ -114,10 +114,16 @@ public class ChangeFontActivity extends BaseActivity {
                         .setOkButton("确定", new OnDialogButtonClickListener() {
                             @Override
                             public boolean onClick(BaseDialog baseDialog, View v) {
-                                Intent intent =getPackageManager().getLaunchIntentForPackage(getPackageName());
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                Intent intent =getPackageManager().getLaunchIntentForPackage(getPackageName());
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                startActivity(intent);
+//                                finish();
+
+                                Intent intent = new Intent(ChangeFontActivity.this,SplashActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
+
                                 return false;
                             }
                         })

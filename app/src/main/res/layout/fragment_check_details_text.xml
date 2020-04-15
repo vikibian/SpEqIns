@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:text="合格情况："
+                        android:text="设备合格情况："
                         android:textColor="@color/black"
                         android:textSize="16dp"
                         android:layout_width="wrap_content"
@@ -231,6 +231,37 @@
                         layout="@layout/myexpandableview"/>
 
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp"
+                    android:padding="3dp"
+                    android:background="@drawable/bg_textview_border"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="检查项合格情况："
+                        android:textColor="@color/black"
+                        android:textSize="16dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/check_detail_item_qualify"
+                        android:text=" "
+                        android:theme="@style/MyEditText"
+                        android:textColor="#666666"
+                        android:textSize="14dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:enabled="false"/>
                 </LinearLayout>
 
                 <LinearLayout

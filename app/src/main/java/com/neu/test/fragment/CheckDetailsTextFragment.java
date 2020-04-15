@@ -31,13 +31,14 @@ public class CheckDetailsTextFragment extends Fragment  {
 
     private String content;
     private TextView textView_inform;
+    private TextView textView_suggestion_title;
     private DetectionItem1 mDetectionItem;
     private DetectionResult detectionResult;
     private Task task;
     private TextView textView_time;
     private TextView textView_deviceType;
     private TextView textView_qualify;
-    private TextView textView_checked;
+    private TextView textView_item_qualify_condition;
     private TextView textView_user;
     private TextView textView_address;
     private ExpandableTextView expandableTextView_content;
@@ -93,6 +94,7 @@ public class CheckDetailsTextFragment extends Fragment  {
     }
 
     private void initFragment(View view) {
+        textView_suggestion_title = view.findViewById(R.id.check_detail_suggestion_title);
         textView_inform = view.findViewById(R.id.check_detail_suggestion);
         textView_inform.setText(detectionResult.getSUGGESTION());
         Log.e(TAG," 法律法规："+detectionResult.getCHECKCONTENT());
@@ -110,7 +112,8 @@ public class CheckDetailsTextFragment extends Fragment  {
 
         textView_qualify = view.findViewById(R.id.check_detail_qualify);
 
-        textView_qualify.setText(task.getRESULT());
+//        textView_qualify.setText(task.getRESULT());
+        textView_qualify.setText(searchUtil.getHelpMapForResult().get(task.getRESULT()));
 
 //        textView_checked = view.findViewById(R.id.check_detail_checked);
         //textView_checked.setText(resultBean.getIschecked());
@@ -121,6 +124,8 @@ public class CheckDetailsTextFragment extends Fragment  {
         textView_address = view.findViewById(R.id.check_detail_address);
         textView_address.setText(task.getPLACE());
 
+        textView_item_qualify_condition = view.findViewById(R.id.check_detail_item_qualify);
+        textView_item_qualify_condition.setText(searchUtil.getHelpMapForResult().get(detectionResult.getSTATUS().trim()));
 
         law_title = view.findViewById(R.id.check_detail_law).findViewById(R.id.check_detail_myexpandview_title);
         law_content = view.findViewById(R.id.check_detail_law).findViewById(R.id.check_detail_myexpandview_content);
@@ -171,6 +176,7 @@ public class CheckDetailsTextFragment extends Fragment  {
         textView_nohege_changway = view.findViewById(R.id.check_detail_nohege_include)
                 .findViewById(R.id.check_detail_nohege_changway);
         if (detectionResult.getSTATUS().equals(searchUtil.nohege)){
+            textView_suggestion_title.setText("不合格情况描述：");
             include_nohege.setVisibility(View.VISIBLE);
             textView_nohege_yinhuanlevel.setText(detectionResult.getYINHUANLEVEL());
             textView_nohege_changway.setText(detectionResult.getCHANGEDWAY());
@@ -187,6 +193,7 @@ public class CheckDetailsTextFragment extends Fragment  {
                 .findViewById(R.id.check_detail_rectify_changresult);
         if (detectionResult.getSTATUS().equals(searchUtil.recifyQualify)){
             include_rectify.setVisibility(View.VISIBLE);
+            textView_suggestion_title.setText("整改情况描述：");
             textView_rectify_changway.setText(detectionResult.getCHANGEDWAY());
             textView_rectify_changaction.setText(detectionResult.getCHANGEDACTION());
             textView_rectify_changefinishtime.setText(detectionResult.getCHANGEDFINISHTIME());

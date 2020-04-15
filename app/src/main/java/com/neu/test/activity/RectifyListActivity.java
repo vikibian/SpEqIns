@@ -354,11 +354,11 @@ public class RectifyListActivity extends BaseActivity  {
             rectifyListViewHolder.recify_checkbox_recifyqualified.setOnClickListener(clickListener);
             rectifyListViewHolder.recify_imageview_error.setOnClickListener(clickListener);
 
-            if (detectionResults.get(position).getISCHANGED().equals(searchUtil.changed)){
+            if (detectionResults.get(position).getISCHANGED().trim().equals(searchUtil.changed)){
                 rectifyListViewHolder.recify_imageview_arrowright.setVisibility(View.VISIBLE);
                 rectifyListViewHolder.recify_imageview_arrowright.setOnClickListener(clickListener);
             }else if (detectionResults.get(position).getISCHANGED().isEmpty()
-                    || detectionResults.get(position).getISCHANGED().equals(searchUtil.unchanged)){
+                    || detectionResults.get(position).getISCHANGED().trim().equals(searchUtil.unchanged)){
                 rectifyListViewHolder.recify_imageview_arrowright.setVisibility(View.INVISIBLE);
             }
 

@@ -129,6 +129,8 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
                 intent.putExtra("detectionResult",detectionResult);
                 intent.putExtra("task",task);
                 Log.e(TAG,"  测试显示： "+detectionResult.getJIANCHAXIANGTITLE());
+                String string = new Gson().toJson(detectionResult);
+                Log.e(TAG,"  测试显示结果： "+string);
 
                 startActivity(intent);
 

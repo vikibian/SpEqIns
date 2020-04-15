@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.listener.OnColumnItemClickListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.neu.test.R;
 import com.neu.test.activity.ShowSearchedResultActivity;
 import com.neu.test.activity.LoginActivity;
@@ -136,7 +138,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             showNoData.setVisibility(View.VISIBLE);
             noitem_textview.setText("您还未开始查询数据");
         }
-
+        setPortraitParams();
         selectStartTime.setText(SidebarUtils.getSystemTime());
         selectEndtTime.setText(SidebarUtils.getSystemTime());
 
@@ -312,10 +314,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                         taskSmartTable.setVisibility(View.VISIBLE);
                         tasks.clear();
                         tasks = response.getContent();
-//                        List<Task> taskstest  = new ArrayList<Task>();
-//                        taskstest.add(response.getContent().get(0));
-//                        taskstest.add(response.getContent().get(0));
-//                        initTable(taskstest);
                         initTable(tasks);
                         Log.e("TAG"," Content: "+tasks.toString());
                         String resultString = new Gson().toJson(tasks);
@@ -334,21 +332,22 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initTable( List<Task> tasksList) {
-//
-        for (int i=0;i<tasksList.size();i++){
-            Log.e("TAG"," 转换之前:  RESULT："+tasksList.get(i).getRESULT()+"  DEVCLASS: "+tasksList.get(i).getDEVCLASS());
-            //将result的文本类型数字转换为文字
-            tasksList.get(i).setRESULT(searchUtil.getHelpMapForResult().get(tasksList.get(i).getRESULT()));
-            tasksList.get(i).setDEVCLASS(searchUtil.getMapdevclass().get(tasksList.get(i).getDEVCLASS()));
-            Log.e("TAG"," 转换之后:  RESULT："+tasksList.get(i).getRESULT()+"  DEVCLASS: "+tasksList.get(i).getDEVCLASS());
-        }
 
+        String string = new Gson().toJson(tasksList);
+        List<Task> testTasks = new Gson().fromJson(string,new TypeToken<List<Task>>(){}.getType());
+
+        for (int i=0;i<testTasks.size();i++){
+            Log.e("TAG"," inittable 转换之前:  RESULT："+testTasks.get(i).getRESULT()+"  DEVCLASS: "+testTasks.get(i).getDEVCLASS());
+            //将result的文本类型数字转换为文字
+            testTasks.get(i).setRESULT(searchUtil.getHelpMapForResult().get(testTasks.get(i).getRESULT()));
+            testTasks.get(i).setDEVCLASS(searchUtil.getMapdevclass().get(testTasks.get(i).getDEVCLASS()));
+            Log.e("TAG"," inittable 转换之后:  RESULT："+testTasks.get(i).getRESULT()+"  DEVCLASS: "+testTasks.get(i).getDEVCLASS());
+        }
 
         checkdate = new Column<String>("检查日期","CHECKDATE");
         checkdate.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
-                Toast.makeText(getContext(),"点击了"+value+" "+position,Toast.LENGTH_SHORT).show();
                 jumpToShowSearchedResultFragment(position);
             }
         });
@@ -432,7 +431,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        final TableData<Task> tableData = new TableData<Task>("测试标题", tasksList,checkdate,
+        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,checkdate,
                 deadline,devclass, devid, latitude, place,result, taskID, tasktype, danwei);
         taskSmartTable.getConfig().setShowTableTitle(false);
         taskSmartTable.getConfig().setShowXSequence(false);
@@ -460,18 +459,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     }
 
     private void jumpToShowSearchedResultFragment(int position) {
-        Log.e(TAG,"发送数据显示："+tasks.get(position).getCHECKDATE());
-        Log.e(TAG,"发送数据显示："+position);
-        Log.e(TAG,"发送数据显示："+tasks.size());
-        Log.e(TAG,"发送数据显示  result："+tasks.get(position).getRESULT());
-
-        for (int i=0;i<tasks.size();i++){
-            Log.e("TAG"," 转换之前:  RESULT："+tasks.get(i).getRESULT()+"  DEVCLASS: "+tasks.get(i).getDEVCLASS());
-            //将result的文字转换为文本数字
-            tasks.get(i).setRESULT(searchUtil.getHelpMapForResultReverse().get(tasks.get(i).getRESULT()));
-            tasks.get(i).setDEVCLASS(searchUtil.getMapdevclassReverse().get(tasks.get(i).getDEVCLASS()));
-            Log.e("TAG"," 转换之后:  RESULT："+tasks.get(i).getRESULT()+"  DEVCLASS: "+tasks.get(i).getDEVCLASS());
-        }
 
         Intent intent = new Intent(getActivity(), ShowSearchedResultActivity.class);
         intent.putExtra("tasks",tasks.get(position));
@@ -533,15 +520,35 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 Log.e(TAG, "onConfigurationChanged: "+ "ORIENTATION_LANDSCAPE");
                 toolbar.setVisibility(View.GONE);
-//                initTable(tasks);
+                setLandscapeParams();
             } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 Log.e(TAG, "onConfigurationChanged: "+ "ORIENTATION_PORTRAIT");
                 toolbar.setVisibility(View.VISIBLE);
-//                initTable(tasks);
+                setPortraitParams();
             }
         } catch (Exception ex) {
-
         }
+    }
 
+    private void setPortraitParams(){
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        int width;
+        int height;
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) searchRightDrawer.getLayoutParams();
+        params.width = width*4/5;
+        searchRightDrawer.setLayoutParams(params);
+    }
+
+    private void setLandscapeParams(){
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        int width;
+        int height;
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) searchRightDrawer.getLayoutParams();
+        params.width = width*3/5;
+        searchRightDrawer.setLayoutParams(params);
     }
 }

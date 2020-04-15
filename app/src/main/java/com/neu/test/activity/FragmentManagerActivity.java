@@ -55,6 +55,7 @@ public class FragmentManagerActivity extends BaseActivity {
     private FrameLayout mFlContent;
 
     public BottomBarLayout mBottomBarLayout;
+    private int preposition = 0;
 
     private RotateAnimation mRotateAnimation;
 
@@ -84,7 +85,7 @@ public class FragmentManagerActivity extends BaseActivity {
         //获得任务
 //        getTaskByPost();
 
-        initData();
+        initData(0);
         initListener();
         getPersimmions();
 
@@ -108,7 +109,7 @@ public class FragmentManagerActivity extends BaseActivity {
 
 
 
-    private void initData() {
+    private void initData(int position) {
         mFragmentList.clear();
         allTasks = new ArrayList<>();
         permissionUtils = new PermissionUtils(this,this,null,null);
@@ -162,7 +163,7 @@ public class FragmentManagerActivity extends BaseActivity {
         mFragmentList.add(meFragment);
 
 
-        changeFragment(0); //默认显示第一页
+        changeFragment(position); //默认显示第一页
 
     }
 
@@ -173,6 +174,7 @@ public class FragmentManagerActivity extends BaseActivity {
             @Override
             public void onItemSelected(final BottomBarItem bottomBarItem, int previousPosition, final int currentPosition) {
                 Log.i("MainActivity", "position: " + currentPosition);
+                preposition = currentPosition;
                 changeFragment(currentPosition);
 
             }
@@ -289,7 +291,8 @@ public class FragmentManagerActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         this.intent = intent;
-        initData();
+        int currentposition = mBottomBarLayout.getCurrentItem();
+        initData(currentposition);
         initListener();
 
     }

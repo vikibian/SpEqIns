@@ -5,14 +5,30 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/gridview_item_photo"
-        android:scaleType="centerInside"
-        android:checked="false"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
+    <RelativeLayout
+        android:padding="2dp"
         android:layout_width="125dp"
-        android:layout_height="125dp" />
+        android:layout_height="125dp">
+
+        <ImageView
+            android:id="@+id/gridview_item_photo"
+            android:scaleType="centerInside"
+            android:checked="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/gridview_item_photo_pre"
+            android:layout_centerInParent="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/zanting"/>
+
+    </RelativeLayout>
+
 
 </LinearLayout>

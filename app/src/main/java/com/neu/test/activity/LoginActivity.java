@@ -97,8 +97,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         //设置监听
         setListener();
         //获取权限
-        permissionUtils = new PermissionUtils(this,this,null,null);
-        permissionUtils.getPermission();
+//        permissionUtils = new PermissionUtils(this,this,null,null);
+//        permissionUtils.getPermission();
 
     }
 
@@ -121,12 +121,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (name != "" || password != "") { //不为空，即有缓存，从缓存提取
             input_name.setText(name);
             input_password.setText(password);
-            if(autoLogin){
-                promptDialog.showLoading("正在登录 ... ");
-                login();
-            }else{
-                //获取权限
-                permissionUtils.getPermission();
+            if (permissionUtils.canGoNextstep()){
+                if(autoLogin){
+                    promptDialog.showLoading("正在登录 ... ");
+                    login();
+                }else{
+                    //获取权限
+                    permissionUtils.getPermission();
+                }
             }
         }else{
             //获取权限;
@@ -146,7 +148,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 bt_signin.setClickable(false);
                 bt_login.setClickable(false);
                 if(permissionUtils.canGoNextstep()){
-                    promptDialog.showLoading("正在登录 ... ");
                     TelephonyManagement telephonyManagement = TelephonyManagement.getInstance();
                     TelephonyManagement.TelephonyInfo telephonyInfo = telephonyManagement.getTelephonyInfo(LoginActivity.this);
                     String simInfo = telephonyInfo.getSubscriberIdBySlotId(0)+","+telephonyInfo.getSubscriberIdBySlotId(1);
@@ -172,10 +173,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     //登陆
     private void login() {
         if (!isValidae()) { //有效性判断
+            bt_login.setClickable(true);
+            bt_signin.setClickable(true);
             return;
         } else {
             inputName = input_name.getText().toString().trim();
             inputPassword = input_password.getText().toString().trim();
+            promptDialog.showLoading("正在登录 ... ");
             getTasksAndUserBypost(); //获取用户及任务信息
         }
     }

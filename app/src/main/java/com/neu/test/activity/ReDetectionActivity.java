@@ -220,6 +220,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                         public void onError(Call call, Exception e, int i) {
                             Log.e("error", e.toString());
                             promptDialog.dismiss();
+                            Toasty.warning(ReDetectionActivity.this,"客官，网络不给力。");
                         }
 
                         @Override
@@ -256,13 +257,14 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                 String string = new Gson().toJson(detectionResults);
                 Log.e(TAG,"detectionResults: "+string);
                 System.out.println(string);
-                String url = BaseUrl.BaseUrl+"setItemResult";
+                String url = BaseUrl.BaseUrl+"saveItemResult";
                 OkHttp okHttp = new OkHttp();
                 okHttp.postBypostString(url, string, new FileResultCallBack() {
                     @Override
                     public void onError(Call call, Exception e, int i) {
                         Log.e("error",e.toString());
                         promptDialog.dismiss();
+                        Toasty.warning(ReDetectionActivity.this,"客官，网络不给力。");
                     }
 
                     @Override
@@ -679,7 +681,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                     &&(listdetectionresult.get(position).getSTATUS().equals(searchUtil.recifyQualify))){
                                 promptDialog.showLoading("加载中 ... ");
                                 jumpToRectifyResultActivity(getIndex(flag,position),searchUtil.recifyQualify);
-                            }else if (listdetectionresult.get(position).getISCHANGED().equals(searchUtil.unchanged)){
+                            }else if (listdetectionresult.get(position).getISCHANGED().trim().equals(searchUtil.unchanged)){
                                 promptDialog.showLoading("加载中 ... ");
                                 jumpToSuggesstionActivity( getIndex(flag,position),listdetectionresult.get(position).getSTATUS());
                             }

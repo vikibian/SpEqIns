@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,17 +24,25 @@ import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bm.library.PhotoView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.kongzue.dialog.interfaces.OnInputDialogButtonClickListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
@@ -62,6 +71,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,7 +183,7 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
         gridView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
             @Override
             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//                menu.add(0,1,0,"相册");
+                menu.add(0,1,0,"查看");
                 menu.add(0,2,0,"相机");
                 menu.add(0,3,0,"取消");
                 menu.add(0,4,0,"删除");
@@ -390,7 +400,21 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
         switch(item.getItemId()){
             case 1:
                 Log.e(TAG," item  "+item.getTitle());
-                startPhotoGallery();
+                if (deleteIndex == pathlistOfPhoto.size()){
+                    Toasty.warning(this,"该图片不能查看!").show();
+                }else {
+                    int length = pathlistOfPhoto.get(deleteIndex).length();
+                    String suffix = pathlistOfPhoto.get(deleteIndex).substring( length-3,length);
+                    if (suffix.equals("mp4")){
+                        Intent intent2 = new Intent(RectifyResultActivity.this,ShowVideoActivity.class);
+                        intent2.putExtra("video", (Serializable) pathlistOfPhoto);
+                        intent2.putExtra("position",(deleteIndex));
+                        startActivity(intent2);
+                    }else {
+                        initImageView(deleteIndex);
+                    }
+
+                }
                 break;
             case 2:
                 if (permissionUtils.canGoNextstep()){
@@ -416,6 +440,53 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
 
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void initImageView(int position) {
+        final WindowManager windowManager = getWindowManager();
+        final RelativeLayout relativeLayout = new RelativeLayout(this);
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+
+        layoutParams.width =WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        //FLAG_LAYOUT_IN_SCREEN
+        layoutParams.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        layoutParams.format = PixelFormat.RGBA_8888;//让背景透明，放大过程可以看到当前界面
+        layoutParams.verticalMargin = 0;
+        windowManager.addView(relativeLayout,layoutParams);
+
+        final PhotoView photoview = new PhotoView(this);
+        photoview.enable();
+        photoview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        relativeLayout.addView(photoview,params);
+        relativeLayout.setFocusableInTouchMode(true);
+
+        Glide
+                .with(relativeLayout.getContext())
+                .load(pathlistOfPhoto.get(position))
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(photoview);
+
+        photoview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                windowManager.removeView(relativeLayout);
+            }
+        });
+
+        relativeLayout.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (null != windowManager && null != relativeLayout) {
+                        windowManager.removeView(relativeLayout);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     //Menu的点击事件

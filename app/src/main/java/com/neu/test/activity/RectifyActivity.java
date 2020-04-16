@@ -105,7 +105,7 @@ public class RectifyActivity extends BaseActivity implements View.OnClickListene
     //将status的固定值设置在一个固定的位置
     private SearchUtil searchUtil = new SearchUtil();
     private String phonenumber ="";
-    private GPSUtil gpsUtil;
+//    private GPSUtil gpsUtil;
     private String way = "立即整改";
     private String isHege ="";
     private PromptDialog promptDialog;
@@ -117,8 +117,8 @@ public class RectifyActivity extends BaseActivity implements View.OnClickListene
         setContentView(R.layout.activity_rectify);
         promptDialog = new PromptDialog(this);
         permissionUtils = new PermissionUtils(this,RectifyActivity.this,null,null);
-        gpsUtil = new GPSUtil(this);
-        gpsUtil.startLocate();
+//        gpsUtil = new GPSUtil(this);
+//        gpsUtil.startLocate();
         deleteIndex = -1;
 
         initview();
@@ -334,8 +334,8 @@ public class RectifyActivity extends BaseActivity implements View.OnClickListene
         detectionResult.setCHANGEDVIDEO(VideoPath);
 
         detectionResult.setPHONE(phonenumber);
-        detectionResult.setLONGITUDE(gpsUtil.getLongitude());
-        detectionResult.setLATITUDE(gpsUtil.getLatitude());
+        detectionResult.setLONGITUDE(myLongitude);
+        detectionResult.setLATITUDE(myLatitude);
 
         if (isHege.equals(searchUtil.recifyQualify)){
             detectionResult.setSTATUS(searchUtil.recifyQualify);

@@ -60,7 +60,7 @@ import okhttp3.Call;
 
 
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener,OnRequestPermissionsResultCallback{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener,OnRequestPermissionsResultCallback{
     // 定义 字段
     //region
     private static String TAG = "LoginActivity";
@@ -89,6 +89,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null){
+            Intent intent = new Intent(this,SplashActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_login);
         //试图初始化
         initView();

@@ -124,7 +124,7 @@ public class SuggestionActivity extends BaseActivity implements View.OnClickList
     private String phonenumber = "";
     private SuggestionActivitySaveDataUtil saveDataUtil ;
     private SearchUtil searchUtil = new SearchUtil();
-    private GPSUtil gpsUtil;
+//    private GPSUtil gpsUtil;
     private PermissionUtils permissionUtils;
     private PromptDialog promptDialog;
 
@@ -134,8 +134,8 @@ public class SuggestionActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_suggestion);
         promptDialog = new PromptDialog(this);
         permissionUtils = new PermissionUtils(this,SuggestionActivity.this,null,null);
-        gpsUtil = new GPSUtil(this);
-        gpsUtil.startLocate();
+//        gpsUtil = new GPSUtil(this);
+//        gpsUtil.startLocate();
         saveDataUtil = new SuggestionActivitySaveDataUtil(SuggestionActivity.this);
         deleteIndex = -1;
         init();
@@ -228,8 +228,8 @@ public class SuggestionActivity extends BaseActivity implements View.OnClickList
             Log.e("status7",status);
             intent.putExtra("content",et_suggestion.getText().toString());
             intent.putExtra("phone",phonenumber);
-            intent.putExtra("longitude",gpsUtil.getLongitude());
-            intent.putExtra("laitude",gpsUtil.getLatitude());
+            intent.putExtra("longitude",myLongitude);
+            intent.putExtra("laitude",myLatitude);
 
 
             if (status.equals(searchUtil.nohege)){
@@ -409,8 +409,8 @@ public class SuggestionActivity extends BaseActivity implements View.OnClickList
                         intent.putExtra("status",status);
 
                         intent.putExtra("phone",phonenumber);
-                        intent.putExtra("longitude",gpsUtil.getLongitude());
-                        intent.putExtra("laitude",gpsUtil.getLatitude());
+                        intent.putExtra("longitude",myLongitude);
+                        intent.putExtra("laitude",myLatitude);
 
 
                         if (status.equals(searchUtil.nohege)){

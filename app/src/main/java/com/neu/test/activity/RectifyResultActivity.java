@@ -127,7 +127,7 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
     //将status的固定值设置在一个固定的位置
     private SearchUtil searchUtil = new SearchUtil();
     private String phonenumber ="";
-    private GPSUtil gpsUtil;
+//    private GPSUtil gpsUtil;
     private String way = "立即整改";
     private String status = "3";
     private PromptDialog promptDialog;
@@ -140,8 +140,8 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.activity_rectify_result);
         promptDialog = new PromptDialog(this);
         permissionUtils = new PermissionUtils(this,RectifyResultActivity.this,null,null);
-        gpsUtil = new GPSUtil(this);
-        gpsUtil.startLocate();
+//        gpsUtil = new GPSUtil(this);
+//        gpsUtil.startLocate();
         deleteIndex = -1;
 
         initview();
@@ -384,8 +384,8 @@ public class RectifyResultActivity extends BaseActivity implements View.OnClickL
         detectionResult.setCHANGEDVIDEO(VideoPath);
 
         detectionResult.setPHONE(phonenumber);
-        detectionResult.setLONGITUDE(gpsUtil.getLongitude());
-        detectionResult.setLATITUDE(gpsUtil.getLatitude());
+        detectionResult.setLONGITUDE(myLongitude);
+        detectionResult.setLATITUDE(myLatitude);
 
 
     }

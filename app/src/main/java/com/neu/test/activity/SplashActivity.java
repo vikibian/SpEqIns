@@ -12,7 +12,7 @@ import com.neu.test.util.BaseActivity;
 
 import me.wangyuwei.particleview.ParticleView;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
     ParticleView mPvSplash;
     private FrameLayout frameLayout_splash;
     //public static String baseurl = "http://localhost:8080/WEB1010";
@@ -21,6 +21,11 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null){
+            Intent intent = new Intent(this,SplashActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
         setContentView(R.layout.activity_splash);
         initUI();
         initData();

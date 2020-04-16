@@ -111,6 +111,7 @@ public class ChangeFontActivity extends BaseActivity {
                         .setStyle(DialogSettings.STYLE.STYLE_IOS)
                         .setTitle("提示")
                         .setMessage("新的字体大小，需要重启才能生效，是否重启")
+                        .setCancelable(false)
                         .setOkButton("确定", new OnDialogButtonClickListener() {
                             @Override
                             public boolean onClick(BaseDialog baseDialog, View v) {

@@ -93,7 +93,8 @@ public class PhotoVideoActivity extends BaseActivity implements PermissionUtils.
                 List<String> texts = new ArrayList<>();
                 time = getDateLabel();
                 texts.add(time);
-                texts.add(local);
+//                texts.add(local);
+                texts.add("E:"+myLongitude +" N:"+myLatitude);
                 Calendar calendar = Calendar.getInstance();
                 int day =  calendar.get(Calendar.DAY_OF_MONTH);
                 int index = day%10;

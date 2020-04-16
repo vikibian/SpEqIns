@@ -112,4 +112,10 @@ public class GPSUtil {
     public String getLatitude() {
         return latitude;
     }
+
+    public  boolean isOpenGPS(){
+        mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return  mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
 }

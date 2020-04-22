@@ -48,7 +48,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ChangeFontActivity"></activity>
+        <activity android:name=".activity.FindPassWordActivity"
+            android:theme="@style/NoBar"></activity>
+        <activity android:name=".activity.ChangeFontActivity" />
         <activity
             android:name=".activity.ResetPasswordActivity"
             android:theme="@style/NoBar" />
@@ -80,7 +82,8 @@
         <activity
             android:name=".activity.RectifyListActivity"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.RectifyItemActivity" />
+        <activity android:name=".activity.FindPassWordByEmailActivity"
+            android:theme="@style/NoBar"/>
         <activity
             android:name=".activity.FileReadActivity"
             android:theme="@style/NoBar" />
@@ -90,8 +93,9 @@
         <activity
             android:name=".activity.ReDetectionActivity"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.SelectCompanyActivity"
-            android:theme="@style/NoBar"/>
+        <activity
+            android:name=".activity.SelectCompanyActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.PhotoVideoActivity"
             android:theme="@style/NoBar" />
@@ -119,8 +123,9 @@
         <activity
             android:name=".activity.MeInformActivity"
             android:theme="@style/QMNoBar" />
-        <activity android:name=".activity.SignupActivity"
-            android:theme="@style/NoBar"/>
+        <activity
+            android:name=".activity.SignupActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/NoBar" />
@@ -160,9 +165,9 @@
         <activity android:name=".activity.ViewPagerActivity" />
         <activity
             android:name=".activity.FragmentManagerActivity"
-            android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/QMNoBar" />
 

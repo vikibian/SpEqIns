@@ -114,6 +114,7 @@ public class MeFeedbackActivity extends BaseActivity implements View.OnClickList
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
                 promptDialog.dismiss();
+                TipDialog.show(MeFeedbackActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override

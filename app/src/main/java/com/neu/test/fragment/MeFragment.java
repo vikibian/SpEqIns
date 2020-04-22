@@ -2,6 +2,7 @@ package com.neu.test.fragment;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -22,8 +23,10 @@ import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.MessageDialog;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.activity.ChangeFontActivity;
+import com.neu.test.activity.FragmentManagerActivity;
 import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.MeAboutActivity;
@@ -36,6 +39,8 @@ import com.neu.test.util.CacheUtil;
 import com.neu.test.util.ClickUtil;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
+import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
@@ -195,9 +200,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     getActivity().startActivityForResult(intent,REQUEST_CODE_ABOUT);
                     break;
                 case 5:
-//                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
-//                    File cacheFile = new File(cachePath);
-//                    clearAppCache(cacheFile);
                     MessageDialog.build((AppCompatActivity) getContext())
                             .setStyle(DialogSettings.STYLE.STYLE_IOS)
                             .setTitle("提示")
@@ -205,13 +207,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                             .setOkButton("确定", new OnDialogButtonClickListener() {
                                 @Override
                                 public boolean onClick(BaseDialog baseDialog, View v) {
-                                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
-                                    File cacheFile = new File(cachePath);
-                                    clearAppCache(cacheFile);
-//                                    ((QMUICommonListItemView) v).setDetailText(getCacheSize());
-                                    ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
-                                    Log.e(TAG," "+groupListView.getSectionCount());
-                                    Log.e(TAG," "+ v.getTag());
+                                    showMultiChoiceDialog();
+//                                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+//                                    File cacheFile = new File(cachePath);
+//                                    clearAppCache(cacheFile);
+////                                    ((QMUICommonListItemView) v).setDetailText(getCacheSize());
+//                                    ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+//                                    Log.e(TAG," "+groupListView.getSectionCount());
+//                                    Log.e(TAG," "+ v.getTag());
                                     return false;
                                 }
                             })
@@ -231,25 +234,92 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     startActivity(intent);
                     break;
                 case 7:
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean("isAuto",false);
-                    editor.commit();
-                    intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    getActivity().finish();
+                    MessageDialog.build((AppCompatActivity) getActivity())
+                            .setStyle(DialogSettings.STYLE.STYLE_IOS)
+                            .setTitle("提示")
+                            .setMessage("你确定要退出当前登录的用户吗？")
+                            .setOkButton("确定", new OnDialogButtonClickListener() {
+                                @Override
+                                public boolean onClick(BaseDialog baseDialog, View v) {
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putBoolean("isAuto",false);
+                                    editor.commit();
+                                    Intent intent;
+                                    intent = new Intent(getActivity(), LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                    return false;
+                                }
+                            })
+                            .setCancelButton("取消", new OnDialogButtonClickListener() {
+                                @Override
+                                public boolean onClick(BaseDialog baseDialog, View v) {
+                                    return false;
+                                }
+                            })
+                            .show();
                     break;
             }
         }
     }
 
+    private void showMultiChoiceDialog(){
+        String clearpath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
+        final String[] items = new String[]{"清理图片缓存", "清理视频缓存", "清理PDF文件缓存"};
+        QMUIDialog.MultiCheckableDialogBuilder builder = new QMUIDialog.MultiCheckableDialogBuilder(getActivity())
+                .setCheckedItems(new int[]{0,1,2})
+                .addItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+        builder.addAction("取消", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+        builder.addAction("确定", new QMUIDialogAction.ActionListener() {
+            @Override
+            public void onClick(QMUIDialog dialog, int index) {
+                promptDialog.showLoading("正在清理缓存...");
+                for (int i = 0; i < builder.getCheckedItemIndexes().length; i++) {
+                    if (builder.getCheckedItemIndexes()[i] == 0){
+                        String cachePath = clearpath+"/Photo";
+                        File cacheFile = new File(cachePath);
+                        clearAppCache(cacheFile);
+                    }
+                    if (builder.getCheckedItemIndexes()[i] == 1){
+                        String cachePath = clearpath+"/Video";
+                        File cacheFile = new File(cachePath);
+                        clearAppCache(cacheFile);
+                    }
+                    if (builder.getCheckedItemIndexes()[i] == 2){
+                        String cachePath = clearpath+"/PDFDownloads";
+                        File cacheFile = new File(cachePath);
+                        clearAppCache(cacheFile);
+                    }
+                }
+                promptDialog.dismiss();
+                dialog.dismiss();
+                TipDialog.show((AppCompatActivity) getContext(),"缓存已经清除...", TipDialog.TYPE.SUCCESS);
+                ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+            }
+        });
+        int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
+        builder.create(mCurrentDialogStyle).show();
+    }
+
     private void clearAppCache(File cacheFile) {
 
         if (!cacheFile.exists()){
-            Toasty.info(getContext(),"您没有缓存！",Toasty.LENGTH_SHORT).show();
+            //如果不存在则空执行
+//            Toasty.info(getContext(),"不存在！",Toasty.LENGTH_SHORT).show();
         }else {
-            promptDialog.showLoading("缓存清理中...");
             for (File file : cacheFile.listFiles()) {
                 if (file.isFile())
                     file.delete(); // 删除所有文件
@@ -257,8 +327,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                     clearAppCache(file); // 递规的方式删除文件夹
             }
             cacheFile.delete();// 删除目录本身
-            promptDialog.dismiss();
-            Toasty.info(getContext(),"缓存已清空！",Toasty.LENGTH_SHORT).show();
         }
 
     }

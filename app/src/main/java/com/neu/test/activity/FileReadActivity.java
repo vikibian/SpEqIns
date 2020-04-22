@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.net.OkHttp;
 import com.neu.test.util.BaseActivity;
@@ -107,6 +108,7 @@ public class FileReadActivity extends BaseActivity {
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG," error: "+e.toString());
+                TipDialog.show(FileReadActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override

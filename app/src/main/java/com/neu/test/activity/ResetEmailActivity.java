@@ -5,6 +5,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -23,6 +26,8 @@ import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.FindPassWordUtil;
+import com.neu.test.util.SendMailUtil;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
@@ -33,6 +38,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import es.dmoral.toasty.Toasty;
 import me.leefeng.promptlibrary.PromptDialog;
 import okhttp3.Call;
 
@@ -50,15 +56,22 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
 
     private Boolean showemail = true;
     private Boolean shownewemail = true;
-
     private User userInfo = new User();
-
     private PromptDialog promptDialog;
+    private EditText varcode;
+    private Button button_getvarcode;
+    private TimeCount mTimeCount;
+    private FindPassWordUtil findPassWordUtil;
+    private String code ;
+    private boolean isSuccess ;
+    private final int resetCount = 110;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_email);
+        mTimeCount = new TimeCount(300000, 1000);//300000
+        findPassWordUtil = new FindPassWordUtil();
         promptDialog = new PromptDialog(this);
         userInfo = LoginActivity.user;
 
@@ -88,6 +101,10 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
 
         old_email.setText(userInfo.getEMAIL());
         old_email.setEnabled(false);
+
+        varcode = findViewById(R.id.me_resetemail_varcode);
+        button_getvarcode = findViewById(R.id.me_resetemail_getvarcode);
+        button_getvarcode.setOnClickListener(this);
     }
 
     private void initToolBar() {
@@ -118,12 +135,10 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
                 if (showemail) {// 显示密码
                     iv_showemail.setImageDrawable(getResources().getDrawable(R.drawable.ic_vpn_key_grey_500_24dp));
                     old_email.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-
                     showemail = !showemail;
                 } else {// 隐藏密码
                     iv_showemail.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_red_eye_grey_500_24dp));
                     old_email.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
                     showemail = !showemail;
                 }
                 break;
@@ -132,7 +147,7 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
                 if (shownewemail) {// 显示密码
                     iv_shownewemail.setImageDrawable(getResources().getDrawable(R.drawable.ic_vpn_key_grey_500_24dp));
                     new_email.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-
+                    new_email.setSelection(new_email.getText().toString().length());
                     shownewemail = !shownewemail;
                 } else {// 隐藏密码
                     iv_shownewemail.setImageDrawable(getResources().getDrawable(R.drawable.ic_remove_red_eye_grey_500_24dp));
@@ -143,13 +158,30 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
                 break;
 
             case R.id.me_resetemail_submit:
-                Toast.makeText(this, new_email.getText().toString()+"", Toast.LENGTH_SHORT).show();
-
-                if (checkEmail(new_email.getText().toString())){
-                    resetEmail(userInfo.getLOGINNAME(),new_email.getText().toString());
+                if (!mTimeCount.isCountFinish()){
+                    if (varcode.getText().toString().equals(code)){
+                        resetEmail(userInfo.getLOGINNAME(),new_email.getText().toString());
+                    }else {
+                        TipDialog.show(ResetEmailActivity.this,"验证码不正确！",TipDialog.TYPE.ERROR);
+                    }
                 }else {
-                    TipDialog.show(ResetEmailActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
+                    mTimeCount.setCountFinish(false);
+                    TipDialog.show(ResetEmailActivity.this,"验证码已过期!", TipDialog.TYPE.WARNING);
                 }
+                break;
+
+            case R.id.me_resetemail_getvarcode:
+                if (checkEmail(new_email.getText().toString())){
+                    if (!LoginActivity.user.getEMAIL().equals(new_email.getText().toString())){
+                        mTimeCount.start();
+                        sendCodeToEmail(new_email.getText().toString());
+                    }else {
+                        TipDialog.show(ResetEmailActivity.this,"新旧邮箱一样！",TipDialog.TYPE.ERROR);
+                    }
+                }else {
+                    TipDialog.show(ResetEmailActivity.this,"邮箱格式不正确！",TipDialog.TYPE.ERROR);
+                }
+
                 break;
         }
     }
@@ -173,31 +205,70 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
                 promptDialog.dismiss();
+                TipDialog.show(ResetEmailActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override
             public void onResponse(String reponse, int i) {
                 Log.e(TAG, "onResponse: "+reponse);
                 JSONObject result = null;
+                promptDialog.dismiss();
                 try {
                     result = new JSONObject(reponse);
                     if (result.get("message").equals("更改成功")){
                         LoginActivity.user.setEMAIL(new_email.getText().toString());
-                        TipDialog.show(ResetEmailActivity.this,"修改成功！",TipDialog.TYPE.SUCCESS);
+                        Toasty.success(ResetEmailActivity.this,"修改成功！",Toasty.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(ResetEmailActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetEmailActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
-                    promptDialog.dismiss();
-                    setResult(RESULT_OK);
-                    finish();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
+
+    private void sendCodeToEmail(String email) {
+        if (findPassWordUtil.isNetworkConnected(getApplicationContext())){
+            code = findPassWordUtil.getRandomCode();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    isSuccess = SendMailUtil.send(email,"[特种设备企业自查系统]修改邮箱!","您正在修改用户 "+LoginActivity.user.getLOGINNAME()+" 的邮箱，请在规定的时间内输入以下的验证码："+code
+                            +", 若不是本人操作，请及时确定账户安全。");
+                    if (!isSuccess){
+                        Message msg = Message.obtain();
+                        msg.what = resetCount;
+                        handler.sendMessage(msg);
+                        TipDialog.show(ResetEmailActivity.this,"邮件发送失败！", TipDialog.TYPE.ERROR);
+                    }
+                }
+            }).start();
+        }else {
+            Toast.makeText(ResetEmailActivity.this, "网络不可获取！", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case resetCount:
+                    mTimeCount.setCountFinish(false);
+                    button_getvarcode.setClickable(true);
+                    button_getvarcode.setText("获取验证码");
+                    mTimeCount.cancel();
+                    break;
+            }
+        }
+    };
+
 
     /***
      * 验证邮箱
@@ -208,9 +279,44 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
         return matcher.matches();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
         promptDialog.dismissImmediately();
+    }
+
+    /**
+     * 计时器
+     */
+    class TimeCount extends CountDownTimer {
+        private boolean isCountFinish = false;
+
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+
+        @Override
+        public void onTick(long l) {
+            button_getvarcode.setClickable(false);
+            button_getvarcode.setText(l/1000 + "秒后重新获取");
+
+        }
+
+        @Override
+        public void onFinish() {
+            button_getvarcode.setClickable(true);
+            button_getvarcode.setText("获取验证码");
+            isCountFinish = true;
+        }
+
+        public void setCountFinish(boolean countFinish) {
+            isCountFinish = countFinish;
+        }
+
+        public boolean isCountFinish() {
+            return isCountFinish;
+        }
     }
 }

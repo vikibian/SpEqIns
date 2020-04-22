@@ -169,10 +169,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 bt_login.setClickable(false);
                 bt_signin.setClickable(false);
 //                promptDialog.showLoading("加载中 ... ");
-                sinup(); //注册
+//                sinup(); //注册
+//                Toast.makeText(LoginActivity.this, "修改密码", Toast.LENGTH_SHORT).show();
+                findPassword();
                 Log.e("tttttt1","6666");
                 break;
         }
+    }
+
+    private void findPassword() {
+        Intent intent = new Intent(LoginActivity.this, FindPassWordActivity.class);
+        startActivity(intent);
     }
 
     //登陆
@@ -303,6 +310,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             bt_signin.setClickable(true);
         }else{
             super.onResume();
+            bt_login.setClickable(false);
+            bt_signin.setClickable(false);
         }
     }
 }

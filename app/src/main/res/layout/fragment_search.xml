@@ -12,16 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.andremion.floatingnavigationview.FloatingNavigationView
+
+        <com.neu.test.layout.DragFloatActionButton
             android:id="@+id/search_fb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_gravity="right"
-            app:backgroundTint="#03AAED"
-            app:rippleColor="@color/white"
+            android:foregroundGravity="center"
+            android:src="@drawable/ic_format_align_left_white_18dp"
+            android:theme="@style/Widget.Design.FloatingActionButton"
+            android:backgroundTint="@color/lightblue"
             app:fabSize="mini"
+            app:borderWidth="0dp"
             />
+
+
 
         <LinearLayout
             android:orientation="vertical"

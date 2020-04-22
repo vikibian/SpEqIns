@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EEEEEE">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/findpassword_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:theme="@style/AppTheme.PopupOverlay"
+                android:background="?attr/colorPrimary">
+
+                <TextView
+                    android:id="@+id/findpassword_toolbar_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="标题"
+                    android:textColor="@color/white" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <LinearLayout
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp">
+
+                            <TextView
+                                android:textColor="@color/black"
+                                android:textSize="15dp"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:text="用   户  名："
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent" />
+
+                            <EditText
+                                android:paddingLeft="2dp"
+                                android:id="@+id/findpassword_loginname"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="11"
+                                android:background="@color/white"
+                                android:maxLines="1"
+                                android:textSize="15dp" />
+
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <LinearLayout
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp">
+
+                            <TextView
+                                android:textColor="@color/black"
+                                android:textSize="15dp"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:text=" 邮        箱："
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent" />
+
+                            <EditText
+                                android:paddingLeft="2dp"
+                                android:id="@+id/findpassword_email"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="11"
+                                android:background="@color/white"
+                                android:maxLines="1"
+                                android:textSize="15dp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="35dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/findpassword_change"
+                            android:textColor="@color/white"
+                            android:text="下一步"
+                            android:background="@drawable/bg_button2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

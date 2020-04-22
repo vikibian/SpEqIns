@@ -80,8 +80,15 @@ public class GetVerificationCodeActivity extends BaseActivity implements View.On
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG," 核验验证码和手机号");
-                        SMSSDK.submitVerificationCode("+86",phonenumber,string);//提交验证
+                        Log.e(TAG," 核验验证码和手机号"+mTimeCount.isCountFinish());
+
+                        if (mTimeCount.isCountFinish()){
+                            mTimeCount.setCountFinish(false);
+                            TipDialog.show(GetVerificationCodeActivity.this,"验证码已过期！", TipDialog.TYPE.WARNING);
+                        }else {
+                            SMSSDK.submitVerificationCode("+86",phonenumber,string);//提交验证
+                        }
+
                     }
                 }).start();
             }
@@ -183,6 +190,7 @@ public class GetVerificationCodeActivity extends BaseActivity implements View.On
             @Override
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
+                TipDialog.show(GetVerificationCodeActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override
@@ -194,13 +202,14 @@ public class GetVerificationCodeActivity extends BaseActivity implements View.On
                     if (result.get("message").equals("更改成功")){
                         Toasty.success(getApplicationContext(),"修改密码成功").show();
                         LoginActivity.user.setPHONE(phonenumber);
+                        mTimeCount.cancel();
+                        setResult(RESULT_OK);
+                        finish();
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(GetVerificationCodeActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(GetVerificationCodeActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
-                    setResult(RESULT_OK);
-                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -212,6 +221,8 @@ public class GetVerificationCodeActivity extends BaseActivity implements View.On
      * 计时器
      */
     class TimeCount extends CountDownTimer {
+
+        private boolean isCountFinish = false;
 
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
@@ -228,6 +239,15 @@ public class GetVerificationCodeActivity extends BaseActivity implements View.On
         public void onFinish() {
             reget.setVisibility(View.VISIBLE);
             tip.setVisibility(View.GONE);
+            isCountFinish = true;
+        }
+
+        public void setCountFinish(boolean countFinish) {
+            isCountFinish = countFinish;
+        }
+
+        public boolean isCountFinish() {
+            return isCountFinish;
         }
     }
 

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.entity.Result;
 import com.neu.test.net.OkHttp;
@@ -126,7 +127,7 @@ public class SelectCompanyActivity extends BaseActivity {
         okHttp.postBypostString(url, gson, new ListStringCallBack() {
             @Override
             public void onError(Call call, Exception e, int i) {
-
+                TipDialog.show(SelectCompanyActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override

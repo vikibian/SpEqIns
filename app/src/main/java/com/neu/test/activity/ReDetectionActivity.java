@@ -235,10 +235,10 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                                intent.putExtra("task",task);
 //                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                                startActivity(intent);
+                                promptDialog.dismiss();
                                 getDataBypost();
 
-//                                setResult(RESULT_CANCELED);
-//                                finish();
+
 
                             }else {
                                 promptDialog.dismiss();
@@ -271,10 +271,11 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     public void onResponse(FilePathResult filePathResult, int i) {
                         Log.e("message",filePathResult.getMessage());
                         if (filePathResult.getMessage().equals("任务提交成功")){
+                            promptDialog.dismiss();
                             for(int mm= 0;mm<detectionResults.size();mm++){
-                                if(detectionResults.get(i).getJIANCHAXIANGBIANHAO().contains("?")){
-                                    int size = detectionResults.get(i).getJIANCHAXIANGBIANHAO().length();
-                                    detectionResults.get(i).setJIANCHAXIANGBIANHAO(detectionResults.get(i).getJIANCHAXIANGBIANHAO().substring(0,size-1));
+                                if(detectionResults.get(mm).getJIANCHAXIANGBIANHAO().contains("?")){
+                                    int size = detectionResults.get(mm).getJIANCHAXIANGBIANHAO().length();
+                                    detectionResults.get(mm).setJIANCHAXIANGBIANHAO(detectionResults.get(mm).getJIANCHAXIANGBIANHAO().substring(0,size-1));
                                 }
                             }
                             editorSave();
@@ -1075,8 +1076,6 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onResponse(Result<List<Task>> response, int id) {
                 if(response.getMessage().equals("获取任务成功")){
-
-                    Toasty.success(ReDetectionActivity.this,"登陆成功!",Toast.LENGTH_LONG,true).show();
                     List<Task> tasks = response.getContent();
                     if(response.getContent().size()==0){
 //                        Toast.makeText(LoginActivity.this,"无数据",Toast.LENGTH_LONG).show();
@@ -1092,7 +1091,6 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                    finish();
                     SharedPreferences.Editor editor = sp.edit();
                     editor.clear();
-                    Toasty.success(getApplicationContext(),"提交成功！").show();
                     Intent intent = new Intent(ReDetectionActivity.this, FragmentManagerActivity.class);
                     intent.putExtra("userTask", (Serializable) tasks);
                     String result = new Gson().toJson(tasks);
@@ -1100,10 +1098,13 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     intent.putExtra("userName",LoginActivity.inputName);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    finish();
                 }
                 else {
-                    Toasty.error(ReDetectionActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
-
+                    Intent intent = new Intent(ReDetectionActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });

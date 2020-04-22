@@ -22,6 +22,7 @@ import com.neu.test.entity.User;
 import com.neu.test.net.OkHttp;
 import com.neu.test.util.BaseActivity;
 import com.neu.test.util.BaseUrl;
+import com.neu.test.util.FindPassWordUtil;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
@@ -55,12 +56,14 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
 
     private User userInfo = new User();
     private PromptDialog promptDialog;
+    private FindPassWordUtil findPassWordUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
         promptDialog = new PromptDialog(this);
+        findPassWordUtil = new FindPassWordUtil();
         Log.e(TAG, "onCreate: "+LoginActivity.inputPassword);
         userInfo = LoginActivity.user;
 
@@ -171,20 +174,18 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
         Log.e(TAG, "judgePasswordAndPost: "+et_newpasswd.getText().toString());
         Log.e(TAG, "judgePasswordAndPost: "+et_renewpasswd.getText().toString());
         if (et_passwd.getText().toString().equals(userInfo.getLOGINPWD())){
-            if (et_newpasswd.getText().toString().isEmpty()
-                    || et_newpasswd.getText().toString().length() < 4
-                    || et_newpasswd.getText().toString().length() > 10) {
-                Toasty.info(ResetPasswordActivity.this,"对不起，新密码格式不正确！",Toasty.LENGTH_SHORT).show();
-            } else {
-
+            if ((!et_newpasswd.getText().toString().isEmpty())
+                    && (!(et_newpasswd.getText().toString().length() < 4))
+                    && (!(et_newpasswd.getText().toString().length() > 10))
+                    && (findPassWordUtil.checkPassword(et_newpasswd.getText().toString()))) {
                 if (et_newpasswd.getText().toString().equals(et_renewpasswd.getText().toString())){
-
                     resetPassword(userInfo.getLOGINNAME(),et_newpasswd.getText().toString());
-
                 }else {
                     Toasty.info(ResetPasswordActivity.this,"对不起，两次新密码不匹配！",Toasty.LENGTH_SHORT).show();
                 }
 
+            } else {
+                Toasty.info(ResetPasswordActivity.this,"对不起，新密码格式不正确！",Toasty.LENGTH_SHORT).show();
             }
 
         }else {
@@ -211,24 +212,26 @@ public class ResetPasswordActivity extends BaseActivity implements View.OnClickL
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG, "onError: "+e.toString());
                 promptDialog.dismiss();
+                TipDialog.show(ResetPasswordActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override
             public void onResponse(String reponse, int i) {
                 Log.e(TAG, "onResponse: "+reponse);
                 JSONObject result = null;
+                promptDialog.dismiss();
                 try {
                     result = new JSONObject(reponse);
                     if (result.get("message").equals("更改成功")){
                         LoginActivity.user.setLOGINPWD(pwd);
-                        TipDialog.show(ResetPasswordActivity.this,"修改密码成功！",TipDialog.TYPE.SUCCESS);
+                        Toasty.success(getApplicationContext(),"密码修改成功！",Toasty.LENGTH_SHORT).show();
+                        finish();
                     }else if (result.get("message").equals("用户名输入错误")){
                         TipDialog.show(ResetPasswordActivity.this,"出现错误！",TipDialog.TYPE.ERROR);
                     }else if (result.get("message").equals("操作失败")){
                         TipDialog.show(ResetPasswordActivity.this,"修改失败！",TipDialog.TYPE.ERROR);
                     }
-                    promptDialog.dismiss();
-                    finish();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

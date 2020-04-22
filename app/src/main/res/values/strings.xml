@@ -56,4 +56,6 @@
 
     <string name="about">\u3000\u3000这款软件的主要用途是用于企业在特种设备现场的自查，通过联网获取服务器后台数据通知现场检查人员
     对某一特种设备进行检查。</string>
+    <string name="password_hint">提示：密码要求4至10位英文或数字！</string>
+
 </resources>

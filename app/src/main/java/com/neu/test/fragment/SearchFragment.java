@@ -44,6 +44,7 @@ import com.neu.test.activity.ShowSearchedResultActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
+import com.neu.test.layout.DragFloatActionButton;
 import com.neu.test.layout.SimpleToolbar;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListTaskCallBack;
@@ -51,6 +52,7 @@ import com.neu.test.util.BaseUrl;
 import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.SidebarUtils;
+import com.qmuiteam.qmui.widget.QMUIRadiusImageView2;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.Serializable;
@@ -72,7 +74,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private DrawerLayout mDrawerLayout;
     private RelativeLayout searchRightDrawer;
-    private FloatingNavigationView mFloatingNavigationView;
+//    private FloatingNavigationView mFloatingNavigationView;
+    private DragFloatActionButton mFloatingNavigationView;
     private TextView searchTtoolbarTextview;
     private boolean isDirection_right =false;
     private Button search_select_time;
@@ -100,6 +103,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
     private List<Task> tasks  = new ArrayList<Task>();;
     private SmartTable<Task> taskSmartTable;
+    Column<String> ordernum;
     Column<String> checkdate;
     Column<String> deadline;
     Column<String> devclass;
@@ -116,7 +120,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private SimpleToolbar toolbar;
     private PromptDialog promptDialog;
     private PermissionUtils permissionUtils;
-
+    private QMUIRadiusImageView2 globalBtn;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -132,25 +136,28 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         simple_toolbar.setVisibility(View.VISIBLE);
         promptDialog = new PromptDialog(getActivity());
         permissionUtils = new PermissionUtils((AppCompatActivity) getActivity(),getActivity(),null,null);
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         initActivity(view);
         if (!isSearch){
             showNoData.setVisibility(View.VISIBLE);
             noitem_textview.setText("您还未开始查询数据");
         }
-        setPortraitParams();
+        toolbar.setVisibility(View.GONE);
+        setLandscapeParams();
         selectStartTime.setText(SidebarUtils.getSystemTime());
         selectEndtTime.setText(SidebarUtils.getSystemTime());
 
         mFloatingNavigationView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isDirection_right){
-                    mDrawerLayout.openDrawer(searchRightDrawer);
-                    isDirection_right = true;
-                }else {
-                    mDrawerLayout.closeDrawer(searchRightDrawer);
-                    isDirection_right = false;
+                if (!mFloatingNavigationView.isDrag()){
+                    if(!isDirection_right){
+                        mDrawerLayout.openDrawer(searchRightDrawer);
+                        isDirection_right = true;
+                    }else {
+                        mDrawerLayout.closeDrawer(searchRightDrawer);
+                        isDirection_right = false;
+                    }
                 }
             }
         });
@@ -335,14 +342,26 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         String string = new Gson().toJson(tasksList);
         List<Task> testTasks = new Gson().fromJson(string,new TypeToken<List<Task>>(){}.getType());
-
+        List<Integer> num = new ArrayList<>();
         for (int i=0;i<testTasks.size();i++){
             Log.e("TAG"," inittable 转换之前:  RESULT："+testTasks.get(i).getRESULT()+"  DEVCLASS: "+testTasks.get(i).getDEVCLASS());
             //将result的文本类型数字转换为文字
             testTasks.get(i).setRESULT(searchUtil.getHelpMapForResult().get(testTasks.get(i).getRESULT()));
             testTasks.get(i).setDEVCLASS(searchUtil.getMapdevclass().get(testTasks.get(i).getDEVCLASS()));
             Log.e("TAG"," inittable 转换之后:  RESULT："+testTasks.get(i).getRESULT()+"  DEVCLASS: "+testTasks.get(i).getDEVCLASS());
+            num.add(i+1);
         }
+
+
+
+        ordernum = new Column<String>("序号","FANGANBIANHAO");
+        ordernum.setId(0);
+        ordernum.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+            @Override
+            public void onClick(Column<String> column, String value, String s, int position) {
+                jumpToShowSearchedResultFragment(position);
+            }
+        });
 
         checkdate = new Column<String>("检查日期","CHECKDATE");
         checkdate.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
@@ -431,14 +450,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,checkdate,
+        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,ordernum,checkdate,
                 deadline,devclass, devid, latitude, place,result, taskID, tasktype, danwei);
         taskSmartTable.getConfig().setShowTableTitle(false);
         taskSmartTable.getConfig().setShowXSequence(false);
+        taskSmartTable.getConfig().setShowYSequence(false);
         taskSmartTable.setTableData(tableData);
-
 //        table.getConfig().setContentStyle(new FontStyle(50, Color.BLUE));
-        taskSmartTable.getConfig().setMinTableWidth(1024);       //设置表格最小宽度
+        taskSmartTable.getConfig().setMinTableWidth(256);       //设置表格最小宽度
         FontStyle style = new FontStyle();
         style.setTextSize(15);
         taskSmartTable.setZoom(true);
@@ -447,6 +466,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         taskSmartTable.getConfig().setContentCellBackgroundFormat(new BaseCellBackgroundFormat<CellInfo>() {     //设置隔行变色
             @Override
             public int getBackGroundColor(CellInfo cellInfo) {
+                Log.e(TAG,"SmartTAble信息："+taskSmartTable.getTableData().getColumnByID(0).getFieldName());
+
+                if (cellInfo.col == 0){
+                    Log.e(TAG,"SmartTAble信息1：row:"+cellInfo.row+" col:"+cellInfo.col);
+                    cellInfo.set(taskSmartTable.getTableData().getColumnByID(0),null,String.valueOf(cellInfo.row+1),cellInfo.col,cellInfo.row);
+//                    taskSmartTable.getTableData().getColumnByID(0).setWidth(512);
+                }
+
                 if(cellInfo.row%2 ==1) {
                     return ContextCompat.getColor(getContext(), R.color.lightgray);      //需要在 app/res/values 中添加 <color name="tableBackground">#d4d4d4</color>
                 }else{
@@ -454,7 +481,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-        taskSmartTable.getConfig().setMinTableWidth(1024);   //设置最小宽度
+//        taskSmartTable.getConfig().setMinTableWidth(1024);   //设置最小宽度
 
     }
 

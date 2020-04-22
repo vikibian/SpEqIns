@@ -202,7 +202,6 @@
             <ListView
                 android:id="@+id/lv_detection"
                 android:layout_width="match_parent"
-                android:layoutAnimation="@anim/anim_listview_item"
                 android:layout_height="match_parent"
                 android:listSelector="@android:color/transparent"
                 android:cacheColorHint="@android:color/transparent"

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.adapter.ListLawAdaper;
 import com.neu.test.entity.FileBean;
@@ -111,6 +112,7 @@ public class LawLearningActivity extends BaseActivity {
             public void onError(Call call, Exception e, int i) {
                 Log.e(TAG," "+e.toString());
                 promptDialog.dismiss();
+                TipDialog.show(LawLearningActivity.this,"网络出现错误！",TipDialog.TYPE.ERROR);
             }
 
             @Override

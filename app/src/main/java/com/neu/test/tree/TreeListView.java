@@ -122,23 +122,19 @@ public class TreeListView extends ListView {
 	}
 
 	public interface OnGroupItemClickListener {
-		public void onGroupClick(AdapterView<?> parent, View view,
-                                 int position, TreeNode node);
+		public void onGroupClick(AdapterView<?> parent, View view, int position, TreeNode node);
 	}
 
 	public interface OnChildItemClickListener {
-		public void onChildClick(AdapterView<?> parent, View view,
-                                 int position, TreeNode node);
+		public void onChildClick(AdapterView<?> parent, View view, int position, TreeNode node);
 	}
 
 	public interface OnExpandClickListener {
-		public void onExpandClick(AdapterView<?> parent, View view,
-                                  int position, TreeNode node);
+		public void onExpandClick(AdapterView<?> parent, View view, int position, TreeNode node);
 	}
 
 	public interface OnCollapseClickListener {
-		public void onCollapseClick(AdapterView<?> parent, View view,
-                                    int position, TreeNode node);
+		public void onCollapseClick(AdapterView<?> parent, View view, int position, TreeNode node);
 	}
 
 	public interface OnExpandListener {

@@ -63,6 +63,7 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
     private TextView textView_toolbar;
     private TextView textView_deadline;
     private EditText editText_declocation;
+    private MaterialSpinner materialSpinner_checkitemstandard;
 
     private Task task;
     private String task_type = "日常";//任务类型/任务来源
@@ -99,6 +100,13 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+        materialSpinner_checkitemstandard.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                Log.e(TAG," 测试materialSpinner_checkitemstandard：  text:"+materialSpinner_checkitemstandard.getText());
+            }
+        });
+
     }
 
     private void initToolbar() {
@@ -123,7 +131,8 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         button_ok = findViewById(R.id.draft_task_button_ok);
         button_getCheckItem = findViewById(R.id.draft_task_button_getCheckItem);
         textView_deadline = findViewById(R.id.draft_task_textview_deadline);
-        editText_declocation = findViewById(R.id.draft_task_edittext_devlocation);
+//        editText_declocation = findViewById(R.id.draft_task_edittext_devlocation);
+        materialSpinner_checkitemstandard = findViewById(R.id.draft_task_spinner_checkitemstandard);
 
         button_ok.setOnClickListener(this);
         button_getCheckItem.setOnClickListener(this);
@@ -135,6 +144,9 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         List<String> list_devtype = new ArrayList<>();
         list_devtype = Arrays.asList(searchUtil.deviceTypeForDraft);
         materialSpinner_devType.setItems(list_devtype);
+        String[] strings = {"国标","市标","其他"};
+        List<String> listOfStandard = Arrays.asList(strings);
+        materialSpinner_checkitemstandard.setItems(listOfStandard);
         textView_companyName.setText(LoginActivity.user.getUSEUNITNAME());
         textView_person.setText(LoginActivity.user.getUSERNAME());
 
@@ -211,7 +223,7 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         task.setLOGINNAME(LoginActivity.user.getLOGINNAME());
         task.setRUNWATERNUM(task.getLOGINNAME()+taskid);
         task.setDEADLINE(textView_deadline.getText().toString());
-        task.setPLACE(editText_declocation.getText().toString().trim());
+//        task.setPLACE(editText_declocation.getText().toString().trim());
         getDetctionData();
     }
 

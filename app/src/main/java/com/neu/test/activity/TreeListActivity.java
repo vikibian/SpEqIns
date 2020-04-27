@@ -163,19 +163,14 @@ public class TreeListActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getConvertView(final TreeNode node, int position,
-                                   View convertView, ViewGroup parent) {
+        public View getConvertView(final TreeNode node, int position, View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = inflater
-                        .inflate(R.layout.treelistview_item, null);
-                holder.imageView = (ImageView) convertView
-                        .findViewById(R.id.imageView);
-                holder.textView = (MyTextView) convertView
-                        .findViewById(R.id.textView);
-                holder.checkBox = (CheckBox) convertView
-                        .findViewById(R.id.checkBox);
+                convertView = inflater.inflate(R.layout.treelistview_item, null);
+                holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
+                holder.textView = (MyTextView) convertView.findViewById(R.id.textView);
+                holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
                 convertView.setTag(holder);
                 holder.tree_more = convertView.findViewById(R.id.tree_more);
             } else
@@ -190,7 +185,7 @@ public class TreeListActivity extends AppCompatActivity {
             boolean isGroup = node.isGroup();
             DetectionResult detailTask = (DetectionResult) node.getSelfData();
             if (isGroup == true) {
-                holder.imageView.setImageResource(R.mipmap.jiahao);
+                holder.imageView.setImageResource(R.drawable.ic_add_circle_outline_blue_500_24dp);
                 holder.textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                 holder.textView.setTextColor(Color.rgb(0, 0, 0xb0));
             } else {
@@ -237,8 +232,7 @@ public class TreeListActivity extends AppCompatActivity {
 
     private class GroupItemClickListener implements TreeListView.OnGroupItemClickListener {
         @Override
-        public void onGroupClick(AdapterView<?> parent, View view,
-                                 int position, TreeNode node) {
+        public void onGroupClick(AdapterView<?> parent, View view, int position, TreeNode node) {
       /*UserBean bean = (UserBean) node.getSelfData();
       toast("GroupItemClickListener" + bean.getName());*/
         }
@@ -247,24 +241,21 @@ public class TreeListActivity extends AppCompatActivity {
 
     private class ChildItemClickListener implements TreeListView.OnChildItemClickListener {
         @Override
-        public void onChildClick(AdapterView<?> parent, View view,
-                                 int position, TreeNode node) {
+        public void onChildClick(AdapterView<?> parent, View view, int position, TreeNode node) {
             DetectionResult d = (DetectionResult) node.getSelfData();
         }
     }
 
     private class ExpandClickListener implements TreeListView.OnExpandClickListener {
         @Override
-        public void onExpandClick(AdapterView<?> parent, View view,
-                                  int position, TreeNode node) {
+        public void onExpandClick(AdapterView<?> parent, View view, int position, TreeNode node) {
             DetectionResult d = (DetectionResult) node.getSelfData();
         }
     }
 
     private class CollapseClickListener implements TreeListView.OnCollapseClickListener {
         @Override
-        public void onCollapseClick(AdapterView<?> parent, View view,
-                                    int position, TreeNode node) {
+        public void onCollapseClick(AdapterView<?> parent, View view, int position, TreeNode node) {
             DetectionResult d = (DetectionResult) node.getSelfData();
 
         }

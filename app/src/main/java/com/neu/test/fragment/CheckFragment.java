@@ -516,7 +516,6 @@ public class CheckFragment extends Fragment {
             MyTextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
             TextView tv_issave_device = convertView.findViewById(R.id.tv_issave_device);
-            TextView tv_check_deciveType = convertView.findViewById(R.id.tv_check_deviceType);
             TextView tv_check_taskname = convertView.findViewById(R.id.tv_check_taskname);
 //            CircleRelativeLayout circleRelativeLayout = convertView.findViewById(R.id.check_list_imagebutton);
 //            LinearLayout ll_check_bg = convertView.findViewById(R.id.ll_check_bg);
@@ -536,8 +535,7 @@ public class CheckFragment extends Fragment {
                 color = 0xC6F00000-(0x000F0000-0x00000F00)*position;
 
             }
-            tv_check_device.setTextColor(color);
-            tv_check_deciveType.setText(task.getTASKTYPE());
+            tv_check_taskname.setTextColor(color);
             tv_check_taskname.setText(task.getTASKNAME());
             tv_check_device.setText(String.valueOf(task.getDEVID()));
             tv_check_address.setText(task.getPLACE());

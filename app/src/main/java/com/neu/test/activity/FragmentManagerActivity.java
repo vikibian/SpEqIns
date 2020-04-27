@@ -115,7 +115,7 @@ public class FragmentManagerActivity extends BaseActivity {
         permissionUtils = new PermissionUtils(this,this,null,null);
         permissionUtils.getPermission();
 
-        String[] taskType = {"自查","整改","下派","临时"};
+        String[] taskType = {"日常","整改","政府专项","企业专项"};
         allTasks = (List<Task>) intent.getSerializableExtra("userTask");
         String all = new Gson().toJson(allTasks);
         Log.e(TAG, "initData: "+all+"  "+allTasks.size() );
@@ -125,15 +125,15 @@ public class FragmentManagerActivity extends BaseActivity {
         kingTasks.clear();
         randomTasks.clear();
         for (int i=0; i<allTasks.size();i++){
-            if (allTasks.get(i).getTASKTYPE().equals("自查")){
+            if (allTasks.get(i).getTASKTYPE().equals("日常")){
                 selfTasks.add(allTasks.get(i));
             }
             else if (allTasks.get(i).getTASKTYPE().equals("整改")){
                 reselfTasks.add(allTasks.get(i));
             }
-            else if (allTasks.get(i).getTASKTYPE().equals("下派")){
+            else if (allTasks.get(i).getTASKTYPE().equals("政府专项")){
                 kingTasks.add(allTasks.get(i));
-            }else {
+            }else if (allTasks.get(i).getTASKTYPE().equals("企业专项")){
                 randomTasks.add(allTasks.get(i));
             }
         }

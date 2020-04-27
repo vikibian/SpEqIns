@@ -43,7 +43,59 @@
                         android:textColor="@color/black"
                         android:inputType="textMultiLine"
                         android:textSize="15sp"
-                        android:text="设备名称："
+                        android:text="任务名称："
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_check_taskname"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:text=" 66665"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:paddingRight="3dp"
+                    android:paddingLeft="3dp"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textColor="@color/black"
+                        android:inputType="textMultiLine"
+                        android:textSize="15sp"
+                        android:text="设备类型："
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_check_deviceType"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:text=" 66665"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:paddingRight="3dp"
+                    android:paddingLeft="3dp"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textColor="@color/black"
+                        android:inputType="textMultiLine"
+                        android:textSize="15sp"
+                        android:text="设备编号："
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 

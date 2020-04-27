@@ -77,8 +77,8 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     private List<Task> tasks;
     private Task task;
     private List<DetectionResult> listResult = new ArrayList<>();
-    private String taskID;
-    private String devID;
+    private long taskID;
+    private long devID;
     private SearchUtil searchUtil = new SearchUtil();
     private List<DetectionResult> listDatas_qualified = new ArrayList<>();
     private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
@@ -193,7 +193,7 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
         String url;
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("username",LoginActivity.inputName);
 //        map.put("taskID","1234567891011");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
         map.put("taskID",taskID);

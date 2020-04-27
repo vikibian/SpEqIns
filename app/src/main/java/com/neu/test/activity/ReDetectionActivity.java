@@ -179,7 +179,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         button_middle.setOnClickListener(this);
         button_right.setOnClickListener(this);
 
-        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
+        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
         sp = getSharedPreferences(data, Context.MODE_PRIVATE);
 
         detectionResults = (List<DetectionResult>) getIntent().getSerializableExtra("items");
@@ -211,11 +211,13 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     promptDialog.dismiss();
                     Toasty.warning(ReDetectionActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
                 } else {
-                    String string = new Gson().toJson(detectionResults);
-                    Log.e(TAG,"detectionResults: "+string);
-                    String url = BaseUrl.BaseUrl+"setItemResult";
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("detectionResults",detectionResults);
+                    map.put("TASK",task);
+                    String gson = new Gson().toJson(map);
+                    String url = BaseUrl.BaseUrl+"setResultFull";
                     OkHttp okHttp = new OkHttp();
-                    okHttp.postBypostString(url, string, new FileResultCallBack() {
+                    okHttp.postBypostString(url, gson, new FileResultCallBack() {
                         @Override
                         public void onError(Call call, Exception e, int i) {
                             Log.e("error", e.toString());
@@ -235,7 +237,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                                intent.putExtra("task",task);
 //                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                                startActivity(intent);
-                                promptDialog.dismiss();
+
                                 getDataBypost();
 
 
@@ -254,12 +256,13 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onClick(View view) {
                 promptDialog.showLoading("保存中...");
-                String string = new Gson().toJson(detectionResults);
-                Log.e(TAG,"detectionResults: "+string);
-                System.out.println(string);
-                String url = BaseUrl.BaseUrl+"saveItemResult";
+                Map<String,Object> map = new HashMap<>();
+                map.put("detectionResults",detectionResults);
+                map.put("TASKTYPE",task.getTASKTYPE());
+                String gson = new Gson().toJson(map);
+                String url = BaseUrl.BaseUrl+"saveResultFull";
                 OkHttp okHttp = new OkHttp();
-                okHttp.postBypostString(url, string, new FileResultCallBack() {
+                okHttp.postBypostString(url, gson, new FileResultCallBack() {
                     @Override
                     public void onError(Call call, Exception e, int i) {
                         Log.e("error",e.toString());
@@ -284,6 +287,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             intent1.putExtra("isDoing",isDoing);
                             intent1.putExtra("where","finish");
                             setResult(RESULT_OK,intent1);
+                            promptDialog = null;
                             finish();
                         }else {
                             promptDialog.dismiss();
@@ -378,8 +382,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         //noinspection SimplifiableIfStatement
         switch (id) {
             case android.R.id.home:
-                setResult(RESULT_CANCELED);//不设置RESULT_OK的原因是会出现bug
-                this.finish();
+                this.onBackPressed();
                 return true;
             case R.id.action_add_item://搜索，根据需要显示/隐藏下载按钮
                 LayoutInflater layoutInflater = LayoutInflater.from(ReDetectionActivity.this);
@@ -530,7 +533,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         if (isDo){
             detectionadd.clear();
         }
-        detectionAdapter = new ReDetectionActivity.ReDetectionAdapter(listtoflash,flag);
+        detectionAdapter = new ReDetectionAdapter(listtoflash,flag);
         lv_detection.setAdapter(detectionAdapter);
     }
 
@@ -843,6 +846,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                lv_detection.setAdapter(detectionAdapter);
                 String result = new Gson().toJson(detectionResults.get(position));
                 Log.e(TAG,"结果(suggestion)："+result);
+                Log.e(TAG,"结果(select)："+select);
                 judgeSelect();
             }
 
@@ -931,7 +935,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
   }
 
   public void refleshData(){
-    Map<String, String> map = new HashMap<>();
+    Map<String, Object> map = new HashMap<>();
     map.put("taskID",task.getTASKID());
     map.put("DEVID",task.getDEVID());
     map.put("USERNAME",task.getLOGINNAME());
@@ -1000,7 +1004,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void getSaveData(final Task task) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("USERNAME",task.getLOGINNAME());
@@ -1052,7 +1056,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void getDataBypost() {
-        String url = BaseUrl.BaseUrl+"getTaskServlet";
+        String url = BaseUrl.BaseUrl+"getFullyTSchedule";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
         map.put("username",LoginActivity.inputName);
@@ -1097,13 +1101,16 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     Log.e(TAG, "onResponse: "+result );
                     intent.putExtra("userName",LoginActivity.inputName);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    promptDialog.dismissImmediately();
                     startActivity(intent);
+                    promptDialog =null;
                     finish();
                 }
                 else {
                     Intent intent = new Intent(ReDetectionActivity.this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    promptDialog = null;
                     finish();
                 }
             }

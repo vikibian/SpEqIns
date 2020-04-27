@@ -262,6 +262,7 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
                 case resetCount:
                     mTimeCount.setCountFinish(false);
                     button_getvarcode.setClickable(true);
+                    button_getvarcode.setBackground(getResources().getDrawable(R.drawable.bg_button));
                     button_getvarcode.setText("获取验证码");
                     mTimeCount.cancel();
                     break;
@@ -301,13 +302,14 @@ public class ResetEmailActivity extends BaseActivity implements View.OnClickList
         public void onTick(long l) {
             button_getvarcode.setClickable(false);
             button_getvarcode.setText(l/1000 + "秒后重新获取");
-
+            button_getvarcode.setBackground(getResources().getDrawable(R.drawable.bg_button_unselectable));
         }
 
         @Override
         public void onFinish() {
             button_getvarcode.setClickable(true);
             button_getvarcode.setText("获取验证码");
+            button_getvarcode.setBackground(getResources().getDrawable(R.drawable.bg_button));
             isCountFinish = true;
         }
 

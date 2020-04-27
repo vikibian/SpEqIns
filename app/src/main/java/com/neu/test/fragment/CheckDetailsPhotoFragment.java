@@ -127,8 +127,6 @@ public class CheckDetailsPhotoFragment extends Fragment {
                 }else {
                     initImageView(position,imageList);
                 }
-                //展示选中图片
-                Toast.makeText(getActivity(), ""+position, Toast.LENGTH_SHORT).show();
             }
         });
 

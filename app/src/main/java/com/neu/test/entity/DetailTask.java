@@ -6,8 +6,8 @@ public class DetailTask implements Serializable {
 
   private String JIANCHAXIANGID;
   private String JIANCHAXIANGCONTENT;
-  private String TASKID;
-  private String DEVID;
+  private long TASKID;
+  private long DEVID;
   private String SHIFOUHEGEQUZHENG = "1";
   private String FANGANID;
   private String JIANCHAXIANGTITLE;  //
@@ -46,19 +46,19 @@ public class DetailTask implements Serializable {
     this.JIANCHAXIANGCONTENT = JIANCHAXIANGCONTENT;
   }
 
-  public String getTASKID() {
+  public long getTASKID() {
     return TASKID;
   }
 
-  public void setTASKID(String TASKID) {
+  public void setTASKID(long TASKID) {
     this.TASKID = TASKID;
   }
 
-  public String getDEVID() {
+  public long getDEVID() {
     return DEVID;
   }
 
-  public void setDEVID(String DEVID) {
+  public void setDEVID(long DEVID) {
     this.DEVID = DEVID;
   }
 

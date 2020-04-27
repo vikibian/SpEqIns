@@ -15,60 +15,79 @@
         >
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
-            android:background="@color/lightblue"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
+
             <LinearLayout
-                android:layout_marginTop="10dp"
+                android:background="@color/lightblue"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_margin="25dp">
+                android:layout_height="150dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_margin="25dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_marginTop="20dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/tou"
-                    />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginTop="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/tou"
+                        />
 
-                <TextView
-                    android:id="@+id/me_fragment_nametext"
-                    android:layout_marginTop="5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:text="姓名"
-                    android:textColor="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    <TextView
+                        android:id="@+id/me_fragment_nametext"
+                        android:layout_marginTop="5dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="姓名"
+                        android:textColor="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+
             </LinearLayout>
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/qmui_config_color_white"
-            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#EEEEEE"
+                android:orientation="vertical">
 
 
                 <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                    android:background="@color/white"
                     android:id="@+id/me_fragment_ListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                    android:id="@+id/me_fragment_ListView1"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                    android:id="@+id/me_fragment_ListView2"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
+                    android:id="@+id/me_fragment_ListView3"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
 
     </ScrollView>
 

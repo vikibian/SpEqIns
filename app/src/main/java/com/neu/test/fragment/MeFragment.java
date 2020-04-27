@@ -26,6 +26,7 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.activity.ChangeFontActivity;
+import com.neu.test.activity.DraftTaskActivity;
 import com.neu.test.activity.FragmentManagerActivity;
 import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.LoginActivity;
@@ -61,7 +62,9 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     public static final int REQUEST_CODE_LAW= 4;
     private TextView nametext;
     private QMUIGroupListView groupListView ;
-    private QMUIGroupListView.Section section ;
+    private QMUIGroupListView groupListView1 ;
+    private QMUIGroupListView groupListView2 ;
+    private QMUIGroupListView groupListView3 ;
     PromptDialog promptDialog;
 
     int me;
@@ -80,7 +83,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.GONE);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        section = new QMUIGroupListView.Section(getContext());
+
         promptDialog = new PromptDialog(getActivity());
         init(view);
         initGroupListview(view);
@@ -90,29 +93,27 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     private void initGroupListview(View view)  {
 
         int height = QMUIResHelper.getAttrDimen(getContext(), com.qmuiteam.qmui.R.attr.qmui_list_item_height);
-
+        int size = QMUIDisplayHelper.dp2px(view.getContext(), 20);
 
         QMUICommonListItemView Item0 = groupListView.createItemView("个人信息");
         Item0.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item0.setTag(0);
 
 
-//        QMUICommonListItemView itemWithChevron = mGroupListView.createItemView("Item 4");
-//        itemWithChevron.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-
         QMUICommonListItemView Item1 = groupListView.createItemView("账号与安全");
         Item1.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item1.setTag(1);
 
-        QMUICommonListItemView Item2 = groupListView.createItemView("法律法规学习");
+
+        QMUICommonListItemView Item2 = groupListView1.createItemView("法律法规学习");
         Item2.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item2.setTag(2);
 
-        QMUICommonListItemView Item3 = groupListView.createItemView("意见反馈");
+        QMUICommonListItemView Item3 = groupListView2.createItemView("意见反馈");
         Item3.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item3.setTag(3);
 
-        QMUICommonListItemView Item4 = groupListView.createItemView("关于软件");
+        QMUICommonListItemView Item4 = groupListView2.createItemView("关于软件");
         Item4.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item4.setTag(4);
 
@@ -123,7 +124,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         String cachesize = "";
         cachesize = getCacheSize();
 
-        QMUICommonListItemView Item5 = groupListView.createItemView(
+        QMUICommonListItemView Item5 = groupListView3.createItemView(
                 null,
                 "清空缓存",
                 cachesize,
@@ -131,16 +132,19 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item5.setTag(5);
 
-        QMUICommonListItemView Item6 = groupListView.createItemView("字体大小");
+        QMUICommonListItemView Item6 = groupListView3.createItemView("字体大小");
         Item6.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item6.setTag(6);
 
-        QMUICommonListItemView Item7 = groupListView.createItemView("退出");
+        QMUICommonListItemView Item7 = groupListView3.createItemView("退出");
         Item7.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         Item7.setTag(7);
 
+        QMUICommonListItemView Item8 = groupListView1.createItemView("任务起草");
+        Item8.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item8.setTag(8);
 
-        int size = QMUIDisplayHelper.dp2px(view.getContext(), 20);
+
         QMUIGroupListView.newSection(getContext())
                 .setUseDefaultTitleIfNone(false) //默认标题内容
                 .setUseTitleViewForSectionSpace(false) //取消标题显示
@@ -148,19 +152,50 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item0, this)
                 .addItemView(Item1, this)
+//                .addItemView(Item2, this)
+//                .addItemView(Item8, this)
+//                .addItemView(Item3, this)
+//                .addItemView(Item4, this)
+//                .addItemView(Item5, this)
+//                .addItemView(Item6, this)
+//                .addItemView(Item7, this)
+                //   .setOnlyShowStartEndSeparator(true)
+                .addTo(groupListView);
+
+        QMUIGroupListView.newSection(getContext())
+                .setUseDefaultTitleIfNone(false) //默认标题内容
+                .setUseTitleViewForSectionSpace(false) //取消标题显示
+
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item2, this)
+                .addItemView(Item8, this)
+                .addTo(groupListView1);
+
+        QMUIGroupListView.newSection(getContext())
+                .setUseDefaultTitleIfNone(false) //默认标题内容
+                .setUseTitleViewForSectionSpace(false) //取消标题显示
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item3, this)
                 .addItemView(Item4, this)
+                .addTo(groupListView2);
+
+        QMUIGroupListView.newSection(getContext())
+                .setUseDefaultTitleIfNone(false) //默认标题内容
+                .setUseTitleViewForSectionSpace(false) //取消标题显示
+                .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item5, this)
                 .addItemView(Item6, this)
                 .addItemView(Item7, this)
-                //   .setOnlyShowStartEndSeparator(true)
-                .addTo(groupListView);
+                .addTo(groupListView3);
 
     }
 
     private void init(View view) {
         groupListView = view.findViewById(R.id.me_fragment_ListView);
+        groupListView1 = view.findViewById(R.id.me_fragment_ListView1);
+        groupListView2 = view.findViewById(R.id.me_fragment_ListView2);
+        groupListView3 = view.findViewById(R.id.me_fragment_ListView3);
+
         nametext = view.findViewById(R.id.me_fragment_nametext);
 
         nametext.setText(LoginActivity.user.getUSERNAME());
@@ -208,13 +243,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                                 @Override
                                 public boolean onClick(BaseDialog baseDialog, View v) {
                                     showMultiChoiceDialog();
-//                                    String cachePath = BaseUrl.absolutePath+"/DCIM/"+ LoginActivity.inputName;
-//                                    File cacheFile = new File(cachePath);
-//                                    clearAppCache(cacheFile);
-////                                    ((QMUICommonListItemView) v).setDetailText(getCacheSize());
-//                                    ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
-//                                    Log.e(TAG," "+groupListView.getSectionCount());
-//                                    Log.e(TAG," "+ v.getTag());
                                     return false;
                                 }
                             })
@@ -260,6 +288,10 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                                 }
                             })
                             .show();
+                    break;
+                case 8:
+                    intent = new Intent(getActivity(), DraftTaskActivity.class);
+                    startActivity(intent);
                     break;
             }
         }
@@ -307,7 +339,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 promptDialog.dismiss();
                 dialog.dismiss();
                 TipDialog.show((AppCompatActivity) getContext(),"缓存已经清除...", TipDialog.TYPE.SUCCESS);
-                ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+                ((QMUICommonListItemView)groupListView3.findViewWithTag(5)).setDetailText(getCacheSize());
             }
         });
         int mCurrentDialogStyle = com.qmuiteam.qmui.R.style.QMUI_Dialog;
@@ -349,7 +381,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        ((QMUICommonListItemView)groupListView.findViewWithTag(5)).setDetailText(getCacheSize());
+        ((QMUICommonListItemView)groupListView3.findViewWithTag(5)).setDetailText(getCacheSize());
         promptDialog.dismissImmediately();
     }
 }

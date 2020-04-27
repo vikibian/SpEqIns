@@ -1,18 +1,111 @@
 package com.neu.test.entity;
 
+import com.neu.test.tree.TreeNodeGroup;
+import com.neu.test.tree.TreeNodeId;
+import com.neu.test.tree.TreeNodePid;
+
 import java.io.Serializable;
 
 public class DetectionResult implements Serializable {
 
 
+  @TreeNodeId
+  private int id = 0;
+  @TreeNodePid
+  private int parentId = 0;
+  @TreeNodeGroup
+  private boolean isGroup = false;
+
+  private String name = "";
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public int getParentId() {
+    return parentId;
+  }
+
+  public void setParentId(int parentId) {
+    this.parentId = parentId;
+  }
+
+  @Override
+  public String toString() {
+    return "DetectionResult{" +
+            "id=" + id +
+            ", parentId=" + parentId +
+            ", isGroup=" + isGroup +
+            ", name='" + name + '\'' +
+            ", DEVCLASS='" + DEVCLASS + '\'' +
+            ", DEVID='" + DEVID + '\'' +
+            ", CHECKCONTENT='" + CHECKCONTENT + '\'' +
+            ", JIANCHAXIANGBIANHAO='" + JIANCHAXIANGBIANHAO + '\'' +
+            ", STATUS='" + STATUS + '\'' +
+            ", REFJIM='" + REFJIM + '\'' +
+            ", REFJVI='" + REFJVI + '\'' +
+            ", TASKID='" + TASKID + '\'' +
+            ", ISCHANGED='" + ISCHANGED + '\'' +
+            ", CHANGEDIMAGE='" + CHANGEDIMAGE + '\'' +
+            ", CHANGEDVIDEO='" + CHANGEDVIDEO + '\'' +
+            ", JIANCHAXIANGTITLE='" + JIANCHAXIANGTITLE + '\'' +
+            ", LAW='" + LAW + '\'' +
+            ", REGISTERCODE='" + REGISTERCODE + '\'' +
+            ", SUGGESTION='" + SUGGESTION + '\'' +
+            ", LOGINNAME='" + LOGINNAME + '\'' +
+            ", RUNWATERNUM='" + RUNWATERNUM + '\'' +
+            ", ISHAVEDETAIL='" + ISHAVEDETAIL + '\'' +
+            ", CHANGEDWAY='" + CHANGEDWAY + '\'' +
+            ", CHANGEDACTION='" + CHANGEDACTION + '\'' +
+            ", CHANGEDFINISHTIME='" + CHANGEDFINISHTIME + '\'' +
+            ", CHANGEDRESULT='" + CHANGEDRESULT + '\'' +
+            ", YINHUANLEVEL='" + YINHUANLEVEL + '\'' +
+            ", PHONE='" + PHONE + '\'' +
+            ", LONGITUDE='" + LONGITUDE + '\'' +
+            ", LATITUDE='" + LATITUDE + '\'' +
+            '}';
+  }
+
+  public boolean isGroup() {
+    return isGroup;
+  }
+
+  public void setGroup(boolean group) {
+    isGroup = group;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public DetectionResult(int id, int parentId, boolean isGroup, String name) {
+    this.id = id;
+    this.parentId = parentId;
+    this.isGroup = isGroup;
+    this.name = name;
+  }
+
+
+  public DetectionResult(){
+
+  }
+
   private String DEVCLASS = "";  //设备种类
-  private String DEVID = "";  //设备名
+  private long DEVID ;  //设备名
   private String CHECKCONTENT;  //检测内容
   private String JIANCHAXIANGBIANHAO;  //检测ID
   private String STATUS = "2";  //检查项合格情况
   private String REFJIM = "";  //图片地址
   private String REFJVI = "";  //视频地址
-  private String TASKID;  //任务ID
+  private long TASKID;  //任务ID
 
   private String ISCHANGED = "0";  //是否整改
 
@@ -110,12 +203,20 @@ public class DetectionResult implements Serializable {
     this.DEVCLASS = DEVCLASS;
   }
 
-  public String getDEVID() {
+  public long getDEVID() {
     return DEVID;
   }
 
-  public void setDEVID(String DEVID) {
+  public void setDEVID(long DEVID) {
     this.DEVID = DEVID;
+  }
+
+  public long getTASKID() {
+    return TASKID;
+  }
+
+  public void setTASKID(long TASKID) {
+    this.TASKID = TASKID;
   }
 
   public String getCHECKCONTENT() {
@@ -148,14 +249,6 @@ public class DetectionResult implements Serializable {
 
   public void setREFJVI(String REFJVI) {
     this.REFJVI = REFJVI;
-  }
-
-  public String getTASKID() {
-    return TASKID;
-  }
-
-  public void setTASKID(String TASKID) {
-    this.TASKID = TASKID;
   }
 
   public String getREGISTERCODE() {

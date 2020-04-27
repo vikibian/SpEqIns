@@ -4,9 +4,50 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Task implements Serializable {
-    private String TASKID;  //任务ID
+
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "TASKID='" + TASKID + '\'' +
+                ", DEVCLASS='" + DEVCLASS + '\'' +
+                ", DEVID='" + DEVID + '\'' +
+                ", LOGINNAME='" + LOGINNAME + '\'' +
+                ", RESULT='" + RESULT + '\'' +
+                ", NEXT_INSSEIFTIME='" + NEXT_INSSEIFTIME + '\'' +
+                ", DEADLINE='" + DEADLINE + '\'' +
+                ", FANGANBIANHAO='" + FANGANBIANHAO + '\'' +
+                ", JIANCHARENYUANDANWEI='" + JIANCHARENYUANDANWEI + '\'' +
+                ", JIANCHADANWEIZUZHIDAIMA='" + JIANCHADANWEIZUZHIDAIMA + '\'' +
+                ", LASTRUNWATERNUMBER='" + LASTRUNWATERNUMBER + '\'' +
+                ", DEVZHUCEMA='" + DEVZHUCEMA + '\'' +
+                ", DANWEIZUZHIJIGOUDAIMA='" + DANWEIZUZHIJIGOUDAIMA + '\'' +
+                ", SHENHERENYUAN='" + SHENHERENYUAN + '\'' +
+                ", SHENHERIQI='" + SHENHERIQI + '\'' +
+                ", JIANCHARESULTSTATE='" + JIANCHARESULTSTATE + '\'' +
+                ", JIANCHARENYUANNAME='" + JIANCHARENYUANNAME + '\'' +
+                ", RUNWATERNUM='" + RUNWATERNUM + '\'' +
+                ", CHECKDATE='" + CHECKDATE + '\'' +
+                ", TASKTYPE='" + TASKTYPE + '\'' +
+                ", USEUNITNAME='" + USEUNITNAME + '\'' +
+                ", PLACE='" + PLACE + '\'' +
+                ", LONGITUDE='" + LONGITUDE + '\'' +
+                ", LATITUDE='" + LATITUDE + '\'' +
+                '}';
+    }
+    private long TASKID;  //任务ID
+
+    public String getTASKNAME() {
+        return TASKNAME;
+    }
+
+    public void setTASKNAME(String TASKNAME) {
+        this.TASKNAME = TASKNAME;
+    }
+
+    private String TASKNAME;  //任务ID
     private String DEVCLASS;  //设备种类
-    private String DEVID;  //设备ID
+    private long DEVID;  //设备ID
     private String LOGINNAME;  //登录名
     private String RESULT;  //结果
     private String NEXT_INSSEIFTIME;  //下次检测时间
@@ -114,12 +155,20 @@ public class Task implements Serializable {
     private String JIANCHARENYUANNAME; //检察人员姓名
     private String RUNWATERNUM; //流水号
 
-    public String getTASKID() {
+    public long getTASKID() {
         return TASKID;
     }
 
-    public void setTASKID(String TASKID) {
+    public void setTASKID(long TASKID) {
         this.TASKID = TASKID;
+    }
+
+    public long getDEVID() {
+        return DEVID;
+    }
+
+    public void setDEVID(long DEVID) {
+        this.DEVID = DEVID;
     }
 
     public String getDEVCLASS() {
@@ -130,13 +179,6 @@ public class Task implements Serializable {
         this.DEVCLASS = DEVCLASS;
     }
 
-    public String getDEVID() {
-        return DEVID;
-    }
-
-    public void setDEVID(String DEVID) {
-        this.DEVID = DEVID;
-    }
 
     public String getLOGINNAME() {
         return LOGINNAME;

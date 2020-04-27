@@ -170,7 +170,7 @@
                         android:layout_marginRight="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:met_floatingLabel="normal"/>
+                        app:met_floatingLabel="normal" />
 
                     <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner-->
                         <!--android:id="@+id/MBsp_deviceUser"-->

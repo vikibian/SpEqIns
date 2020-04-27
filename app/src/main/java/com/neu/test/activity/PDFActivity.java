@@ -164,7 +164,7 @@ public class PDFActivity extends BaseActivity {
         toolbar_title.setTextSize(18);
 //        toolabr_subtitleLeft.setTextSize(13);
 //        toolbar_subtitleRight.setTextSize(13);
-        toolbar_title.setText(task.getDEVID());
+        toolbar_title.setText(""+task.getDEVID());
         mToolbar.setTitle("");
 //        toolabr_subtitleLeft.setText(title);
 //        toolbar_subtitleRight.setText(taskType);

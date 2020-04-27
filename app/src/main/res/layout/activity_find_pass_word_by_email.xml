@@ -120,14 +120,14 @@
                             android:textSize="15dp" />
 
                         <androidx.appcompat.widget.AppCompatButton
-                            android:layout_marginLeft="10dp"
                             android:id="@+id/findpasswordbyemail_getvarcode"
-                            android:background="@drawable/bg_button"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
                             android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:text="获取验证码"/>
+                            android:background="@drawable/bg_button"
+                            android:text="获取验证码"
+                            android:textColor="@color/white" />
 
 
                     </LinearLayout>

@@ -2,11 +2,11 @@
 
     <string name="app_name">特种设备企业自查系统</string>
 
-    <string name="tab_home">自查</string>
+    <string name="tab_home">日常</string>
 
-    <string name="tab_random">临时</string>
+    <string name="tab_random">企专</string>
 
-    <string name="tab_task">下派</string>
+    <string name="tab_task">政专</string>
 
     <string name="tab_video">查询</string>
 

@@ -244,6 +244,7 @@ public class FindPassWordByEmailActivity extends BaseActivity implements View.On
                 case resetCount:
                     mTimeCount.setCountFinish(false);
                     button_getVarCode.setClickable(true);
+                    button_getVarCode.setBackground(getResources().getDrawable(R.drawable.bg_button));
                     button_getVarCode.setText("获取验证码");
                     mTimeCount.cancel();
                     break;
@@ -272,6 +273,7 @@ public class FindPassWordByEmailActivity extends BaseActivity implements View.On
         @Override
         public void onTick(long l) {
             button_getVarCode.setClickable(false);
+            button_getVarCode.setBackground(getResources().getDrawable(R.drawable.bg_button_unselectable));
             button_getVarCode.setText(l/1000 + "秒后重新获取");
             Log.e(TAG, "onTick: "+(l/1000));
         }
@@ -279,6 +281,7 @@ public class FindPassWordByEmailActivity extends BaseActivity implements View.On
         @Override
         public void onFinish() {
             button_getVarCode.setClickable(true);
+            button_getVarCode.setBackground(getResources().getDrawable(R.drawable.bg_button));
             button_getVarCode.setText("获取验证码");
             isCountFinish = true;
         }

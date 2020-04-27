@@ -71,8 +71,8 @@ public class ShowSearchedResultFragment extends Fragment implements View.OnClick
     private List<Task> tasks;
     private Task task;
     private List<DetectionResult> listResult;
-    private String taskID;
-    private String devID;
+    private long taskID;
+    private long devID;
     private SearchUtil searchUtil = new SearchUtil();
 
 //    private List<DetectionItem1> listDatas_qualified = new ArrayList<>();

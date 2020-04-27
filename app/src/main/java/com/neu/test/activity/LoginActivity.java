@@ -211,7 +211,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //获取用户信息和任务list
     private void getTasksAndUserBypost() {
-        url = BaseUrl.BaseUrl+"getUserAndTask";
+        url = BaseUrl.BaseUrl+"getUserAndFullTask";
         Map<String, String> map = new HashMap<>();
         map.put("username",inputName);
         map.put("password",inputPassword);
@@ -310,8 +310,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             bt_signin.setClickable(true);
         }else{
             super.onResume();
-            bt_login.setClickable(false);
-            bt_signin.setClickable(false);
+            bt_login.setClickable(true);
+            bt_signin.setClickable(true);
         }
     }
 }

@@ -48,8 +48,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.FindPassWordActivity"
-            android:theme="@style/NoBar"></activity>
+        <activity android:name=".activity.TreeListActivity"
+            android:theme="@style/NoBar">
+        </activity>
+        <activity android:name=".activity.DraftTaskActivity"
+            android:theme="@style/NoBar"/>
+        <activity
+            android:name=".activity.FindPassWordActivity"
+            android:theme="@style/NoBar" />
         <activity android:name=".activity.ChangeFontActivity" />
         <activity
             android:name=".activity.ResetPasswordActivity"
@@ -82,8 +88,9 @@
         <activity
             android:name=".activity.RectifyListActivity"
             android:theme="@style/NoBar" />
-        <activity android:name=".activity.FindPassWordByEmailActivity"
-            android:theme="@style/NoBar"/>
+        <activity
+            android:name=".activity.FindPassWordByEmailActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.FileReadActivity"
             android:theme="@style/NoBar" />

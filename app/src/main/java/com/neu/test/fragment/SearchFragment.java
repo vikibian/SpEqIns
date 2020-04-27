@@ -105,16 +105,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private SmartTable<Task> taskSmartTable;
     Column<String> ordernum;
     Column<String> checkdate;
-    Column<String> deadline;
-    Column<String> devclass;
     Column<String> devid;
-    Column<String> latitude;
     Column<String> place;
     Column<String> result;
     Column<String> taskID;
     Column<String> tasktype;
-    Column<String> danwei;
-    Column<String> nextInsertTime;
+    Column<String> shenherenyuan;
+    Column<String> shenheriqi;
     private SearchUtil searchUtil = new SearchUtil();
     private static boolean isSearch = false;
     private SimpleToolbar toolbar;
@@ -178,10 +175,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         MBsp_Qualify.setAdapter(adapterDeviceQualify);
         MBsp_Qualify.setText(searchUtil.deviceQualify[0]);
 
-        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.taskType);
+        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.taskTypeNew);
         adapterTaskType.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_taskType.setAdapter(adapterTaskType);
-        MBsp_taskType.setText(searchUtil.taskType[0]);
+        MBsp_taskType.setText(searchUtil.taskTypeNew[0]);
 
 //        adapterDeviceChecked = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceChecked);
 //        adapterDeviceChecked.setDropDownViewResource(R.layout.my_spinner_item);
@@ -278,20 +275,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
         searchmap.put("startDate",selectStartTime.getText().toString());
         searchmap.put("endDate",selectEndtTime.getText().toString());
-        //测试用数据
-//        searchmap.put("LOGINNAME",LoginActivity.inputName);
-//        searchmap.put("DEVCLASS","3000");
-//        searchmap.put("RESULT","1");
-//        searchmap.put("TASKTYPE","临时");
-//        searchmap.put("startDate","2020-03-08");
-//        searchmap.put("endDate","2020-04-09");
-        Log.e(TAG," loginname: "+LoginActivity.inputName);
-        Log.e(TAG," devclass: "+searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
-        Log.e(TAG," result: "+searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
-        Log.e(TAG," taskType: "+MBsp_taskType.getText().toString());
-        Log.e(TAG," startDate: "+selectStartTime.getText().toString());
-        Log.e(TAG," endDate: "+selectEndtTime.getText().toString());
-
 
         OkHttp okHttp = new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(searchmap), new ListTaskCallBack() {
@@ -363,24 +346,9 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        checkdate = new Column<String>("检查日期","CHECKDATE");
-        checkdate.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
-            @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
-                jumpToShowSearchedResultFragment(position);
-            }
-        });
 
-        deadline = new Column<String>("截止日期","DEADLINE");
-        deadline.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
-            @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
-                jumpToShowSearchedResultFragment(position);
-            }
-        });
-
-        devclass = new Column<String>("设备类型","DEVCLASS");
-        devclass.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+        taskID = new Column<String>("任务名","TASKID");
+        taskID.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
                 jumpToShowSearchedResultFragment(position);
@@ -395,16 +363,34 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        latitude = new Column<String>("设备注册码","DEVZHUCEMA");
-        latitude.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+
+        place = new Column<String>("地址","PLACE");
+        place.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
                 jumpToShowSearchedResultFragment(position);
             }
         });
 
-        place = new Column<String>("地址","PLACE");
-        place.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+        shenherenyuan = new Column<String>("审核人","SHENHERENYUAN");
+        shenherenyuan.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+            @Override
+            public void onClick(Column<String> column, String value, String s, int position) {
+                jumpToShowSearchedResultFragment(position);
+            }
+        });
+
+        shenheriqi = new Column<String>("审核日期","SHENHERIQI");
+        shenheriqi.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+            @Override
+            public void onClick(Column<String> column, String value, String s, int position) {
+                jumpToShowSearchedResultFragment(position);
+            }
+        });
+
+
+        checkdate = new Column<String>("检查日期","CHECKDATE");
+        checkdate.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
                 jumpToShowSearchedResultFragment(position);
@@ -419,13 +405,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        taskID = new Column<String>("任务ID","TASKID");
-        taskID.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
-            @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
-                jumpToShowSearchedResultFragment(position);
-            }
-        });
 
         tasktype = new Column<String>("任务类型","TASKTYPE");
         tasktype.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
@@ -434,24 +413,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 jumpToShowSearchedResultFragment(position);
             }
         });
-        danwei = new Column<String>("检查单位","USEUNITNAME");
-        danwei.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
-            @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
-                jumpToShowSearchedResultFragment(position);
-            }
-        });
 
-        nextInsertTime = new Column<String>("下次检查时间","NEXT_INSSEIFTIME");
-        nextInsertTime.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
-            @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
-                jumpToShowSearchedResultFragment(position);
-            }
-        });
 
-        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,ordernum,checkdate,
-                deadline,devclass, devid, latitude, place,result, taskID, tasktype, danwei);
+        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,ordernum,taskID,
+                devid, place,shenherenyuan,shenheriqi,checkdate, result,  tasktype);
         taskSmartTable.getConfig().setShowTableTitle(false);
         taskSmartTable.getConfig().setShowXSequence(false);
         taskSmartTable.getConfig().setShowYSequence(false);

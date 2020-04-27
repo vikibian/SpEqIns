@@ -200,7 +200,7 @@ public class CheckFragment extends Fragment {
           String s = task.getUSEUNITNAME();
           String DEVCLASS = task.getDEVCLASS();
 
-            data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
+            data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
           sharedPreferences = getActivity().getSharedPreferences(data, Context.MODE_PRIVATE);
           if(task.getRESULT().equals("2")){
             String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
@@ -323,12 +323,12 @@ public class CheckFragment extends Fragment {
     }
 
     private void getDetctionData(String devclass, final String title, final Task task, final int position) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("username",task.getLOGINNAME());
         map.put("TASKID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("DEVCLASS",task.getDEVCLASS());
-        String url = BaseUrl.BaseUrl+"getTaskDetail";
+        String url = BaseUrl.BaseUrl+"getFullCheckItems";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(map), new ListIDetailTaskCallBack() {
@@ -395,7 +395,7 @@ public class CheckFragment extends Fragment {
     }
 
     private void getReDetctionData(final Task task, final int position) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("RUNWATERNUMBER",task.getLASTRUNWATERNUMBER());
@@ -433,7 +433,7 @@ public class CheckFragment extends Fragment {
 
 
     private void getSaveData(final Task task, final int position) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("USERNAME",task.getLOGINNAME());
@@ -458,7 +458,7 @@ public class CheckFragment extends Fragment {
                     intent.putExtra("items", (Serializable) list);
                     intent.putExtra("position",position);
                     intent.putExtra("task", task);
-
+                    promptDialog.dismissImmediately();
                     startActivityForResult(intent,CHECKFRAGMENT);
                 }else {
                     promptDialog.dismiss();
@@ -516,6 +516,8 @@ public class CheckFragment extends Fragment {
             MyTextView tv_check_address = convertView.findViewById(R.id.tv_check_address);
             TextView tv_check_endtime = convertView.findViewById(R.id.tv_check_endtime);
             TextView tv_issave_device = convertView.findViewById(R.id.tv_issave_device);
+            TextView tv_check_deciveType = convertView.findViewById(R.id.tv_check_deviceType);
+            TextView tv_check_taskname = convertView.findViewById(R.id.tv_check_taskname);
 //            CircleRelativeLayout circleRelativeLayout = convertView.findViewById(R.id.check_list_imagebutton);
 //            LinearLayout ll_check_bg = convertView.findViewById(R.id.ll_check_bg);
 
@@ -535,8 +537,9 @@ public class CheckFragment extends Fragment {
 
             }
             tv_check_device.setTextColor(color);
-
-            tv_check_device.setText(task.getDEVID());
+            tv_check_deciveType.setText(task.getTASKTYPE());
+            tv_check_taskname.setText(task.getTASKNAME());
+            tv_check_device.setText(String.valueOf(task.getDEVID()));
             tv_check_address.setText(task.getPLACE());
             tv_check_endtime.setText(task.getDEADLINE());
             return convertView;

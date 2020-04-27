@@ -79,6 +79,8 @@ public class CheckDetailsTextFragment extends Fragment  {
         this.detectionResult = detectionResult;
         this.task = task;
         Log.e(TAG,"检验task："+task.toString());
+        String detection = new Gson().toJson(detectionResult);
+        Log.e(TAG,"检验detection："+detection);
     }
 
 

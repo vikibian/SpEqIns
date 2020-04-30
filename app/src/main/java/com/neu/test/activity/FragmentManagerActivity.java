@@ -60,9 +60,9 @@ public class FragmentManagerActivity extends BaseActivity {
     private RotateAnimation mRotateAnimation;
 
     private List<Task> selfTasks = new ArrayList<Task>(); //自查任务
-    private List<Task> reselfTasks = new ArrayList<Task>(); //复查任务
-    private List<Task> kingTasks = new ArrayList<Task>(); //上级任务
-    private List<Task> randomTasks = new ArrayList<Task>();  //随机任务
+    private List<Task> reselfTasks = new ArrayList<Task>(); //整改任务
+    private List<Task> kingTasks = new ArrayList<Task>(); //政府专项任务
+    private List<Task> randomTasks = new ArrayList<Task>();  //企业专项任务
     private List<Task> allTasks ;  //随机任务
     String userName;
 
@@ -115,7 +115,7 @@ public class FragmentManagerActivity extends BaseActivity {
         permissionUtils = new PermissionUtils(this,this,null,null);
         permissionUtils.getPermission();
 
-        String[] taskType = {"日常","整改","政府专项","企业专项"};
+        String[] taskType = {"日常","政府专项","企业专项","整改"};
         allTasks = (List<Task>) intent.getSerializableExtra("userTask");
         String all = new Gson().toJson(allTasks);
         Log.e(TAG, "initData: "+all+"  "+allTasks.size() );
@@ -144,16 +144,16 @@ public class FragmentManagerActivity extends BaseActivity {
          mFragmentList.add(checkFragment);
 
 
-        CheckFragment reCheck = new CheckFragment(reselfTasks,mBottomBarLayout,taskType[1]);
-        mFragmentList.add(reCheck);
-
-
-        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[2]);
+        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[1]);//recheck
         mFragmentList.add(taskFrag);
 
 
-        CheckFragment randomFrag = new CheckFragment(randomTasks,mBottomBarLayout,taskType[3]);
+        CheckFragment randomFrag = new CheckFragment(randomTasks,mBottomBarLayout,taskType[2]);
         mFragmentList.add(randomFrag);
+
+
+        CheckFragment recheck = new CheckFragment(selfTasks,mBottomBarLayout,taskType[3]);
+        mFragmentList.add(recheck);
 
         SearchFragment searchFragment = new SearchFragment();
         mFragmentList.add(searchFragment);
@@ -186,9 +186,9 @@ public class FragmentManagerActivity extends BaseActivity {
 
 
         mBottomBarLayout.setUnread(0, selfTasks.size());//设置第一个页签的未读数为20
-        mBottomBarLayout.setUnread(1, reselfTasks.size());//设置第二个页签的未读数
-        mBottomBarLayout.setUnread(2, kingTasks.size());//设置第二个页签的未读数
-        mBottomBarLayout.setUnread(3, randomTasks.size());//设置第二个页签的未读数
+        mBottomBarLayout.setUnread(1, kingTasks.size());//设置第二个页签的未读数 reselfTasks
+        mBottomBarLayout.setUnread(2, randomTasks.size());//设置第二个页签的未读数
+        mBottomBarLayout.setUnread(3, reselfTasks.size());//设置第二个页签的未读数
 
 
         // mBottomBarLayout.showNotify(2);//设置第三个页签显示提示的小红点

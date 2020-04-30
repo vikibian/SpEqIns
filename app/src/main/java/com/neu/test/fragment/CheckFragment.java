@@ -29,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.neu.test.R;
 import com.neu.test.activity.DetctionActivity;
+import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.ReDetectionActivity;
 import com.neu.test.activity.RectifyListActivity;
 import com.neu.test.activity.RectifyResultActivity;
@@ -200,7 +201,7 @@ public class CheckFragment extends Fragment {
           String s = task.getUSEUNITNAME();
           String DEVCLASS = task.getDEVCLASS();
 
-            data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+            data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
           sharedPreferences = getActivity().getSharedPreferences(data, Context.MODE_PRIVATE);
           if(task.getRESULT().equals("2")){
             String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
@@ -286,6 +287,7 @@ public class CheckFragment extends Fragment {
       detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
       detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
       detectionResult.setLAW(items.get(position).getLAW());
+      detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
       detectionResults.add(detectionResult);
         if(!items.get(position).getSHIFOUHEGEQUZHENG().equals("1")){
             detectionResult.setSTATUS("0");
@@ -324,10 +326,12 @@ public class CheckFragment extends Fragment {
 
     private void getDetctionData(String devclass, final String title, final Task task, final int position) {
         Map<String, Object> map = new HashMap<>();
-        map.put("username",task.getLOGINNAME());
+        map.put("username", LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
         map.put("TASKID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
         map.put("DEVCLASS",task.getDEVCLASS());
+        map.put("RUNWATERNUMBER",task.getRUNWATERNUM());
         String url = BaseUrl.BaseUrl+"getFullCheckItems";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
@@ -398,8 +402,9 @@ public class CheckFragment extends Fragment {
         Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
-        map.put("RUNWATERNUMBER",task.getLASTRUNWATERNUMBER());
-        map.put("USERNAME",task.getLOGINNAME());
+        map.put("RUNWATERNUMBER",task.getRUNWATERNUM());
+        map.put("USERNAME",LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
         String url = BaseUrl.BaseUrl+"selectReItemResult";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
@@ -436,7 +441,8 @@ public class CheckFragment extends Fragment {
         Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
-        map.put("USERNAME",task.getLOGINNAME());
+        map.put("USERNAME",LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
         map.put("RUNWATERNUM",task.getRUNWATERNUM());
         String url = BaseUrl.BaseUrl+"getSaveResult";
         Log.e(TAG,"url: "+url);

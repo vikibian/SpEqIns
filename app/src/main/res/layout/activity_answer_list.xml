@@ -44,10 +44,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.neu.test.layout.MyTextView
                 android:id="@+id/searched_result_title"
                 android:layout_gravity="center_horizontal"
                 android:text="检查情况"
+                android:ellipsize="marquee"
                 android:textSize="18dp"
                 android:textColor="@color/black"
                 android:textAlignment="center"
@@ -111,6 +112,36 @@
                 android:text=" "
                 android:textColor="#666666"
                 android:inputType="textMultiLine"
+                android:textSize="13dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:enabled="false"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:padding="3dp"
+            android:background="@drawable/bg_textview_border"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="任务ID："
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/searched_result_deviceID"
+                android:text=" "
+                android:textColor="#666666"
                 android:textSize="13dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

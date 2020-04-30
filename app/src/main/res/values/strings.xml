@@ -54,8 +54,11 @@
 		4、具体描述：细节描述，可以给出问题发生的频率或者APP名称，sdk版本等，也可以加上附件如日志，贴图等\n
         </string>
 
-    <string name="about">\u3000\u3000这款软件的主要用途是用于企业在特种设备现场的自查，通过联网获取服务器后台数据通知现场检查人员
-    对某一特种设备进行检查。</string>
+    <string name="about">\u3000\u3000这款软件的主要用途是用于企业在特种设备现场的自查，执行人员可以通过软件联网获取需要执行的日常任务、整改任务、政府专项或企业专项任务，完成某一设备的检查计划，
+        必要时还可以对特殊任务起草，完成特种设备的检查过程。</string>
     <string name="password_hint">提示：密码要求4至10位英文或数字！</string>
+
+    <string name="nosearch">您还未开始查询数据!</string>
+    <string name="searchNoData">暂无数据！\n 请您尝试其他搜索条件！</string>
 
 </resources>

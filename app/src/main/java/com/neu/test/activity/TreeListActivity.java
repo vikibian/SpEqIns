@@ -283,30 +283,30 @@ public class TreeListActivity extends AppCompatActivity {
                 if(!treeNodeList.contains(node)){
                     treeNodeList.add(node);
                 }
-            }
-            if(node.isSelected()){
-                if(!node.isGroup()){
-                    if(!subDetectionResults.contains(node.getSelfData())){
+            }else{
+                if(node.isSelected()){
+                    if (!subDetectionResults.contains(node.getSelfData())) {
                         subDetectionResults.add((DetectionResult) node.getSelfData());
                     }
-                }
-            }else {
-                if (!node.isGroup()) {
+                }else{
                     if (subDetectionResults.contains(node.getSelfData())) {
                         subDetectionResults.remove(node.getSelfData());
                     }
                 }
-                if(subDetectionResults.size() == 0){
-                    int pId = node.getParentId();
-                    for(int i =0;i<treeNodeList.size();i++){
-                        if(treeNodeList.get(i).getId() == pId){
+                int pId = node.getParentId();
+                for (int i = 0; i < treeNodeList.size(); i++) {
+                    if (treeNodeList.get(i).getId() == pId) {
+                        List<TreeNode> list = treeNodeList.get(i).getChildNodeList();
+                        if (list.size() == subDetectionResults.size())
+                            treeNodeList.get(i).setSelected(true);
+                        else
                             treeNodeList.get(i).setSelected(false);
-                        }
                     }
                 }
             }
         }
     }
+
 
 
     @Override

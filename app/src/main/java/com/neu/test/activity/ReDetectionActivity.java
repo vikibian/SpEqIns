@@ -179,7 +179,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         button_middle.setOnClickListener(this);
         button_right.setOnClickListener(this);
 
-        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME();
+        data = task.getTASKID()+task.getDEVID()+task.getTASKTYPE()+task.getLOGINNAME()+task.getRUNWATERNUM();
         sp = getSharedPreferences(data, Context.MODE_PRIVATE);
 
         detectionResults = (List<DetectionResult>) getIntent().getSerializableExtra("items");
@@ -244,7 +244,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
                             }else {
                                 promptDialog.dismiss();
-                                Toasty.error(ReDetectionActivity.this, "文件上传失败！", Toast.LENGTH_SHORT).show();
+                                Toasty.error(ReDetectionActivity.this, "提交失败！", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -1007,8 +1007,9 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         Map<String, Object> map = new HashMap<>();
         map.put("taskID",task.getTASKID());
         map.put("DEVID",task.getDEVID());
-        map.put("USERNAME",task.getLOGINNAME());
+        map.put("USERNAME",LoginActivity.user.getUSERNAME());
         map.put("RUNWATERNUM",task.getRUNWATERNUM());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
         String url = BaseUrl.BaseUrl+"getSaveResult";
         Log.e(TAG,"url: "+url);
         OkHttp okHttp=new OkHttp();
@@ -1059,7 +1060,8 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
         String url = BaseUrl.BaseUrl+"getFullyTSchedule";
         Log.d(TAG,"POST url: "+url);
         Map<String, String> map = new HashMap<>();
-        map.put("username",LoginActivity.inputName);
+        map.put("username",LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
 //        map.put("password",inputPassword);
         Log.e(TAG,"map: "+ map.toString());
 
@@ -1095,6 +1097,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                    finish();
                     SharedPreferences.Editor editor = sp.edit();
                     editor.clear();
+                    editor.commit();
                     Intent intent = new Intent(ReDetectionActivity.this, FragmentManagerActivity.class);
                     intent.putExtra("userTask", (Serializable) tasks);
                     String result = new Gson().toJson(tasks);

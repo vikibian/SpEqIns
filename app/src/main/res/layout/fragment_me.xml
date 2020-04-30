@@ -81,6 +81,7 @@
                 <com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView
                     android:id="@+id/me_fragment_ListView3"
                     android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

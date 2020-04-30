@@ -255,18 +255,6 @@ public class RectifyListActivity extends BaseActivity  {
             rectifyListViewHolder.recify_textview_leftnum.setText((position+1)+"");
             rectifyListViewHolder.recify_textview_context.setText(detectionResults.get(position).getJIANCHAXIANGTITLE());
 
-            //测试
-//            if (position == 0){
-////                detectionResults.get(position).setREFJIM("");
-//                detectionResults.get(position).setREFJIM("image_202031610246.jpg,image_202031662445.jpg");
-////                detectionResults.get(position).setREFJVI("");
-//                detectionResults.get(position).setREFJVI("video_1584540967093.mp4,video_1584582023465.mp4");
-//            }
-////            //测试
-//            if (position == 1){
-//                detectionResults.get(position).setREFJIM("image_202031610246.jpg,image_202031662445.jpg");
-//                detectionResults.get(position).setREFJVI("video_1584540967093.mp4,video_1584582023465.mp4");
-//            }
 
             //设置按钮状态
             if (detectionResults.get(position).getISCHANGED().equals(searchUtil.changed)){

@@ -60,7 +60,7 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     private TextView toolbar_title;
     private Button button_back;
     private MaterialSpinner sp_fliter;
-
+    private TextView textView_devID;
     private MyListView listView;
     private ListViewAdapter1 listViewAdapter1;
 
@@ -194,11 +194,10 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
         url = BaseUrl.BaseUrl+"selectItemResultServlet";
         Log.d(TAG,"POST url: "+url);
         Map<String, Object> map = new HashMap<>();
-        map.put("username",LoginActivity.inputName);
-//        map.put("taskID","1234567891011");//1affb4ca-1b34-4d99-9222-5ce1ed62afa5   taskID
+        map.put("username",LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
         map.put("taskID",taskID);
         Log.e(TAG,"map: "+ map.toString());
-//        map.put("DEVID","五号电梯");//123456  devID
         map.put("RUNWATERNUM",task.getRUNWATERNUM());
         map.put("DEVID",task.getDEVID());
         Log.e(TAG,"map: "+ map.toString());
@@ -282,7 +281,8 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
             textView_address.setText(task.getPLACE());
 //            textView_address.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 
-            textView_title.setText(task.getDEVID()+"检查情况");
+            textView_title.setText(task.getTASKNAME()+"  检查情况");
+            textView_devID.setText(String.valueOf(task.getDEVID()));
         }
 
     }
@@ -311,7 +311,7 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
 //        textView_checked = view.findViewById(R.id.searched_result_checked);
         textView_user = findViewById(R.id.searched_result_user);
         textView_address = findViewById(R.id.searched_result_address);
-
+        textView_devID = findViewById(R.id.searched_result_deviceID);
         listView = findViewById(R.id.show_searched_result_listview);
 
         dropDownMenu = findViewById(R.id.dropdownmenu);

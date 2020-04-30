@@ -131,42 +131,8 @@
             android:layout_weight="1"
 
             android:layout_height="match_parent"
-
-            app:iconNormal="@drawable/ic_build_black_24dp"
-
-            app:iconSelected="@drawable/ic_build_indigo_700_24dp"
-            app:iconWidth="30dp"
-            app:iconHeight="30dp"
-            app:itemTextSize="12dp"
-
-            app:itemText="@string/tab_micro"
-
-            app:textColorNormal="@color/black"
-
-            app:textColorSelected="@color/lightblue"
-
-
-            app:itemMarginTop="-5dp"
-
-            app:openTouchBg="true"
-
-            app:touchDrawable="@drawable/selector_bg"
-
-            />
-
-
-
-        <com.neu.test.layout.BottomBarItem
-
-            android:layout_width="0dp"
-
-            android:layout_weight="1"
-
-            android:layout_height="match_parent"
-
             app:iconNormal="@drawable/ic_assignment_returned_black_24dp"
-
-            app:iconSelected="@drawable/ic_assignment_indigo_700_24dp"
+            app:iconSelected="@drawable/ic_assignment_returned_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
@@ -185,6 +151,8 @@
 
             />
 
+
+
         <com.neu.test.layout.BottomBarItem
 
             android:layout_width="0dp"
@@ -200,6 +168,36 @@
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
             app:itemText="@string/tab_random"
+
+            app:textColorNormal="@color/black"
+
+            app:textColorSelected="@color/lightblue"
+
+
+            app:itemMarginTop="-5dp"
+
+            app:openTouchBg="true"
+
+            app:touchDrawable="@drawable/selector_bg"
+
+            />
+
+        <com.neu.test.layout.BottomBarItem
+
+            android:layout_width="0dp"
+
+            android:layout_weight="1"
+
+            android:layout_height="match_parent"
+
+            app:iconNormal="@drawable/ic_build_black_24dp"
+
+            app:iconSelected="@drawable/ic_build_indigo_700_24dp"
+            app:iconWidth="30dp"
+            app:iconHeight="30dp"
+            app:itemTextSize="12dp"
+
+            app:itemText="@string/tab_micro"
 
             app:textColorNormal="@color/black"
 

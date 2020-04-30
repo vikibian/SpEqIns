@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -85,6 +86,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private TextView selectEndtTime;
     private TextView noitem_textview;
     private LinearLayout showNoData;
+    private TextView smartTable_title;
 
     private boolean flag_check=false;//判断是否已经根据条件选择了查询项，
 
@@ -101,23 +103,26 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     ArrayAdapter<String> adapterDeviceUser;
     ArrayAdapter<String> adapterTaskType;
 
-    private List<Task> tasks  = new ArrayList<Task>();;
+    private List<Task> tasks  = new ArrayList<Task>();
     private SmartTable<Task> taskSmartTable;
     Column<String> ordernum;
     Column<String> checkdate;
-    Column<String> devid;
+    Column<Long> devid;
     Column<String> place;
     Column<String> result;
-    Column<String> taskID;
+    Column<Long> taskID;
+    Column<String> taskName;
     Column<String> tasktype;
     Column<String> shenherenyuan;
     Column<String> shenheriqi;
+    Column<String> devType;
     private SearchUtil searchUtil = new SearchUtil();
     private static boolean isSearch = false;
     private SimpleToolbar toolbar;
     private PromptDialog promptDialog;
     private PermissionUtils permissionUtils;
     private QMUIRadiusImageView2 globalBtn;
+    private List<Task> taskss = new ArrayList<Task>();
 
     public SearchFragment() {
         // Required empty public constructor
@@ -137,8 +142,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         initActivity(view);
         if (!isSearch){
             showNoData.setVisibility(View.VISIBLE);
-            noitem_textview.setText("您还未开始查询数据");
+            noitem_textview.setText(R.string.nosearch);
         }
+        initTable(taskss);
+        smartTable_title.setText("查询结果显示");
         toolbar.setVisibility(View.GONE);
         setLandscapeParams();
         selectStartTime.setText(SidebarUtils.getSystemTime());
@@ -208,6 +215,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         showNoData = view.findViewById(R.id.search_fragment_noitem);
         noitem_textview = view.findViewById(R.id.search_fragment_noitem_textview);
+        smartTable_title = view.findViewById(R.id.smartTable_title);
 
         MBsp_Type = view.findViewById(R.id.MBsp_deviceType);
         MBsp_Qualify = view.findViewById(R.id.MBsp_deviceQualify);
@@ -269,12 +277,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
-        searchmap.put("LOGINNAME",LoginActivity.inputName);
+        searchmap.put("LOGINNAME",LoginActivity.user.getUSERNAME());
+        searchmap.put("unitname",LoginActivity.user.getUSEUNITNAME());
         searchmap.put("DEVCLASS",searchUtil.getTypeToDevclass(MBsp_Type.getText().toString()));
         searchmap.put("RESULT",searchUtil.getQualityToNum(MBsp_Qualify.getText().toString()));
         searchmap.put("TASKTYPE",MBsp_taskType.getText().toString());
         searchmap.put("startDate",selectStartTime.getText().toString());
         searchmap.put("endDate",selectEndtTime.getText().toString());
+
+        smartTable_title.setText(MBsp_taskType.getText().toString()+" "+
+                MBsp_Type.getText().toString()
+                +" 查询结果显示");
 
         OkHttp okHttp = new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(searchmap), new ListTaskCallBack() {
@@ -293,10 +306,11 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                     Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
                     if(response.getContent().size()==0){
                         tasks.clear();
-                        taskSmartTable.setVisibility(View.INVISIBLE);
+//                        taskSmartTable.setVisibility(View.INVISIBLE);
                         Log.e("TAG"," response.getContent: "+"无数据");
                         showNoData.setVisibility(View.VISIBLE);
-                        noitem_textview.setText("暂无数据！");
+                        noitem_textview.setText(R.string.searchNoData);
+                        initTable(tasks);
 
                     }else {
                         Log.e("TAG"," response.getContent: "+"有数据");
@@ -345,20 +359,27 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
                 jumpToShowSearchedResultFragment(position);
             }
         });
+        ordernum.setFixed(true);
 
-
-        taskID = new Column<String>("任务名","TASKID");
-        taskID.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+        taskName = new Column<String>("任务名","TASKNAME");
+        taskName.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
             @Override
             public void onClick(Column<String> column, String value, String s, int position) {
                 jumpToShowSearchedResultFragment(position);
             }
         });
 
-        devid = new Column<String>("设备ID","DEVID");
-        devid.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+        taskID = new Column<Long>("任务ID","TASKID");
+        taskID.setOnColumnItemClickListener(new OnColumnItemClickListener<Long>() {
             @Override
-            public void onClick(Column<String> column, String value, String s, int position) {
+            public void onClick(Column<Long> column, String value, Long aLong, int position) {
+                jumpToShowSearchedResultFragment(position);
+            }
+        });
+        devid = new Column<Long>("设备ID","DEVID");
+        devid.setOnColumnItemClickListener(new OnColumnItemClickListener<Long>() {
+            @Override
+            public void onClick(Column<Long> column, String value, Long aLong, int position) {
                 jumpToShowSearchedResultFragment(position);
             }
         });
@@ -414,9 +435,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        devType = new Column<String>("设备类型","DEVCLASS");
+        devType.setOnColumnItemClickListener(new OnColumnItemClickListener<String>() {
+            @Override
+            public void onClick(Column<String> column, String value, String s, int position) {
+                jumpToShowSearchedResultFragment(position);
+            }
+        });
 
-        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,ordernum,taskID,
-                devid, place,shenherenyuan,shenheriqi,checkdate, result,  tasktype);
+
+        final TableData<Task> tableData = new TableData<Task>("测试标题", testTasks,ordernum,taskName,taskID,
+                devid, place,shenherenyuan,shenheriqi,checkdate, result,  tasktype,devType);
         taskSmartTable.getConfig().setShowTableTitle(false);
         taskSmartTable.getConfig().setShowXSequence(false);
         taskSmartTable.getConfig().setShowYSequence(false);
@@ -424,7 +453,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
 //        table.getConfig().setContentStyle(new FontStyle(50, Color.BLUE));
         taskSmartTable.getConfig().setMinTableWidth(256);       //设置表格最小宽度
         FontStyle style = new FontStyle();
-        style.setTextSize(15);
+        style.setTextSize(20);
         taskSmartTable.setZoom(true);
         taskSmartTable.getConfig().setContentStyle(style);       //设置表格主题字体样式
         taskSmartTable.getConfig().setColumnTitleStyle(style);   //设置表格标题字体样式
@@ -464,17 +493,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         Log.e(TAG," onStart");
-        if (tasks.size()!=0){
-            initTable(tasks);
-        }else {
-            if (!isSearch){
-                showNoData.setVisibility(View.VISIBLE);
-                noitem_textview.setText("您还未开始查询数据");
-            }else {
-                showNoData.setVisibility(View.VISIBLE);
-                noitem_textview.setText("暂无数据！");
+        initTable(tasks);
+        if (tasks.size() == 0){
+                if (!isSearch){
+                    smartTable_title.setText("查询结果显示");
+                    showNoData.setVisibility(View.VISIBLE);
+                    noitem_textview.setText(R.string.nosearch);
+                }else {
+                    smartTable_title.setText(MBsp_taskType.getText().toString()+" "+
+                            MBsp_Type.getText().toString()
+                            +" 查询结果显示");
+                    showNoData.setVisibility(View.VISIBLE);
+                    noitem_textview.setText(R.string.searchNoData);
+                }
             }
-        }
+
     }
 
     @Override

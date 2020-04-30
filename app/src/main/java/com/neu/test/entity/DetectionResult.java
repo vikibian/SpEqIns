@@ -34,6 +34,8 @@ public class DetectionResult implements Serializable {
     this.parentId = parentId;
   }
 
+
+
   @Override
   public String toString() {
     return "DetectionResult{" +
@@ -108,6 +110,7 @@ public class DetectionResult implements Serializable {
   private long TASKID;  //任务ID
 
   private String ISCHANGED = "0";  //是否整改
+  private String QIYEMINGCHENG;
 
   public String getISCHANGED() {
     return ISCHANGED;
@@ -340,5 +343,13 @@ public class DetectionResult implements Serializable {
 
   public void setLATITUDE(String LATITUDE) {
     this.LATITUDE = LATITUDE;
+  }
+
+  public String getQIYEMINGCHENG() {
+    return QIYEMINGCHENG;
+  }
+
+  public void setQIYEMINGCHENG(String QIYEMINGCHENG) {
+    this.QIYEMINGCHENG = QIYEMINGCHENG;
   }
 }

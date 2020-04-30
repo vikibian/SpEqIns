@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +51,7 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
 
     private static final String TAG = "DraftTaskActivity";
     private static final int JUMP_TREELIST = 11;
-    private EditText editText_taskID;
+    private EditText editText_taskName;
     private MaterialSpinner materialSpinner_taskSource;
     private EditText editText_devID;
     private MaterialSpinner materialSpinner_devType;
@@ -63,7 +64,11 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
     private TextView textView_toolbar;
     private TextView textView_deadline;
     private EditText editText_declocation;
-    private MaterialSpinner materialSpinner_checkitemstandard;
+    private MaterialSpinner materialSpinner_checkperiod;
+
+    private LinearLayout linearLayout_task;
+    private EditText editText_taskID;
+    private boolean isZhenggai = false;//根据是否是整改任务判断需不需要读取editText_taskID的内容
 
     private Task task;
     private String task_type = "日常";//任务类型/任务来源
@@ -79,9 +84,8 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_draft_task);
         searchUtil = new SearchUtil();
         promptDialog = new PromptDialog(this);
-        task = new Task();
-        initView();
 
+        initView();
         initToolbar();
 
         materialSpinner_taskSource.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
@@ -89,6 +93,13 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
                 Log.e(TAG," 测试materialSpinner_taskSource："+searchUtil.taskTypeNew[position]+" position:"+position);
                 task_type = searchUtil.taskTypeNew[position];
+                if (materialSpinner_taskSource.getText().equals("整改")){
+                    linearLayout_task.setVisibility(View.VISIBLE);
+                    isZhenggai = true;
+                }else {
+                    linearLayout_task.setVisibility(View.GONE);
+                    isZhenggai = false;
+                }
             }
         });
 
@@ -97,13 +108,6 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
             public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
                 Log.e(TAG," 测试materialSpinner_devType："+searchUtil.classofdevForDraft[position]+" position:"+position+"  text:"+materialSpinner_devType.getText());
                 task_devclass = searchUtil.classofdevForDraft[position];
-            }
-        });
-
-        materialSpinner_checkitemstandard.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                Log.e(TAG," 测试materialSpinner_checkitemstandard：  text:"+materialSpinner_checkitemstandard.getText());
             }
         });
 
@@ -122,7 +126,7 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initView() {
-        editText_taskID = findViewById(R.id.draft_task_edittext_taskID);
+        editText_taskName = findViewById(R.id.draft_task_edittext_taskName);
         materialSpinner_taskSource = findViewById(R.id.draft_task_spinner_tasksource);
         editText_devID = findViewById(R.id.draft_task_edittext_devID);
         materialSpinner_devType = findViewById(R.id.draft_task_spinner_devtype);
@@ -131,8 +135,9 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         button_ok = findViewById(R.id.draft_task_button_ok);
         button_getCheckItem = findViewById(R.id.draft_task_button_getCheckItem);
         textView_deadline = findViewById(R.id.draft_task_textview_deadline);
-//        editText_declocation = findViewById(R.id.draft_task_edittext_devlocation);
-        materialSpinner_checkitemstandard = findViewById(R.id.draft_task_spinner_checkitemstandard);
+        materialSpinner_checkperiod = findViewById(R.id.draft_task_spinner_checkperiod);
+        linearLayout_task = findViewById(R.id.draft_task_lin);
+        editText_taskID = findViewById(R.id.draft_task_edittext_taskID);
 
         button_ok.setOnClickListener(this);
         button_getCheckItem.setOnClickListener(this);
@@ -144,12 +149,16 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         List<String> list_devtype = new ArrayList<>();
         list_devtype = Arrays.asList(searchUtil.deviceTypeForDraft);
         materialSpinner_devType.setItems(list_devtype);
-        String[] strings = {"国标","市标","其他"};
-        List<String> listOfStandard = Arrays.asList(strings);
-        materialSpinner_checkitemstandard.setItems(listOfStandard);
+
+        List<String> listOfStandard = Arrays.asList(searchUtil.checkperiod);
+        materialSpinner_checkperiod.setItems(listOfStandard);
+
         textView_companyName.setText(LoginActivity.user.getUSEUNITNAME());
         textView_person.setText(LoginActivity.user.getUSERNAME());
 
+        task = new Task();
+        task.setUSEUNITNAME(LoginActivity.user.getUSEUNITNAME());
+        task.setLOGINNAME(LoginActivity.user.getUSERNAME());
 
     }
 
@@ -166,18 +175,20 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
                     //提交任务
                     draftTask();
                 }
-
                 break;
             case R.id.draft_task_button_getCheckItem:
-                String taskName = editText_taskID.getText().toString().trim();
+                String taskName = editText_taskName.getText().toString().trim();
                 String devID = editText_devID.getText().toString().trim();
+                String taskID = editText_taskID.getText().toString();
                 if(taskName.equals("")){
                     Toasty.error(this,"请输入有效任务名称").show();
                 }else if(devID.equals("")||(!isNumeric(devID))){
                     Toasty.error(this,"请输入有效设备号").show();
                 }else if(textView_deadline.getText().toString().equals("")){
                     Toasty.error(this,"请选择截止时间").show();
-                }else {
+                }else if ((isZhenggai)&&((taskID.equals(""))||(!isNumeric(taskID)))){
+                    Toasty.error(this,"请选择输入有效任务ID").show();
+                } else{
                     promptDialog.showLoading("任务项获取中 ...");
                     BigInteger bigInteger = new BigInteger(devID);
                     long devid = bigInteger.longValue();
@@ -215,15 +226,17 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         task.setDEVID(devID);
         task.setTASKNAME(taskName);
         BigInteger bigInteger = new BigInteger(taskid);
-        task.setTASKID(bigInteger.longValue());
+        if (isZhenggai){
+            task.setTASKID(Long.valueOf(editText_taskID.getText().toString()));
+        }else {
+            task.setTASKID(bigInteger.longValue());
+        }
         task.setTASKTYPE(task_type);
         task.setDEVCLASS(task_devclass);
         task.setRESULT("2");
-        task.setUSEUNITNAME(LoginActivity.user.getUSEUNITNAME());
-        task.setLOGINNAME(LoginActivity.user.getLOGINNAME());
         task.setRUNWATERNUM(task.getLOGINNAME()+taskid);
         task.setDEADLINE(textView_deadline.getText().toString());
-//        task.setPLACE(editText_declocation.getText().toString().trim());
+        //task.setPLACE(editText_declocation.getText().toString().trim());
         getDetctionData();
     }
 
@@ -231,9 +244,12 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
 
 
     private void getDetctionData() {
-        Map<String, String> map = new HashMap<>();
-        map.put("username",task.getLOGINNAME());
+        Map<String, Object> map = new HashMap<>();
+        map.put("username",LoginActivity.user.getUSERNAME());
         map.put("DEVCLASS",task.getDEVCLASS());
+        map.put("UNIT",LoginActivity.user.getUSEUNITNAME());
+        map.put("DEVID",task.getDEVID());
+        map.put("ZHOUQI",materialSpinner_checkperiod.getText());
         String url = BaseUrl.BaseUrl+"getItemLists";
         OkHttp okHttp=new OkHttp();
         okHttp.postBypostString(url, new Gson().toJson(map), new ListIDetailTaskCallBack() {
@@ -250,22 +266,18 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
                 if(response.getMessage().equals("获取检查项成功")) {
                     List<DetailTask> items = response.getContent();
                     List<DetectionResult> dd = new ArrayList<>();
-                    DetectionResult detectionResult = new DetectionResult(0, TreeNode.ROOT_PARENT_ID,true, "");
-                    detectionResult.setJIANCHAXIANGTITLE(searchUtil.getDevclassToType(task_devclass));
-                    dd.add(detectionResult);
-                    List<DetectionResult> detectionResults = creatDetectionResultList(items);
-                    dd.addAll(detectionResults);
-                    if(dd.size()>1){
+                    if(items.size() >0) {
+                        List<DetectionResult> detectionResults = creatDetectionResultList(items);
+                        dd.addAll(detectionResults);
                         Intent intent = new Intent(DraftTaskActivity.this,TreeListActivity.class);
                         intent.putExtra("DetectionResults", (Serializable) dd);
                         startActivityForResult(intent,JUMP_TREELIST);
                         promptDialog.dismissImmediately();
-
-                    }else{
+                    } else{
                         promptDialog.dismissImmediately();
                         Toasty.error(DraftTaskActivity.this,"暂无可选项").show();
                     }
-                }else if(response.getMessage().equals("设备不存在")){
+                }else if(response.getMessage().equals("设备号不存在")){
                     promptDialog.dismissImmediately();
                     Toasty.error(DraftTaskActivity.this,"设备号输入有误").show();
                 }else{
@@ -278,21 +290,55 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
 
 
     public List<DetectionResult> creatDetectionResultList(List<DetailTask> items){
+        //父节点
+
+        DetectionResult detectionResult1 = new DetectionResult(0, TreeNode.ROOT_PARENT_ID,true, "");
+        detectionResult1.setJIANCHAXIANGTITLE("通用");
+        DetectionResult detectionResult2 = new DetectionResult(1, TreeNode.ROOT_PARENT_ID,true, "");
+        detectionResult2.setJIANCHAXIANGTITLE(searchUtil.getDevclassToType(task_devclass));
+        //子节点
         List<DetectionResult> detectionResults = new ArrayList<>();
+        if(items.get(0).getDEVCLASS().equals("10000"))
+            detectionResults.add(detectionResult1);
+        if(!materialSpinner_devType.getText().equals("通用")){
+            if(!items.get(items.size()-1).getDEVCLASS().equals("10000"))
+                detectionResults.add(detectionResult2);
+        }
         for (int position=0;position<items.size();position++){
-            DetectionResult detectionResult = new DetectionResult(position+1,0,false,items.get(position).getJIANCHAXIANGTITLE());
-            detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
-            detectionResult.setJIANCHAXIANGBIANHAO(items.get(position).getJIANCHAXIANGID());//检查编号
-            Log.e("编号",items.get(position).getJIANCHAXIANGID());
-            detectionResult.setLOGINNAME(items.get(position).getLOGINNAME());//检查人员
-            detectionResult.setTASKID(task.getTASKID());
-            detectionResult.setDEVID(task.getDEVID());
-            detectionResult.setDEVCLASS(task.getDEVCLASS());
-            detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
-            detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
-            detectionResult.setLAW(items.get(position).getLAW());
-            detectionResult.setSTATUS("2");
-            detectionResults.add(detectionResult);
+            if(items.get(position).getDEVCLASS().equals("10000")){
+                Log.e("tttttttt",position+"通用");
+                DetectionResult detectionResult = new DetectionResult(position+2,0,false,items.get(position).getJIANCHAXIANGTITLE());
+                detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
+                detectionResult.setJIANCHAXIANGBIANHAO(items.get(position).getJIANCHAXIANGID());//检查编号
+                Log.e("编号",items.get(position).getJIANCHAXIANGID());
+                detectionResult.setLOGINNAME(items.get(position).getLOGINNAME());//检查人员
+                detectionResult.setTASKID(task.getTASKID());
+                detectionResult.setDEVID(task.getDEVID());
+                detectionResult.setDEVCLASS(task.getDEVCLASS());
+                detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
+                detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
+                detectionResult.setLAW(items.get(position).getLAW());
+                detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
+                detectionResult.setSTATUS("2");
+                detectionResults.add(detectionResult);
+            }else{
+                Log.e("tttttttt",position+"sp");
+                DetectionResult detectionResult = new DetectionResult(position+2,1,false,items.get(position).getJIANCHAXIANGTITLE());
+                detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
+                detectionResult.setJIANCHAXIANGBIANHAO(items.get(position).getJIANCHAXIANGID());//检查编号
+                Log.e("编号",items.get(position).getJIANCHAXIANGID());
+                detectionResult.setLOGINNAME(items.get(position).getLOGINNAME());//检查人员
+                detectionResult.setTASKID(task.getTASKID());
+                detectionResult.setDEVID(task.getDEVID());
+                detectionResult.setDEVCLASS(task.getDEVCLASS());
+                detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
+                detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
+                detectionResult.setLAW(items.get(position).getLAW());
+                detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
+                detectionResult.setSTATUS("2");
+                detectionResults.add(detectionResult);
+            }
+
         }
         return  detectionResults;
     }
@@ -310,8 +356,7 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
 
 
     private void submitData() {
-        String taskString = new Gson().toJson(task);
-        Log.e(TAG,"task:"+taskString);
+
         Map<String, Object> map = new HashMap<>();
         map.put("task",task);
         map.put("DetectionResults",detectionResults);
@@ -362,4 +407,5 @@ public class DraftTaskActivity extends AppCompatActivity implements View.OnClick
         }
         return true;
     }
+
 }

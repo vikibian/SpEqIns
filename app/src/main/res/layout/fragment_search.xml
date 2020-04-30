@@ -93,11 +93,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <com.bin.david.form.core.SmartTable
-                        android:id="@+id/result_table"
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        />
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:textSize="13dp"
+                            android:id="@+id/smartTable_title"
+                            android:gravity="center"
+                            android:text="123"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <com.bin.david.form.core.SmartTable
+                            android:id="@+id/result_table"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            />
+
+                    </LinearLayout>
+
 
                 </FrameLayout>
 

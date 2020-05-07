@@ -143,7 +143,7 @@ public class RectifyListActivity extends BaseActivity  {
                     String string = new Gson().toJson(map);
                     Log.e(TAG,"提交时："+string);
 //                    String url = BaseUrl.BaseUrl+"setItemResult";
-                    String url = BaseUrl.testBaseUrl+"setResultFull";
+                    String url = BaseUrl.BaseUrl+"setResultFull";
                     OkHttp okHttp = new OkHttp();
                     okHttp.postBypostString(url, string, new FileResultCallBack() {
                         @Override

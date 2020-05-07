@@ -386,7 +386,7 @@ public class CheckFragment extends Fragment {
         tasks.remove(pos);
         devclassTasks.remove(pos);
         BottomBarLayout bottomBarLayout = getActivity().findViewById(R.id.bbl);
-        bottomBarLayout.setUnread(1,tasks.size());
+        bottomBarLayout.setUnread(3,tasks.size());
         checkAdapter.notifyDataSetChanged();
         lv_check.setAdapter(checkAdapter);
         if(devclassTasks.size() == 0){

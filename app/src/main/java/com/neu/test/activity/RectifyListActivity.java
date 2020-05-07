@@ -135,9 +135,15 @@ public class RectifyListActivity extends BaseActivity  {
                     promptDialog.dismiss();
                     Toasty.warning(RectifyListActivity.this, "有未操作项，无法提交", Toast.LENGTH_LONG).show();
                 } else {
-                    String string = new Gson().toJson(detectionResults);
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("detectionResults",detectionResults);
+                    map.put("TASK",task);
+                    map.put("role",LoginActivity.user.getROLEID());
+//                    String string = new Gson().toJson(detectionResults);
+                    String string = new Gson().toJson(map);
                     Log.e(TAG,"提交时："+string);
-                    String url = BaseUrl.BaseUrl+"setItemResult";
+//                    String url = BaseUrl.BaseUrl+"setItemResult";
+                    String url = BaseUrl.testBaseUrl+"setResultFull";
                     OkHttp okHttp = new OkHttp();
                     okHttp.postBypostString(url, string, new FileResultCallBack() {
                         @Override

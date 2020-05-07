@@ -214,8 +214,9 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                     Map<String,Object> map = new HashMap<>();
                     map.put("detectionResults",detectionResults);
                     map.put("TASK",task);
+                    map.put("role",LoginActivity.user.getROLEID());
                     String gson = new Gson().toJson(map);
-                    String url = BaseUrl.BaseUrl+"setResultFull";
+                    String url = BaseUrl.testBaseUrl+"setResultFull";
                     OkHttp okHttp = new OkHttp();
                     okHttp.postBypostString(url, gson, new FileResultCallBack() {
                         @Override
@@ -1057,11 +1058,12 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     }
 
     private void getDataBypost() {
-        String url = BaseUrl.BaseUrl+"getFullyTSchedule";
+        String url = BaseUrl.testBaseUrl+"getFullyTSchedule";
         Log.d(TAG,"POST url: "+url);
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("username",LoginActivity.user.getUSERNAME());
         map.put("unitname",LoginActivity.user.getUSEUNITNAME());
+        map.put("role",LoginActivity.user.getROLEID());
 //        map.put("password",inputPassword);
         Log.e(TAG,"map: "+ map.toString());
 

@@ -304,7 +304,6 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Result<List<Task>> response, int id) {
                 promptDialog.dismiss();
                 if(response.getMessage().equals("获取任务成功")){
-                    Toasty.success(getContext(),"搜索数据成功!",Toast.LENGTH_LONG,true).show();
                     if(response.getContent().size()==0){
                         tasks.clear();
 //                        taskSmartTable.setVisibility(View.INVISIBLE);

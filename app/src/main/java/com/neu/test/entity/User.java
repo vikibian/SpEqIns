@@ -7,7 +7,7 @@ public class User {
     private String UNITID;  //企业ID
     private String PERMISSION;  //业务权限
     private String DEVCLASS;  // 设备类别
-    private String ROLEID;  //角色
+    private int ROLEID;  //角色
     private String USERNAME;   //用户名
     private String REGISTATUS;   //用户状态
     private boolean IS_DEL;  //删除标志
@@ -76,11 +76,11 @@ public class User {
         this.DEVCLASS = DEVCLASS;
     }
 
-    public String getROLEID() {
+    public int getROLEID() {
         return ROLEID;
     }
 
-    public void setROLEID(String ROLEID) {
+    public void setROLEID(int ROLEID) {
         this.ROLEID = ROLEID;
     }
 

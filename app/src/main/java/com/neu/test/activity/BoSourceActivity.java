@@ -104,7 +104,6 @@ public class BoSourceActivity extends BaseActivity implements View.OnClickListen
 
     ViewHolder viewHolder=null;
     View view1;
-    WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private Toolbar toolbar;
     private TextView toolbar_textView;
     private static boolean isSave = false;
@@ -149,16 +148,6 @@ public class BoSourceActivity extends BaseActivity implements View.OnClickListen
         btn_sure_detection = findViewById(R.id.btn_sure_detection);
         tv_totalitem = findViewById(R.id.tv_totalitem);
 
-        mWaveSwipeRefreshLayout = findViewById(R.id.main_swipe);
-
-        mWaveSwipeRefreshLayout.setOnRefreshListener(new WaveSwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //mWaveSwipeRefreshLayout.setRefreshing(false);
-                //getSaveData(task);
-//                mWaveSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         button_left = findViewById(R.id.button_selector_left);
         button_right = findViewById(R.id.button_selector_right);
@@ -293,7 +282,7 @@ public class BoSourceActivity extends BaseActivity implements View.OnClickListen
       toolbar_subtitleLeft.setTextSize(13);
       toolabr_subtitleRight.setTextSize(13);
 
-      toolbar_title.setText(taskType+"    ");//加空格的原因是让其显示居中
+      toolbar_title.setText("任务执行"+"    ");//加空格的原因是让其显示居中
       toolbar_subtitleLeft.setText(title);
       toolabr_subtitleRight.setText(taskType);
       toolabr_subtitleRight.setTextColor(getResources().getColor(R.color.yellow));

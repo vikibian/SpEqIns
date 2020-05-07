@@ -84,7 +84,7 @@
 
                     <CheckBox
                         android:focusable="false"
-                        android:text="整改不合格"
+                        android:text="不合格"
                         android:id="@+id/recify_item_status_unqualified"
                         android:layout_weight="1"
                         android:textSize="13dp"
@@ -93,7 +93,7 @@
 
                     <CheckBox
                         android:focusable="false"
-                        android:text="整改合格"
+                        android:text="合格"
                         android:id="@+id/recify_item_status_recifyqualified"
                         android:layout_weight="1"
                         android:textSize="13dp"

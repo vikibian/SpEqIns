@@ -4,7 +4,7 @@ import android.os.Environment;
 
 public class BaseUrl {
 
-    public static String testBaseUrl = "http://th4fcr.natappfree.cc/WEB1010/";
+    public static String testBaseUrl = "http://zg7fmd.natappfree.cc/WEB1010/";
     //public static String BaseUrl = "http://192.168.1.6:8080/WEB1010/";
 //    public static String testBaseUrl = "http://192.168.1.3:8080/WEB1010/";
     public static String BaseUrl = "http://39.97.108.172:8080/WEB1010/";

@@ -215,6 +215,7 @@ public class DraftBoxActivity extends BaseActivity implements View.OnClickListen
                 if (integerList.size() ==0){
                     Toasty.warning(this,"未选择，无法提交！",Toasty.LENGTH_SHORT).show();
                 }else {
+                    //TODO：
                     submit();
                 }
 
@@ -230,10 +231,11 @@ public class DraftBoxActivity extends BaseActivity implements View.OnClickListen
     }
 
     private void submit() {
+        promptDialog.showLoading("草稿提交中...");
         Map<String, Object> map = new HashMap<>();
         map.put("taskList",taskList);
         map.put("DetectionResultsList",detectionResultsLists);
-        String url = BaseUrl.testBaseUrl+"writeCaoGao";
+        String url = BaseUrl.BaseUrl+"writeCaoGao";
 
         String s = new Gson().toJson(map);
         Log.e(TAG, "submit: "+s);
@@ -250,6 +252,7 @@ public class DraftBoxActivity extends BaseActivity implements View.OnClickListen
             public void onResponse(Result<List<Task>> response, int id) {
 
                 if(response.getMessage().equals("草稿提交成功")){
+
                     Toasty.success(DraftBoxActivity.this,"成功").show();
                     Log.e(TAG,"  "+response.getMessage().toString());
                     List<Task> tasks = response.getContent();

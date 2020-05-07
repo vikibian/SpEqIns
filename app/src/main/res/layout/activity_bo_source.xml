@@ -180,11 +180,6 @@
 
         </LinearLayout>
 
-        <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/main_swipe">
 
             <ListView
                 android:id="@+id/lv_detection"
@@ -198,7 +193,6 @@
 
             </ListView>
 
-        </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
 
 
         <LinearLayout

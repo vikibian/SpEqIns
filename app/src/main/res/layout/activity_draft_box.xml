@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.DraftBoxActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/draft_box_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:theme="@style/AppTheme.PopupOverlay"
+        android:background="?attr/colorPrimary">
+
+        <TextView
+            android:id="@+id/draft_box_toolbar_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="标题"
+            android:textColor="@color/white" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/draft_box_lin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:orientation="vertical">
+            <TextView
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="额，暂无数据"/>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_above="@+id/draft_box_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.neu.test.layout.MyListView
+                        android:id="@+id/draft_box_listview"
+                        android:layout_marginTop="20sp"
+                        android:layout_marginLeft="10sp"
+                        android:layout_marginRight="10sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    </com.neu.test.layout.MyListView>
+
+                </LinearLayout>
+
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/draft_box_scrollview"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_box_button_save"
+                android:textColor="@color/white"
+                android:text="暂存"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_box_button_ok"
+                android:textColor="@color/white"
+                android:text="生成整改任务"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

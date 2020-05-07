@@ -52,7 +52,7 @@ import java.util.Map;
 import es.dmoral.toasty.Toasty;
 import okhttp3.Call;
 
-public class TreeListActivity extends AppCompatActivity {
+public class TreeListActivity3 extends AppCompatActivity {
 
   private TreeListView mTreeListView = null;
   private MyTreeBaseAdapter mTreeListAdapter = null;
@@ -94,7 +94,7 @@ public class TreeListActivity extends AppCompatActivity {
     intent = getIntent();
     myDetectionResults = (List<DetectionResult>) intent.getSerializableExtra("DetectionResults");
 
-    mTreeListAdapter = new MyTreeBaseAdapter(TreeListActivity.this,myDetectionResults);
+    mTreeListAdapter = new MyTreeBaseAdapter(TreeListActivity3.this,myDetectionResults);
     mTreeListView.setAdapter(mTreeListAdapter);
     //TreeMethod();
   }
@@ -103,11 +103,6 @@ public class TreeListActivity extends AppCompatActivity {
     btn_submit.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(subDetectionResults.size() == 0){
-          Toasty.warning(TreeListActivity.this,"未选择检查项").show();
-        }
-        intent.putExtra("DList", (Serializable) subDetectionResults);
-        setResult(RESULT_OK,intent);
         finish();
       }
     });
@@ -175,7 +170,7 @@ public class TreeListActivity extends AppCompatActivity {
     private class ViewHolder {
       public ImageView imageView = null;
       public MyTextView textView = null;
-      public CheckBox checkBox = null;
+
       public ImageView tree_more;
     }
 
@@ -186,13 +181,12 @@ public class TreeListActivity extends AppCompatActivity {
       if (convertView == null) {
         holder = new ViewHolder();
         convertView = inflater
-          .inflate(R.layout.treelistview_item, null);
+          .inflate(R.layout.treelistview_item_3, null);
         holder.imageView = (ImageView) convertView
           .findViewById(R.id.imageView);
         holder.textView = (MyTextView) convertView
           .findViewById(R.id.textView);
-        holder.checkBox = (CheckBox) convertView
-          .findViewById(R.id.checkBox);
+
         convertView.setTag(holder);
         holder.tree_more = convertView.findViewById(R.id.tree_more);
       } else
@@ -214,19 +208,12 @@ public class TreeListActivity extends AppCompatActivity {
       }
       holder.textView.setText(detailTask.getJIANCHAXIANGTITLE());
 
-      holder.checkBox.setChecked(node.isSelected());
-      holder.checkBox.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          mTreeListAdapter.select(node.getId(), !node.isSelected());
-        }
-      });
 
       holder.tree_more.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          Dialog dlg = new Dialog(TreeListActivity.this,R.style.FullScreen);
-          View textEntryView = View.inflate(TreeListActivity.this,R.layout.show_law_and_other, null);
+          Dialog dlg = new Dialog(TreeListActivity3.this,R.style.FullScreen);
+          View textEntryView = View.inflate(TreeListActivity3.this,R.layout.show_law_and_other, null);
           TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
           TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
           Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
@@ -318,12 +305,10 @@ public class TreeListActivity extends AppCompatActivity {
         for (int i = 0; i < treeNodeList.size(); i++) {
           if (treeNodeList.get(i).getId() == pId) {
             List<TreeNode> list = treeNodeList.get(i).getChildNodeList();
-            if (list.size() == subDetectionResults.size()){
+            if (list.size() == subDetectionResults.size())
               treeNodeList.get(i).setSelected(true);
-            }
-            else {
+            else
               treeNodeList.get(i).setSelected(false);
-            }
           }
         }
       }
@@ -347,7 +332,7 @@ public class TreeListActivity extends AppCompatActivity {
   }
 
   public void askForIsSureToFinish(){
-    MessageDialog.build(TreeListActivity.this)
+    MessageDialog.build(TreeListActivity3.this)
       .setStyle(DialogSettings.STYLE.STYLE_IOS)
       .setTitle("提示")
       .setMessage("确认退出当前界面吗")

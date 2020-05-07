@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EEEEEE">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/redraft_task_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:theme="@style/AppTheme.PopupOverlay"
+        android:background="?attr/colorPrimary">
+
+        <TextView
+            android:id="@+id/redraft_task_toolbar_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="标题"
+            android:textColor="@color/white" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:paddingBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="任务名: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_taskName"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="任务类型: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_taskType"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/draft_task_lin"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="任务ID: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_taskID"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="设备ID: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_devID"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="任务开始时间: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_starttime"
+                    android:textSize="13dp"
+                    android:hint="请选择开始时间..."
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="任务截止时间: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_deadline"
+                    android:textSize="13dp"
+                    android:hint="请选择截止时间..."
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="设备种类: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_devtype"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="设备地址: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_devlocation"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    android:layout_weight="1"
+                    android:text="企业名称: "
+                    android:textColor="@color/black"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_companyname"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_drafttask"
+                    android:gravity="center"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:text="排查人员: "
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/redraft_task_textview_person"
+                    android:textSize="13dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:background="@drawable/bg_drafttask"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="2.52"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.neu.test.layout.MyListView
+                    android:id="@+id/redraft_listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.neu.test.layout.MyListView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="35dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/redraft_task_button_back"
+                    android:textColor="@color/white"
+                    android:text="返回"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/bg_button2"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/redraft_task_button_ok"
+                    android:textColor="@color/white"
+                    android:text="确定"
+                    android:layout_marginLeft="3dp"
+                    android:background="@drawable/bg_button2"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

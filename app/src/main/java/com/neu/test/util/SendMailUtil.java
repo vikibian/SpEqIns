@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.SplashActivity;
 
 /**
@@ -40,12 +41,12 @@ public class SendMailUtil {
     @NonNull
     private static MailInfo creatMail(String toAdd, String subject, String content) {
         final MailInfo mailInfo = new MailInfo();
-        mailInfo.setMailServerHost(SplashActivity.emailInfo.getHOST());
-        mailInfo.setMailServerPort(SplashActivity.emailInfo.getPORT());
+        mailInfo.setMailServerHost(LoginActivity.emailInfo.getHOST());
+        mailInfo.setMailServerPort(LoginActivity.emailInfo.getPORT());
         mailInfo.setValidate(true);
-        mailInfo.setUserName(SplashActivity.emailInfo.getFROMADD()); // 你的邮箱地址
-        mailInfo.setPassword(SplashActivity.emailInfo.getFROMPSW());// 您的邮箱密码
-        mailInfo.setFromAddress(SplashActivity.emailInfo.getFROMADD()); // 发送的邮箱
+        mailInfo.setUserName(LoginActivity.emailInfo.getFROMADD()); // 你的邮箱地址
+        mailInfo.setPassword(LoginActivity.emailInfo.getFROMPSW());// 您的邮箱密码
+        mailInfo.setFromAddress(LoginActivity.emailInfo.getFROMADD()); // 发送的邮箱
         mailInfo.setToAddress(toAdd); // 发到哪个邮件去
         mailInfo.setSubject(subject); // 邮件主题
         mailInfo.setContent(content); // 邮件文本

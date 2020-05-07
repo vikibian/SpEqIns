@@ -4,6 +4,7 @@ package com.neu.test.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -140,11 +141,11 @@ public class FragmentManagerActivity extends BaseActivity {
 
         //如果变换页面下的排列将下面的顺序重新排列一下即可
 
-         CheckFragment checkFragment = new CheckFragment(selfTasks,mBottomBarLayout,taskType[0]);
-         mFragmentList.add(checkFragment);
+        CheckFragment checkFragment = new CheckFragment(selfTasks,mBottomBarLayout,taskType[0]);
+        mFragmentList.add(checkFragment);
 
 
-        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[1]);//recheck
+        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[1]);
         mFragmentList.add(taskFrag);
 
 
@@ -152,7 +153,7 @@ public class FragmentManagerActivity extends BaseActivity {
         mFragmentList.add(randomFrag);
 
 
-        CheckFragment recheck = new CheckFragment(selfTasks,mBottomBarLayout,taskType[3]);
+        CheckFragment recheck = new CheckFragment(reselfTasks,mBottomBarLayout,taskType[3]);
         mFragmentList.add(recheck);
 
         SearchFragment searchFragment = new SearchFragment();

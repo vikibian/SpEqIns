@@ -107,8 +107,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
+            <com.neu.test.layout.MyTextView
                 android:textSize="14dp"
+                android:ellipsize="marquee"
                 android:id="@+id/rectify_list_tv_totalitem"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
@@ -119,7 +120,6 @@
         <ListView
             android:id="@+id/rectify_list_lv"
             android:layout_width="match_parent"
-            android:layoutAnimation="@anim/anim_listview_item"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:divider="@null"

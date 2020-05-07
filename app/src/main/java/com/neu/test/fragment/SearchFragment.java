@@ -182,10 +182,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         MBsp_Qualify.setAdapter(adapterDeviceQualify);
         MBsp_Qualify.setText(searchUtil.deviceQualify[0]);
 
-        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.taskTypeNew);
+        adapterTaskType = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,searchUtil.taskType);
         adapterTaskType.setDropDownViewResource(R.layout.my_spinner_item);
         MBsp_taskType.setAdapter(adapterTaskType);
-        MBsp_taskType.setText(searchUtil.taskTypeNew[0]);
+        MBsp_taskType.setText(searchUtil.taskType[0]);
 
 //        adapterDeviceChecked = new ArrayAdapter<String>(getActivity(),R.layout.my_spinner,deviceChecked);
 //        adapterDeviceChecked.setDropDownViewResource(R.layout.my_spinner_item);
@@ -274,7 +274,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
     private void getSearchedData() {
         Log.e(TAG," Type : "+MBsp_Type.getText());
         Log.e(TAG," Qualify : "+MBsp_Qualify.getText());
-
+//        LoginActivity.user.setUSERNAME("孙琴");
+//        LoginActivity.user.setUSEUNITNAME("菲仕兰辉山乳业有限公司");
         String url = BaseUrl.BaseUrl+"selectUserResultServlet";
         Map<String, String> searchmap = new HashMap<>();
         searchmap.put("LOGINNAME",LoginActivity.user.getUSERNAME());

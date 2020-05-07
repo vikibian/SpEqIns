@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,46 +16,34 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
 import com.kongzue.dialog.v3.MessageDialog;
 import com.neu.test.R;
-import com.neu.test.entity.DetailTask;
-import com.neu.test.entity.DetectionItem;
+import com.neu.test.entity.CheckLists;
 import com.neu.test.entity.DetectionResult;
-import com.neu.test.entity.Result;
-import com.neu.test.entity.Task;
 import com.neu.test.layout.MyTextView;
-import com.neu.test.net.OkHttp;
-import com.neu.test.net.callback.ListIDetailTaskCallBack;
 import com.neu.test.tree.TreeBaseAdapter;
 import com.neu.test.tree.TreeListView;
 import com.neu.test.tree.TreeNode;
-import com.neu.test.util.BaseActivity;
-import com.neu.test.util.BaseUrl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
-import okhttp3.Call;
 
-public class TreeListActivity extends AppCompatActivity {
+public class TreeListActivity2 extends AppCompatActivity {
 
   private TreeListView mTreeListView = null;
   private MyTreeBaseAdapter mTreeListAdapter = null;
-  private List<DetectionResult> myDetectionResults = new ArrayList<>();
-  private List<DetectionResult> subDetectionResults = new ArrayList<>();
+  private List<CheckLists> myCheckLists = new ArrayList<>();
+  private List<CheckLists> subCheckLists = new ArrayList<>();
   private List<TreeNode> treeNodeList = new ArrayList<>();
   private Toolbar mToolbar;
   private TextView textView_toolbar;
@@ -92,9 +78,9 @@ public class TreeListActivity extends AppCompatActivity {
 
   private void init() {
     intent = getIntent();
-    myDetectionResults = (List<DetectionResult>) intent.getSerializableExtra("DetectionResults");
+    myCheckLists = (List<CheckLists>) intent.getSerializableExtra("CheckLists");
 
-    mTreeListAdapter = new MyTreeBaseAdapter(TreeListActivity.this,myDetectionResults);
+    mTreeListAdapter = new MyTreeBaseAdapter(TreeListActivity2.this,myCheckLists);
     mTreeListView.setAdapter(mTreeListAdapter);
     //TreeMethod();
   }
@@ -103,10 +89,10 @@ public class TreeListActivity extends AppCompatActivity {
     btn_submit.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if(subDetectionResults.size() == 0){
-          Toasty.warning(TreeListActivity.this,"未选择检查项").show();
+        if(subCheckLists.size() == 0){
+          Toasty.warning(TreeListActivity2.this,"未选择检查项").show();
         }
-        intent.putExtra("DList", (Serializable) subDetectionResults);
+        intent.putExtra("CList", (Serializable) subCheckLists);
         setResult(RESULT_OK,intent);
         finish();
       }
@@ -159,7 +145,7 @@ public class TreeListActivity extends AppCompatActivity {
     mTreeListAdapter.selectAll(flag);
   }
 
-  private void notifyDataSetChanged(List<DetectionResult> dataList) {
+  private void notifyDataSetChanged(List<CheckLists> dataList) {
     mTreeListAdapter.notifyDataSetChanged(dataList);
   }
 
@@ -199,7 +185,7 @@ public class TreeListActivity extends AppCompatActivity {
         holder = (ViewHolder) convertView.getTag();
 
       boolean isGroup = node.isGroup();
-      DetectionResult detailTask = (DetectionResult) node.getSelfData();
+      CheckLists checkLists = (CheckLists) node.getSelfData();
       if (isGroup == true) {
         holder.tree_more.setVisibility(View.GONE);
         holder.imageView.setImageResource(R.mipmap.jiahao);
@@ -212,7 +198,7 @@ public class TreeListActivity extends AppCompatActivity {
         holder.textView.setTextColor(Color.BLACK);
 
       }
-      holder.textView.setText(detailTask.getJIANCHAXIANGTITLE());
+      holder.textView.setText(checkLists.getMONITORCONTENT());
 
       holder.checkBox.setChecked(node.isSelected());
       holder.checkBox.setOnClickListener(new View.OnClickListener() {
@@ -225,8 +211,8 @@ public class TreeListActivity extends AppCompatActivity {
       holder.tree_more.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-          Dialog dlg = new Dialog(TreeListActivity.this,R.style.FullScreen);
-          View textEntryView = View.inflate(TreeListActivity.this,R.layout.show_law_and_other, null);
+          Dialog dlg = new Dialog(TreeListActivity2.this,R.style.FullScreen);
+          View textEntryView = View.inflate(TreeListActivity2.this,R.layout.show_law_and_other, null);
           TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
           TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
           Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
@@ -236,8 +222,8 @@ public class TreeListActivity extends AppCompatActivity {
               dlg.dismiss();
             }
           });
-          tv_paichaxize.setText(myDetectionResults.get(position).getCHECKCONTENT());
-          tv_laws.setText(myDetectionResults.get(position).getLAW());
+          tv_paichaxize.setText(myCheckLists.get(position).getMONITORCONTENT());
+          tv_laws.setText(myCheckLists.get(position).getLAW());
           dlg.setContentView(textEntryView);
           dlg.show();
         }
@@ -262,7 +248,7 @@ public class TreeListActivity extends AppCompatActivity {
     @Override
     public void onChildClick(AdapterView<?> parent, View view,
                              int position, TreeNode node) {
-      DetectionResult d = (DetectionResult) node.getSelfData();
+
     }
   }
 
@@ -270,7 +256,7 @@ public class TreeListActivity extends AppCompatActivity {
     @Override
     public void onExpandClick(AdapterView<?> parent, View view,
                               int position, TreeNode node) {
-      DetectionResult d = (DetectionResult) node.getSelfData();
+
     }
   }
 
@@ -278,7 +264,7 @@ public class TreeListActivity extends AppCompatActivity {
     @Override
     public void onCollapseClick(AdapterView<?> parent, View view,
                                 int position, TreeNode node) {
-      DetectionResult d = (DetectionResult) node.getSelfData();
+
 
     }
   }
@@ -286,14 +272,14 @@ public class TreeListActivity extends AppCompatActivity {
   private class ExpandListener implements TreeListView.OnExpandListener {
     @Override
     public void onExpand(TreeNode node) {
-      DetectionResult d = (DetectionResult) node.getSelfData();
+
     }
   }
 
   private class CollapseListener implements TreeListView.OnCollapseListener {
     @Override
     public void onCollapse(TreeNode node) {
-      DetectionResult d = (DetectionResult) node.getSelfData();
+
     }
   }
 
@@ -306,24 +292,22 @@ public class TreeListActivity extends AppCompatActivity {
         }
       }else{
         if(node.isSelected()){
-          if (!subDetectionResults.contains(node.getSelfData())) {
-            subDetectionResults.add((DetectionResult) node.getSelfData());
+          if (!subCheckLists.contains(node.getSelfData())) {
+            subCheckLists.add((CheckLists) node.getSelfData());
           }
         }else{
-          if (subDetectionResults.contains(node.getSelfData())) {
-            subDetectionResults.remove(node.getSelfData());
+          if (subCheckLists.contains(node.getSelfData())) {
+            subCheckLists.remove(node.getSelfData());
           }
         }
         int pId = node.getParentId();
         for (int i = 0; i < treeNodeList.size(); i++) {
           if (treeNodeList.get(i).getId() == pId) {
             List<TreeNode> list = treeNodeList.get(i).getChildNodeList();
-            if (list.size() == subDetectionResults.size()){
+            if (list.size() == subCheckLists.size())
               treeNodeList.get(i).setSelected(true);
-            }
-            else {
+            else
               treeNodeList.get(i).setSelected(false);
-            }
           }
         }
       }
@@ -347,7 +331,7 @@ public class TreeListActivity extends AppCompatActivity {
   }
 
   public void askForIsSureToFinish(){
-    MessageDialog.build(TreeListActivity.this)
+    MessageDialog.build(TreeListActivity2.this)
       .setStyle(DialogSettings.STYLE.STYLE_IOS)
       .setTitle("提示")
       .setMessage("确认退出当前界面吗")

@@ -18,8 +18,9 @@ public class SearchUtil {
     public String[] deviceType = {"通用","锅炉","压力容器","电梯","起重机","厂车","大型游乐设施","压力管道元件","压力管道","客车索道"};
     public String[] deviceTypeForDraft = {"通用","锅炉","压力容器","电梯","起重机","厂车","大型游乐设施","压力管道元件","压力管道","客车索道"};
     public String[] deviceQualify = {"合格","不合格"};
-    public String[] taskType = {"自查","整改","下派","临时"};
+    public String[] taskType = {"无","日常","整改","政府专项","企业专项"};
     public String[] taskTypeNew = {"日常","整改","政府专项","企业专项"};
+    public String[] taskTypeDraft = {"日常","政府专项","企业专项"};
     public String[] classofdev ={"10000","1000","2000","3000","4000","5000","6000","7000","8000","9000"};
     public String[] classofdevForDraft ={"10000","1000","2000","3000","4000","5000","6000","7000","8000","9000"};
     public String[] checkperiod ={"施工前","竣工后","总体验收","新购进特种设备","日常巡检","发生隐患后"};
@@ -108,6 +109,20 @@ public class SearchUtil {
             num = "3";
         }
         return num;
+    }
+
+    public String getQualityFromNUm(String num){
+        String quality = "";
+        if (num.equals("0")){
+            quality = "合格";
+        } else if (num.equals("1")){
+            quality = "不合格";
+        }else if (num.equals("2")){
+            quality = "未定";
+        }else if (num.equals("3")){
+            quality = "整改合格";
+        }
+        return quality;
     }
 
     public Map<String,String> getHelpMapForResult(){

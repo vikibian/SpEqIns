@@ -1,5 +1,6 @@
 package com.neu.test.activity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -35,6 +36,7 @@ import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
 import com.yyydjk.library.DropDownMenu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import okhttp3.Call;
 
 public class ShowSearchedResultActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "ShowSearchedResult";
+    private static final int REDRAFT_CODE = 101;
     private TextView textView_time;
     private TextView textView_deviceType;
     private TextView textView_qualify;
@@ -59,6 +62,7 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     private Toolbar mToolbar;
     private TextView toolbar_title;
     private Button button_back;
+    private Button buttonReDraft;
     private MaterialSpinner sp_fliter;
     private TextView textView_devID;
     private MyListView listView;
@@ -83,6 +87,8 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     private List<DetectionResult> listDatas_qualified = new ArrayList<>();
     private List<DetectionResult> listDatas_unqualified = new ArrayList<>();
     private List<DetectionResult> listDatas_undecied = new ArrayList<>();//代表的是整改合格
+    private List<DetectionResult> listForDraft = new ArrayList<>();
+//    private HashMap<Integer, Integer> recodPosition = new HashMap<>();
     private PromptDialog promptDialog;
 
     @Override
@@ -180,7 +186,6 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     private void initToolbar() {
         mToolbar = findViewById(R.id.toolbar_searchResult);
         toolbar_title = findViewById(R.id.toolbar_searchResult_title);
-        toolbar_title.setTextSize(18);
 
         toolbar_title.setText("查询结果显示");
         mToolbar.setTitle("");
@@ -216,7 +221,7 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
                     listResult  = reponse.getContent();
                     String result = new Gson().toJson(listResult);
                     Log.e(TAG,"测试结果："+result);
-                    if (reponse.getMessage().length() == 0){
+                    if (reponse.getContent().size() == 0){
                         Log.e(TAG,"没有post数据");
                     }else {
                         //初始化listview应该在获取数据之后
@@ -299,6 +304,22 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
         listViewAdapter1 = new ListViewAdapter1(getApplicationContext(),listResult,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
         promptDialog.dismiss();
+        boolean isShow = false;
+        listForDraft.clear();
+        int j=0;
+        for (int i=0;i<listResult.size();i++){
+            if (listResult.get(i).getSTATUS().equals(searchUtil.nohege)
+                    || listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)){
+                isShow = true;
+                listForDraft.add(listResult.get(i));
+                j++;
+            }
+        }
+        if (isShow){
+            buttonReDraft.setVisibility(View.VISIBLE);
+        }
+        Log.e(TAG, "initListViewAdapter1: "+isShow);
+        Log.e(TAG, "initListViewAdapter1: "+listForDraft.size());
 
     }
 
@@ -319,6 +340,10 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
         button_back = findViewById(R.id.btn_searchResult_back);
         button_back.setOnClickListener(this);
 
+        buttonReDraft = findViewById(R.id.btn_searchResult_redraft);
+        buttonReDraft.setVisibility(View.GONE);
+        buttonReDraft.setOnClickListener(this);
+
         sp_fliter = findViewById(R.id.show_searched_result_spinner);
         sp_fliter.setItems(searchUtil.getChooseList());
     }
@@ -331,7 +356,37 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
                 setResult(RESULT_OK);
                 this.finish();
                 break;
+            case R.id.btn_searchResult_redraft:
+                Log.e(TAG,"起草按钮点击了...");
+                promptDialog.showLoading("正在加载...");
+                Intent intent = new Intent(ShowSearchedResultActivity.this,ReDraftActivity.class);
+                intent.putExtra("task",task);
+                intent.putExtra("redraftdetection", (Serializable) listForDraft);
+                startActivityForResult(intent,REDRAFT_CODE);
+                promptDialog.dismiss();
+                break;
+            default:
+                break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK){
+//            if (requestCode == REDRAFT_CODE){
+//                boolean isChange = data.getBooleanExtra("isChange",false);
+//                if (isChange){
+//                    List<DetectionResult> detectionResultList = (List<DetectionResult>) data.getSerializableExtra("redraftdetection");
+//                    for (int i = 0;i<recodPosition.size();i++){
+//                        Log.e(TAG, "onActivityResult: "+recodPosition.get(i));
+//                        listResult.set(recodPosition.get(i),detectionResultList.get(i));
+//                    }
+//                    recodPosition.clear();
+//                    initListViewAdapter1();
+//                }
+//            }
+//        }
     }
 
     @Override

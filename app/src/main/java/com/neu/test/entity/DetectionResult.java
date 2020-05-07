@@ -312,6 +312,7 @@ public class DetectionResult implements Serializable {
   private String PHONE = "";//手机号
   private String LONGITUDE = "";//经度
   private String LATITUDE = "";//纬度
+  private String CHECKDATE;
 
   public String getYINHUANLEVEL() {
     return YINHUANLEVEL;
@@ -351,5 +352,13 @@ public class DetectionResult implements Serializable {
 
   public void setQIYEMINGCHENG(String QIYEMINGCHENG) {
     this.QIYEMINGCHENG = QIYEMINGCHENG;
+  }
+
+  public String getCHECKDATE() {
+    return CHECKDATE;
+  }
+
+  public void setCHECKDATE(String CHECKDATE) {
+    this.CHECKDATE = CHECKDATE;
   }
 }

@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class SidebarUtils {
+    private static final String TAG = "SidebarUtils";
+
     public static void initSelectStartTime(Context activity, final TextView selectStartTime){
         //控制时间范围(如果不设置范围，则使用默认时间1900-2100年，此段代码可注释)
         //因为系统Calendar的月份是从0-11的,所以如果是调用Calendar的set方法来设置时间,月份的范围也要是从0-11
@@ -106,6 +108,20 @@ public class SidebarUtils {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = format.parse(starttime);
         Date end = format.parse(endtime);
+        if (start.before(end)||start.equals(end)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isStartBeforeEndForSecond(String starttime,String endtime)throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        Date start = format.parse(starttime);
+        Date end = format.parse(endtime);
+        Log.e(TAG,"start:"+start);
+        Log.e(TAG,"end:"+end);
         if (start.before(end)||start.equals(end)){
             return true;
         }

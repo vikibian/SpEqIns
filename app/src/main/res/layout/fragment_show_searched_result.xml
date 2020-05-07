@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/lin"
+    android:id="@+id/draft_box_scrollview"
     tools:context=".fragment.ShowSearchedResultFragment">
 
     <!--<ScrollView-->

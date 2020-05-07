@@ -71,7 +71,7 @@ public class RectifyListActivity extends BaseActivity  {
     private ListView listView;
     private LinearLayout rectify_list_nocontent;
     private LinearLayout rectify_list_hascontent;
-    private TextView tv_totalitem;
+    private MyTextView tv_totalitem;
     private RectifyListAdapter rectifyListAdapter;
     private SearchUtil searchUtil = new SearchUtil();
 
@@ -382,6 +382,8 @@ public class RectifyListActivity extends BaseActivity  {
                 Log.e(TAG, "onActivityResult: pos  "+pos);
                 Log.e(TAG, "onClick: status  "+detectionResults.get(pos).getSTATUS() );
                 Log.e(TAG, "onClick: changed  "+detectionResults.get(pos).getISCHANGED() );
+                String string = new Gson().toJson(detectionResults.get(pos));
+                Log.e(TAG, "onActivityResult: detectionResults:"+string);
             }
 
         }

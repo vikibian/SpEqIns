@@ -48,11 +48,42 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.TreeListActivity"
+
+        <activity android:name=".activity.BoSourceActivity"
             android:theme="@style/NoBar">
+
         </activity>
-        <activity android:name=".activity.DraftTaskActivity"
-            android:theme="@style/NoBar"/>
+
+        <activity android:name=".activity.GenerateFangAn"
+            android:theme="@style/NoBar">
+
+        </activity>
+        <activity
+            android:name=".activity.TreeListActivity3"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.TreeListActivity2"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.TreeListActivity"
+            android:theme="@style/NoBar" />
+
+        <activity android:name=".activity.DraftBoxDetailsActivity"
+            android:theme="@style/NoBar">
+
+        </activity>
+        <activity
+            android:name=".activity.DraftBoxActivity"
+            android:theme="@style/NoBar"></activity>
+        <activity
+            android:name=".activity.ReDraftActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.TreeListActivity"
+            android:theme="@style/NoBar" />
+        <activity
+            android:name=".activity.DraftTaskActivity"
+            android:theme="@style/NoBar" />
         <activity
             android:name=".activity.FindPassWordActivity"
             android:theme="@style/NoBar" />
@@ -135,16 +166,16 @@
             android:theme="@style/NoBar" />
         <activity
             android:name=".activity.LoginActivity"
-            android:theme="@style/NoBar" />
-        <activity
-            android:name=".activity.SplashActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/NoBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- <activity -->
+        <!-- android:name=".activity.SplashActivity" -->
+        <!-- android:theme="@style/Theme.AppCompat.Light.NoActionBar"> -->
+        <!-- </activity> -->
         <activity
             android:name=".activity.VideoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

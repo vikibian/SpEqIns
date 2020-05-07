@@ -30,10 +30,13 @@ import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.neu.test.R;
+import com.neu.test.entity.DetectionResult;
+import com.neu.test.entity.EmailInfo;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.ResultForTaskAndUser;
 import com.neu.test.entity.Task;
 import com.neu.test.entity.User;
+import com.neu.test.net.callback.EmailInfoCallBack;
 import com.neu.test.net.callback.ListTaskAndUserCallBack;
 import com.neu.test.net.callback.ListTaskCallBack;
 import com.neu.test.net.OkHttp;
@@ -46,6 +49,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,25 +86,52 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TelephonyManager telephonyManager;
     PermissionUtils permissionUtils;
 
-    PromptDialog promptDialog;
+    private PromptDialog promptDialog;
     boolean autoLogin = false;
+
+    public  static EmailInfo emailInfo = new EmailInfo();
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState != null){
             Intent intent = new Intent(this,SplashActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
-        setContentView(R.layout.activity_login);
-        //试图初始化
-        initView();
-        //参数初始化
-        initParams();
-        //设置监听
-        setListener();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getEmailInfo();
+            }
+        }).start();
+      promptDialog = new PromptDialog(this);
+      permissionUtils = new PermissionUtils(this,LoginActivity.this,null,null);
+      telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+      //用户信息缓存
+      sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+      String name = sharedPreferences.getString("name", ""); //姓名
+      String password = sharedPreferences.getString("password", ""); //密码
+      autoLogin = sharedPreferences.getBoolean("isAuto",false);
+      if (name != "" || password != "") { //不为空，即有缓存，从缓存提取
+        if (permissionUtils.canGoNextstep()){
+          if(autoLogin){
+            getAutoTasksAndUserBypost(name,password); //获取用户及任务信息
+          }else{
+            //获取权限
+            //permissionUtils.getPermission();
+            setView(name,password);
+          }
+        }
+      }else{
+        //获取权限;
+        permissionUtils.getPermission();
+        setView("","");
+      }
+
         //获取权限
 //        permissionUtils = new PermissionUtils(this,this,null,null);
 //        permissionUtils.getPermission();
@@ -114,31 +145,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         bt_signin = findViewById(R.id.bt_signin);
     }
 
-    private void initParams() {
-        promptDialog = new PromptDialog(this);
-        permissionUtils = new PermissionUtils(this,LoginActivity.this,null,null);
-        telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-        //用户信息缓存
-        sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-        String name = sharedPreferences.getString("name", ""); //姓名
-        String password = sharedPreferences.getString("password", ""); //密码
-        autoLogin = sharedPreferences.getBoolean("isAuto",false);
-        if (name != "" || password != "") { //不为空，即有缓存，从缓存提取
-            input_name.setText(name);
-            input_password.setText(password);
-            if (permissionUtils.canGoNextstep()){
-                if(autoLogin){
-                    promptDialog.showLoading("正在登录 ... ");
-                    login();
-                }else{
-                    //获取权限
-                    permissionUtils.getPermission();
-                }
-            }
-        }else{
-            //获取权限;
-            permissionUtils.getPermission();
-        }
+    private void initParams(String name,String password) {
+        input_name.setText(name);
+        input_password.setText(password);
     }
 
     private void setListener() {
@@ -150,8 +159,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_login:
-                bt_signin.setClickable(false);
-                bt_login.setClickable(false);
                 if(permissionUtils.canGoNextstep()){
                     TelephonyManagement telephonyManagement = TelephonyManagement.getInstance();
                     TelephonyManagement.TelephonyInfo telephonyInfo = telephonyManagement.getTelephonyInfo(LoginActivity.this);
@@ -166,8 +173,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.bt_signin:
-                bt_login.setClickable(false);
-                bt_signin.setClickable(false);
+
 //                promptDialog.showLoading("加载中 ... ");
 //                sinup(); //注册
 //                Toast.makeText(LoginActivity.this, "修改密码", Toast.LENGTH_SHORT).show();
@@ -185,8 +191,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //登陆
     private void login() {
         if (!isValidae()) { //有效性判断
-            bt_login.setClickable(true);
-            bt_signin.setClickable(true);
+
             return;
         } else {
             inputName = input_name.getText().toString().trim();
@@ -258,6 +263,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+
+    private void getAutoTasksAndUserBypost(String name,String password) {
+      promptDialog.showLoading("自动登录中 ... ",false);
+    url = BaseUrl.BaseUrl+"getUserAndFullTask";
+    Map<String, String> map = new HashMap<>();
+    map.put("username",name);
+    map.put("password",password);
+    String gson = new Gson().toJson(map);
+
+    OkHttp okHttp = new OkHttp();
+    okHttp.postBypostString(url, gson, new ListTaskAndUserCallBack() {
+      @Override
+      public void onError(Call call, Exception e, int i) {
+        promptDialog.dismissImmediately();
+        Toasty.warning(LoginActivity.this,"客官，网络不给力!",Toast.LENGTH_SHORT,true).show();
+        setView(name,password);
+      }
+
+      @Override
+      public void onResponse(ResultForTaskAndUser<List<Task>, User> response, int i) {
+        if(response.getMessage().equals("登录成功")){
+          List<Task> tasks = response.getContent();
+          if(response.getContent().size()==0){
+            Log.e("TAG"," response.getContent: "+"无数据");
+            tasks = new ArrayList<Task>();
+          }
+          user = response.getUserInfo();
+          Intent intent = new Intent(LoginActivity.this,FragmentManagerActivity.class);
+          intent.putExtra("userTask", (Serializable) tasks);
+          intent.putExtra("userName",name);
+          startActivity(intent);
+          promptDialog = null;
+          finish();
+        }
+        else {
+          promptDialog.dismissImmediately();
+          setView(name,password);
+          Toasty.error(LoginActivity.this,"用户名或密码错误!",Toast.LENGTH_LONG,true).show();
+        }
+      }
+    });
+  }
+
     /**
      * 判断输入框输入的内容是否合法
      * @return
@@ -306,12 +354,70 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             promptDialog.dismissImmediately();
             super.onResume();
             Log.e("tttt","onstart");
-            bt_login.setClickable(true);
-            bt_signin.setClickable(true);
         }else{
             super.onResume();
-            bt_login.setClickable(true);
-            bt_signin.setClickable(true);
+          Log.e("tttt","onstart");
         }
+    }
+
+
+///调试
+   void  ttt(){
+
+      //取数据
+      SharedPreferences sharedPreferences = getSharedPreferences("zhenggaitasks",Context.MODE_PRIVATE);
+      String gsonstring = sharedPreferences.getString("tasks","[]");
+      Gson gson = new Gson();
+      List<Task> list = gson.fromJson(gsonstring,new ArrayList<Task>().getClass());
+
+      //放数据
+     Task task = new Task();
+     list.add(task);
+     SharedPreferences.Editor editor = sharedPreferences.edit();
+     editor.putString(task.getTASKID()+task.getDEVID()+task.getRUNWATERNUM(),new Gson().toJson(new ArrayList<DetectionResult>()));
+     String json2 = new Gson().toJson(list);
+     editor.putString("tasks",json2);
+     editor.apply();
+
+    }
+
+
+    void setView(String name,String password){
+      setContentView(R.layout.activity_login);
+      //试图初始化
+      initView();
+      //参数初始化
+      initParams(name,password);
+      //设置监听
+      setListener();
+    }
+
+    private void getEmailInfo() {
+        String url = BaseUrl.BaseUrl +"getEmailInfo";
+        Log.d(TAG,"POST url: "+url);
+
+        OkHttp okHttp = new OkHttp();
+        okHttp.postBypostString(url, "", new EmailInfoCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                Log.e(TAG, "onError: "+e.toString());
+            }
+
+            @Override
+            public void onResponse(Result<EmailInfo> reponse, int id) {
+                Log.e(TAG, "onResponse: "+reponse);
+
+                if (reponse.getMessage().equals("获取数据成功")){
+                    emailInfo = reponse.getContent();
+                    String result = new Gson().toJson(emailInfo);
+                    Log.e(TAG," 结果："+result);
+                }else if (reponse.getMessage().equals("不存在")){
+                    Log.e(TAG,"用户不存在！");
+                }else if (reponse.getMessage().equals("操作失败")){
+                    Log.e(TAG,"查找用户邮箱失败！");
+                }
+            }
+
+        });
     }
 }

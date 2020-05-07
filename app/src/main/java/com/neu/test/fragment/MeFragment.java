@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.allen.library.SuperTextView;
+import com.google.gson.Gson;
 import com.kongzue.dialog.interfaces.OnDialogButtonClickListener;
 import com.kongzue.dialog.util.BaseDialog;
 import com.kongzue.dialog.util.DialogSettings;
@@ -26,15 +27,20 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.kongzue.dialog.v3.TipDialog;
 import com.neu.test.R;
 import com.neu.test.activity.ChangeFontActivity;
+import com.neu.test.activity.DraftBoxActivity;
 import com.neu.test.activity.DraftTaskActivity;
 import com.neu.test.activity.FragmentManagerActivity;
+import com.neu.test.activity.GenerateFangAn;
 import com.neu.test.activity.LawLearningActivity;
 import com.neu.test.activity.LoginActivity;
 import com.neu.test.activity.MeAboutActivity;
 import com.neu.test.activity.MeAccountAndSafeActivity;
 import com.neu.test.activity.MeFeedbackActivity;
 import com.neu.test.activity.MeInformActivity;
+import com.neu.test.entity.DoubleData;
 import com.neu.test.layout.SimpleToolbar;
+import com.neu.test.net.OkHttp;
+import com.neu.test.net.callback.ListDoubleDataCallBack;
 import com.neu.test.util.BaseUrl;
 import com.neu.test.util.CacheUtil;
 import com.neu.test.util.ClickUtil;
@@ -46,9 +52,13 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 import me.leefeng.promptlibrary.PromptDialog;
+import okhttp3.Call;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -144,6 +154,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         Item8.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
         Item8.setTag(8);
 
+        QMUICommonListItemView Item9 = groupListView1.createItemView("方案制订");
+        Item9.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item9.setTag(9);
+
+        QMUICommonListItemView Item10 = groupListView1.createItemView("草稿箱");
+        Item10.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
+        Item10.setTag(10);
+
 
         QMUIGroupListView.newSection(getContext())
                 .setUseDefaultTitleIfNone(false) //默认标题内容
@@ -169,6 +187,8 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                 .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item2, this)
                 .addItemView(Item8, this)
+                .addItemView(Item9, this)
+                .addItemView(Item10,this)
                 .addTo(groupListView1);
 
         QMUIGroupListView.newSection(getContext())
@@ -290,8 +310,21 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                             .show();
                     break;
                 case 8:
-                    intent = new Intent(getActivity(), DraftTaskActivity.class);
+                    promptDialog.showLoading("起草任务准备中 ...");
+                    prepareData();
+                    break;
+
+                case 9:
+                    intent = new Intent(getActivity(), GenerateFangAn.class);
                     startActivity(intent);
+                    break;
+                case 10:
+                    promptDialog.showLoading("正在加载...");
+                    intent = new Intent(getActivity(), DraftBoxActivity.class);
+                    startActivity(intent);
+                    promptDialog.dismiss();
+                    break;
+                default:
                     break;
             }
         }
@@ -383,5 +416,37 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         super.onResume();
         ((QMUICommonListItemView)groupListView3.findViewWithTag(5)).setDetailText(getCacheSize());
         promptDialog.dismissImmediately();
+    }
+
+    private void prepareData() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("username",LoginActivity.user.getUSERNAME());
+        map.put("unitname",LoginActivity.user.getUSEUNITNAME());
+
+        String url = BaseUrl.BaseUrl+"getDraftData";
+        OkHttp okHttp=new OkHttp();
+        okHttp.postBypostString(url, new Gson().toJson(map), new ListDoubleDataCallBack() {
+            @Override
+            public void onError(Call call, Exception e, int i) {
+                promptDialog.dismissImmediately();
+                Toasty.warning(getActivity(),"客官，网络不给力!", Toast.LENGTH_LONG,true).show();
+            }
+
+            @Override
+            public void onResponse(DoubleData<ArrayList<String>, ArrayList<String>> response, int id) {
+                if(response.getMessage().equals("获取信息成功")) {
+                    ArrayList<String> cycle = response.getCycle();
+                    ArrayList<String> fanganName = response.getFAName();
+                    Intent intent = new Intent(getActivity(), DraftTaskActivity.class);
+                    intent.putStringArrayListExtra("cycleList",cycle);
+                    intent.putStringArrayListExtra("nameList",fanganName);
+                    startActivity(intent);
+                    promptDialog.dismissImmediately();
+                }else{
+                    promptDialog.dismissImmediately();
+                    Toasty.error(getActivity(),"获取检查项失败，请稍后重试").show();
+                }
+            }
+        });
     }
 }

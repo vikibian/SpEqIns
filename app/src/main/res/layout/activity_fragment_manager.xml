@@ -104,7 +104,7 @@
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
-            app:itemText="@string/tab_home"
+            app:itemText="@string/tab_self_examination"
 
             app:textColorNormal="@color/black"
 
@@ -131,12 +131,12 @@
             android:layout_weight="1"
 
             android:layout_height="match_parent"
-            app:iconNormal="@drawable/ic_assignment_returned_black_24dp"
-            app:iconSelected="@drawable/ic_assignment_returned_indigo_700_24dp"
+            app:iconNormal="@drawable/ic_view_list_black_24dp"
+            app:iconSelected="@drawable/ic_view_list_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
-            app:itemText="@string/tab_task"
+            app:itemText="@string/tab_make_list"
 
             app:textColorNormal="@color/black"
 
@@ -161,13 +161,13 @@
 
             android:layout_height="match_parent"
 
-            app:iconNormal="@drawable/ic_hourglass_empty_black_24dp"
+            app:iconNormal="@drawable/ic_drafts_black_24dp"
 
-            app:iconSelected="@drawable/ic_hourglass_empty_indigo_700_24dp"
+            app:iconSelected="@drawable/ic_drafts_indigo_700_24dp"
             app:iconWidth="30dp"
             app:iconHeight="30dp"
             app:itemTextSize="12dp"
-            app:itemText="@string/tab_random"
+            app:itemText="@string/tab_temporary"
 
             app:textColorNormal="@color/black"
 

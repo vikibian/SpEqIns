@@ -46,7 +46,7 @@ public class Task implements Serializable {
     }
 
     private String TASKNAME;  //任务ID
-    private String DEVCLASS;  //设备种类
+    private String DEVCLASS = "10000";  //设备种类
     private long DEVID;  //设备ID
     private String LOGINNAME;  //登录名
     private String RESULT;  //结果
@@ -232,7 +232,7 @@ public class Task implements Serializable {
     private String TASKTYPE;  //任务类型
 
     private String USEUNITNAME;
-    private  String PLACE; //地址
+    private  String PLACE = ""; //地址
     private String LONGITUDE;  //经度
     private String LATITUDE;  //纬度
 

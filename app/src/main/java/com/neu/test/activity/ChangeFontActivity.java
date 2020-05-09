@@ -120,7 +120,7 @@ public class ChangeFontActivity extends BaseActivity {
 //                                startActivity(intent);
 //                                finish();
 
-                                Intent intent = new Intent(ChangeFontActivity.this,SplashActivity.class);
+                                Intent intent = new Intent(ChangeFontActivity.this,LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();

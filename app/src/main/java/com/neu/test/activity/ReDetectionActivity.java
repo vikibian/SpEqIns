@@ -648,8 +648,10 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                 Toasty.warning(ReDetectionActivity.this,"已选择，无法重复操作");
                                 reflashList(listdetectionresult,flag);
                             }else{
-                                promptDialog.showLoading("加载中 ... ");
-                                jumpToSuggesstionActivity(getIndex(flag,position),"0");
+                                if (listdetectionresult.get(position).getQUZHENG().equals("一律取证")){
+                                    promptDialog.showLoading("加载中 ... ");
+                                    jumpToSuggesstionActivity(getIndex(flag,position),"0");
+                                }
                             }
                             break;
                         case R.id.rectify_item_status_rectified_2:
@@ -662,8 +664,10 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             }else{
                                 //页面跳转
                                 //detectionResults.get(position).setSTATUS("1");
-                                promptDialog.showLoading("加载中 ... ");
-                                jumpToSuggesstionActivity( getIndex(flag,position),"1");
+                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                    promptDialog.showLoading("加载中 ... ");
+                                    jumpToSuggesstionActivity( getIndex(flag,position),"1");
+                                }
                             }
                             break;
                         case  R.id.rectify_item_status_rectifyliving_2:
@@ -675,9 +679,11 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                 reflashList(listdetectionresult,flag);
                             }else{
                                 //页面跳转  现场整改
-                                promptDialog.showLoading("加载中 ... ");
-                                jumpToRectifyResultActivity( getIndex(flag,position),"3");
-                                reflashList(listdetectionresult,flag);
+                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                    promptDialog.showLoading("加载中 ... ");
+                                    jumpToRectifyResultActivity( getIndex(flag,position),"3");
+                                    reflashList(listdetectionresult,flag);
+                                }
                             }
                             break;
                         case R.id.detction_item_image_right_2:

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="#EEEEEE"
     android:id="@+id/draft_box_scrollview"
-    tools:context=".fragment.ShowSearchedResultFragment">
+    tools:context=".fragment.TemporaryTaskFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_searchResult"

@@ -64,9 +64,6 @@
         <activity
             android:name=".activity.TreeListActivity2"
             android:theme="@style/NoBar" />
-        <activity
-            android:name=".activity.TreeListActivity"
-            android:theme="@style/NoBar" />
 
         <activity android:name=".activity.DraftBoxDetailsActivity"
             android:theme="@style/NoBar">

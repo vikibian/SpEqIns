@@ -8,7 +8,7 @@ public class DetailTask implements Serializable {
   private String JIANCHAXIANGCONTENT;
   private long TASKID;
   private long DEVID;
-  private String SHIFOUHEGEQUZHENG = "1";
+  private String SHIFOUHEGEQUZHENG ;
   private String FANGANID;
   private String JIANCHAXIANGTITLE;  //
 

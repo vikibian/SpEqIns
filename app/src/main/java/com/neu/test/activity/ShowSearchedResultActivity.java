@@ -1,22 +1,16 @@
 package com.neu.test.activity;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jaredrummler.materialspinner.MaterialSpinner;
@@ -27,7 +21,6 @@ import com.neu.test.entity.DetectionItem1;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
-import com.neu.test.fragment.ShowSearchedResultFragment;
 import com.neu.test.layout.MyListView;
 import com.neu.test.net.OkHttp;
 import com.neu.test.net.callback.ListDetectionResultCallBack;
@@ -36,9 +29,7 @@ import com.neu.test.util.BaseUrl;
 import com.neu.test.util.SearchUtil;
 import com.yyydjk.library.DropDownMenu;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,22 +295,22 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
         listViewAdapter1 = new ListViewAdapter1(getApplicationContext(),listResult,searchUtil.choose[posFlag]);
         listView.setAdapter(listViewAdapter1);
         promptDialog.dismiss();
-        boolean isShow = false;
-        listForDraft.clear();
-        int j=0;
-        for (int i=0;i<listResult.size();i++){
-            if (listResult.get(i).getSTATUS().equals(searchUtil.nohege)
-                    || listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)){
-                isShow = true;
-                listForDraft.add(listResult.get(i));
-                j++;
-            }
-        }
-        if (isShow){
-            buttonReDraft.setVisibility(View.VISIBLE);
-        }
-        Log.e(TAG, "initListViewAdapter1: "+isShow);
-        Log.e(TAG, "initListViewAdapter1: "+listForDraft.size());
+//        boolean isShow = false;
+//        listForDraft.clear();
+//        int j=0;
+//        for (int i=0;i<listResult.size();i++){
+//            if (listResult.get(i).getSTATUS().equals(searchUtil.nohege)
+//                    || listResult.get(i).getSTATUS().equals(searchUtil.nohegeText)){
+//                isShow = true;
+//                listForDraft.add(listResult.get(i));
+//                j++;
+//            }
+//        }
+//        if (isShow){
+//            buttonReDraft.setVisibility(View.VISIBLE);
+//        }
+//        Log.e(TAG, "initListViewAdapter1: "+isShow);
+//        Log.e(TAG, "initListViewAdapter1: "+listForDraft.size());
 
     }
 
@@ -356,15 +347,15 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
                 setResult(RESULT_OK);
                 this.finish();
                 break;
-            case R.id.btn_searchResult_redraft:
-                Log.e(TAG,"起草按钮点击了...");
-                promptDialog.showLoading("正在加载...");
-                Intent intent = new Intent(ShowSearchedResultActivity.this,ReDraftActivity.class);
-                intent.putExtra("task",task);
-                intent.putExtra("redraftdetection", (Serializable) listForDraft);
-                startActivityForResult(intent,REDRAFT_CODE);
-                promptDialog.dismiss();
-                break;
+//            case R.id.btn_searchResult_redraft:
+//                Log.e(TAG,"起草按钮点击了...");
+//                promptDialog.showLoading("正在加载...");
+//                Intent intent = new Intent(ShowSearchedResultActivity.this,ReDraftActivity.class);
+//                intent.putExtra("task",task);
+//                intent.putExtra("redraftdetection", (Serializable) listForDraft);
+//                startActivityForResult(intent,REDRAFT_CODE);
+//                promptDialog.dismiss();
+//                break;
             default:
                 break;
         }
@@ -373,20 +364,6 @@ public class ShowSearchedResultActivity extends BaseActivity implements View.OnC
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK){
-//            if (requestCode == REDRAFT_CODE){
-//                boolean isChange = data.getBooleanExtra("isChange",false);
-//                if (isChange){
-//                    List<DetectionResult> detectionResultList = (List<DetectionResult>) data.getSerializableExtra("redraftdetection");
-//                    for (int i = 0;i<recodPosition.size();i++){
-//                        Log.e(TAG, "onActivityResult: "+recodPosition.get(i));
-//                        listResult.set(recodPosition.get(i),detectionResultList.get(i));
-//                    }
-//                    recodPosition.clear();
-//                    initListViewAdapter1();
-//                }
-//            }
-//        }
     }
 
     @Override

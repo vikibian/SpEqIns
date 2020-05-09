@@ -52,6 +52,7 @@ import com.neu.test.util.SearchUtil;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +80,7 @@ public class CheckFragment extends Fragment {
   BottomBarLayout mBottomBarLayout;
   private String taskType;
 
-  private MaterialSpinner sp_devid;
+  private MaterialSpinner sp_tasktype;
   private MaterialSpinner sp_devclass;
 
   private List<String> devclassList;
@@ -92,6 +93,7 @@ public class CheckFragment extends Fragment {
 
   private SharedPreferences sharedPreferences;
   private String data;//保存 缓存的字段名
+  private String[] taskTypeArray = {"日常","企业专项","政府专项"};
 
   PromptDialog promptDialog;
 
@@ -128,7 +130,7 @@ public class CheckFragment extends Fragment {
     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     lv_check = view.findViewById(R.id.lv_check);
-//        sp_devid = view.findViewById(R.id.sp_devid);
+    sp_tasktype = view.findViewById(R.id.sp_tasktype);
     sp_devclass = view.findViewById(R.id.sp_devclass);
     check_noitem = view.findViewById(R.id.check_noitem);
 
@@ -163,7 +165,7 @@ public class CheckFragment extends Fragment {
     }
 
     sp_devclass.setItems(devclassList);
-//        sp_devid.setItems(devidList);
+    sp_tasktype.setItems(Arrays.asList(taskTypeArray));
 
 
     sp_devclass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
@@ -290,11 +292,13 @@ public class CheckFragment extends Fragment {
       detectionResult.setDEVID(task.getDEVID());
       detectionResult.setDEVCLASS(task.getDEVCLASS());
       detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
+      detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
+      detectionResult.setQUZHENG(items.get(position).getSHIFOUHEGEQUZHENG());
       detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
       detectionResult.setLAW(items.get(position).getLAW());
       detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
       detectionResults.add(detectionResult);
-      if(!items.get(position).getSHIFOUHEGEQUZHENG().equals("1")){
+      if(!items.get(position).getSHIFOUHEGEQUZHENG().equals("一律取证")){
         detectionResult.setSTATUS("0");
       }
     }

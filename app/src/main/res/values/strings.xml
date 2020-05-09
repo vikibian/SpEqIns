@@ -13,6 +13,9 @@
     <string name="tab_micro">整改</string>
 
     <string name="tab_me">我的</string>
+    <string name="tab_self_examination">自查</string>
+    <string name="tab_make_list">清单</string>
+    <string name="tab_temporary">临时</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

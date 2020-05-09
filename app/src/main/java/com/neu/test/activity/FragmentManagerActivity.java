@@ -4,7 +4,6 @@ package com.neu.test.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,12 +13,10 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -31,8 +28,10 @@ import com.kongzue.dialog.v3.MessageDialog;
 import com.neu.test.R;
 import com.neu.test.entity.Task;
 import com.neu.test.fragment.CheckFragment;
+import com.neu.test.fragment.MakeListFragment;
 import com.neu.test.fragment.MeFragment;
 import com.neu.test.fragment.SearchFragment;
+import com.neu.test.fragment.TemporaryTaskFragment;
 import com.neu.test.layout.BottomBarItem;
 import com.neu.test.layout.BottomBarLayout;
 import com.neu.test.layout.SimpleToolbar;
@@ -145,12 +144,18 @@ public class FragmentManagerActivity extends BaseActivity {
         mFragmentList.add(checkFragment);
 
 
-        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[1]);
-        mFragmentList.add(taskFrag);
+//        CheckFragment taskFrag = new CheckFragment(kingTasks,mBottomBarLayout,taskType[1]);
+//        mFragmentList.add(taskFrag);
+
+        MakeListFragment makeListFragment = new MakeListFragment();
+        mFragmentList.add(makeListFragment);
+
+        TemporaryTaskFragment temporaryTaskFragment = new TemporaryTaskFragment();
+        mFragmentList.add(temporaryTaskFragment);
 
 
-        CheckFragment randomFrag = new CheckFragment(randomTasks,mBottomBarLayout,taskType[2]);
-        mFragmentList.add(randomFrag);
+//        CheckFragment randomFrag = new CheckFragment(randomTasks,mBottomBarLayout,taskType[2]);
+//        mFragmentList.add(randomFrag);
 
 
         CheckFragment recheck = new CheckFragment(reselfTasks,mBottomBarLayout,taskType[3]);

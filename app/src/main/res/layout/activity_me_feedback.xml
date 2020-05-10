@@ -43,57 +43,65 @@
 
             </androidx.appcompat.widget.Toolbar>
 
-            <ScrollView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <LinearLayout
-                        android:orientation="vertical"
+                    <ScrollView
+                        android:layout_above="@+id/me_feedback_submit"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
-                        <EditText
-                            android:hint="请输入您的意见..."
-                            android:padding="10dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:id="@+id/me_feedback_edittext"
+                        <LinearLayout
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:minLines="4"
-                            android:background="@drawable/bg_edittext2"
-                            android:inputType="textMultiLine"
-                            android:textColor="@color/black"
-                            android:textSize="15dp" />
+                            android:layout_height="match_parent">
 
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
 
-                        <Button
-                            android:layout_marginTop="25dp"
-                            android:id="@+id/me_feedback_submit"
-                            android:textColor="@color/white"
-                            android:text="提交"
-                            android:background="@drawable/bg_button2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                                <EditText
+                                    android:hint="请输入您的意见..."
+                                    android:padding="10dp"
+                                    android:layout_marginRight="10dp"
+                                    android:layout_marginLeft="10dp"
+                                    android:id="@+id/me_feedback_edittext"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="start"
+                                    android:minLines="4"
+                                    android:background="@drawable/bg_edittext2"
+                                    android:inputType="textMultiLine"
+                                    android:textColor="@color/black"
+                                    android:textSize="15dp" />
 
-                    </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
 
+                    </ScrollView>
 
+                    <Button
+                        android:layout_marginBottom="10dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginTop="15dp"
+                        android:id="@+id/me_feedback_submit"
+                        android:textColor="@color/white"
+                        android:text="提交"
+                        android:background="@drawable/bg_button2"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp" />
 
-                </LinearLayout>
+                </RelativeLayout>
 
-
-            </ScrollView>
-
-
-
+            </LinearLayout>
 
         </LinearLayout>
 

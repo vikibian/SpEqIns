@@ -150,14 +150,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         Item7.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CUSTOM);
         Item7.setTag(7);
 
-        QMUICommonListItemView Item8 = groupListView1.createItemView("任务起草");
-        Item8.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        Item8.setTag(8);
-
-        QMUICommonListItemView Item9 = groupListView1.createItemView("方案制订");
-        Item9.setAccessoryType(QMUICommonListItemView.ACCESSORY_TYPE_CHEVRON);
-        Item9.setTag(9);
-
 
 
         QMUIGroupListView.newSection(getContext())
@@ -183,8 +175,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
 
                 .setLeftIconSize(size, ViewGroup.LayoutParams.WRAP_CONTENT)
                 .addItemView(Item2, this)
-                .addItemView(Item8, this)
-                .addItemView(Item9, this)
                 .addTo(groupListView1);
 
         QMUIGroupListView.newSection(getContext())
@@ -304,15 +294,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
                                 }
                             })
                             .show();
-                    break;
-                case 8:
-                    promptDialog.showLoading("起草任务准备中 ...");
-                    prepareData();
-                    break;
-
-                case 9:
-                    intent = new Intent(getActivity(), GenerateFangAn.class);
-                    startActivity(intent);
                     break;
                 default:
                     break;

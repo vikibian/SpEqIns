@@ -475,6 +475,8 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             detectionResult.setDEVID(detectionResults.get(0).getDEVID());
                             detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
                             detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
+                            detectionResult.setQUZHENG("一律取证");
+                            detectionResult.setQIYEMINGCHENG(detectionResults.get(0).getQIYEMINGCHENG());
 //                            ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
                             detectionadd.add(detectionResult);
                             detectionResults.add(detectionResult);
@@ -664,7 +666,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             }else{
                                 //页面跳转
                                 //detectionResults.get(position).setSTATUS("1");
-                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                if (!listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
                                     promptDialog.showLoading("加载中 ... ");
                                     jumpToSuggesstionActivity( getIndex(flag,position),"1");
                                 }
@@ -679,7 +681,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                 reflashList(listdetectionresult,flag);
                             }else{
                                 //页面跳转  现场整改
-                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                if (!listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
                                     promptDialog.showLoading("加载中 ... ");
                                     jumpToRectifyResultActivity( getIndex(flag,position),"3");
                                     reflashList(listdetectionresult,flag);

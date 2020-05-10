@@ -3,6 +3,7 @@ package com.neu.test.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.neu.test.R;
 import com.neu.test.activity.BoSourceActivity;
@@ -33,6 +35,7 @@ import com.neu.test.activity.TreeListActivity3;
 import com.neu.test.entity.DetailTask;
 import com.neu.test.entity.DetectionResult;
 import com.neu.test.entity.DoubleData;
+import com.neu.test.entity.EmailInfo;
 import com.neu.test.entity.Result;
 import com.neu.test.entity.Task;
 import com.neu.test.layout.SimpleToolbar;
@@ -112,6 +115,8 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        faName .add("自定义");
         promptDialog = new PromptDialog(getActivity());
         new Thread(new Runnable() {
             @Override
@@ -141,11 +146,11 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                     materialSpinner_checkperiod.setVisibility(View.VISIBLE);
                     zq_tv.setVisibility(View.VISIBLE);
                 }else{
-                    String value1 = sharedPreferences.getString(spKey+draft_task_spinner_fangan.getText().toString()+"1","");
-                    String value2 = sharedPreferences.getString(spKey+draft_task_spinner_fangan.getText().toString()+"2","");
+                    String value1 = sharedPreferences.getString(spKey+draft_task_spinner_fangan.getText().toString()+"1","[]");
+                    String value2 = sharedPreferences.getString(spKey+draft_task_spinner_fangan.getText().toString()+"2","[]");
                     materialSpinner_checkperiod.setVisibility(View.GONE);
                     zq_tv.setVisibility(View.GONE);
-                    if(value1.equals("")){
+                    if(value1.equals("[]")){
                         button_getCheckItem.setVisibility(View.GONE);
                         draft_task_button_lookFangAn.setVisibility(View.GONE);
                         draft_task_button_donwload.setVisibility(View.VISIBLE);
@@ -156,8 +161,13 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                         draft_task_button_donwload.setVisibility(View.GONE);
                         detectionResults1.clear();
                         detectionResults2.clear();
-                        detectionResults1.addAll(getList(new ArrayList<DetectionResult>(),sharedPreferences.getString(value1,"[]")));
-                        detectionResults2.addAll(getList(new ArrayList<DetectionResult>(),sharedPreferences.getString(value2,"[]")));
+                        detectionResults1.addAll( new Gson().fromJson(value1, new TypeToken<ArrayList<DetectionResult>>(){}.getType()));
+                        detectionResults2.addAll( new Gson().fromJson(value2, new TypeToken<ArrayList<DetectionResult>>(){}.getType()));
+
+                        Log.e("ttttttttt",detectionResults2.size()+"");
+                        Log.e("ttttttttt",detectionResults1.size()+"");
+                        Log.e("ttttttttt",detectionResults1.get(5).toString()+"");
+                        Log.e("ttttttttt",detectionResults2.get(5).toString()+"");
                     }
 
 
@@ -203,7 +213,7 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
         textView_deadline.setOnClickListener(this);
 
         List<String> list_tasksource = new ArrayList<>();
-        list_tasksource = Arrays.asList(new String[]{"无","日常","企业专项","政府专项"});
+        list_tasksource = Arrays.asList(new String[]{"日常","企业专项","政府专项"});
         materialSpinner_taskSource.setItems(list_tasksource);
         List<String> list_devtype = new ArrayList<>();
         list_devtype = Arrays.asList(searchUtil.deviceTypeForDraft);
@@ -223,15 +233,33 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.draft_task_button_ok:
+              String taskName2 = editText_taskID.getText().toString().trim();
+              String devID2 = editText_devID.getText().toString().trim();
+              if(taskName2.equals("")){
+                Toasty.error(getContext(),"请输入有效任务名称").show();
+              }else if(devID2.equals("")||(!isNumeric(devID2))){
+                Toasty.error(getContext(),"请输入有效设备号").show();
+              }else if(textView_deadline.getText().toString().equals("")){
+                Toasty.error(getContext(),"请选择截止时间").show();
+              } else{
                 if(detectionResults2 == null){
-                    Toasty.error(getContext(),"请选择检查项").show();
+                  Toasty.error(getContext(),"请选择检查项").show();
                 }else if(detectionResults2.size() == 0){
-                    Toasty.error(getContext(),"请选择检查项").show();
+                  Toasty.error(getContext(),"请选择检查项").show();
                 }else {
-                    promptDialog.showLoading("任务生成中 ...");
-                    //提交任务
-                    draftTask();
+                  if(!draft_task_spinner_fangan.getText().toString().equals("自定义")){
+                    int index = draft_task_spinner_fangan.getText().toString().lastIndexOf("_");
+                    String ss = draft_task_spinner_fangan.getText().toString().substring(index+1);
+                    if(!ss.equals(materialSpinner_devType.getText().toString())){
+                      Toasty.error(getContext(),"方案与设备类型不匹配").show();
+                      return ;
+                    }
+                  }
+                  promptDialog.showLoading("任务生成中 ...");
+                  //提交任务
+                  draftTask(taskName2,Long.valueOf(devID2));
                 }
+              }
                 break;
             case R.id.draft_task_button_getCheckItem:
                 String taskName = editText_taskID.getText().toString().trim();
@@ -259,34 +287,43 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                 lookFanganData();
                 break;
             case R.id.draft_task_button_donwload:
-                String taskName2 = editText_taskID.getText().toString().trim();
-                String devID2 = editText_devID.getText().toString().trim();
-                if(taskName2.equals("")){
+                String taskName3 = editText_taskID.getText().toString().trim();
+                String devID3 = editText_devID.getText().toString().trim();
+                if(taskName3.equals("")){
                     Toasty.error(getContext(),"请输入有效任务名称").show();
-                }else if(devID2.equals("")||(!isNumeric(devID2))){
+                }else if(devID3.equals("")||(!isNumeric(devID3))){
                     Toasty.error(getContext(),"请输入有效设备号").show();
                 }else if(textView_deadline.getText().toString().equals("")){
                     Toasty.error(getContext(),"请选择截止时间").show();
                 } else{
-                    BigInteger bigInteger = new BigInteger(devID2);
+                    BigInteger bigInteger = new BigInteger(devID3);
                     long devid = bigInteger.longValue();
                     promptDialog.showLoading("检查方案下载中 ...");
-                    jumpToDownload(taskName2,devid);
+                    jumpToDownload(taskName3,devid);
                 }
         }
     }
 
     //提交任务
-    public void draftTask(){
-        if(materialSpinner_taskSource.getText().toString().equals("无")){
-
-            Intent intent = new Intent(getContext(), BoSourceActivity.class);
-            intent.putExtra("items", (Serializable) detectionResults2);
-            intent.putExtra("task", (Serializable) task);
-            startActivity(intent);
-        }else{
-            submitData();
-        }
+    public void draftTask(String taskname,long devid){
+      Date date = new Date();
+      SimpleDateFormat sd2 = new SimpleDateFormat("yyyyMMddHHmmss");
+      String taskid = sd2.format(date);
+      task.setDEVID(devid);
+      task.setTASKNAME(taskname);
+      BigInteger bigInteger = new BigInteger(taskid);
+      task.setTASKID(bigInteger.longValue());
+      task.setTASKTYPE(materialSpinner_taskSource.getText().toString());
+      task.setDEVCLASS(task_devclass);
+      task.setRESULT("2");
+      task.setRUNWATERNUM(taskid);
+      task.setDEADLINE(textView_deadline.getText().toString());
+      for(int i=0;i<detectionResults2.size();i++){
+        detectionResults2.get(i).setDEVID(devid);
+        detectionResults2.get(i).setRUNWATERNUM(taskid);
+        detectionResults2.get(i).setTASKID(Long.valueOf(taskid));
+      }
+      submitData();
     }
     public void jumpToGetItems(String taskName,long devID){
         Date date = new Date();
@@ -369,20 +406,18 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
 
 
     public List<DetectionResult> creatDetectionResultList(List<DetailTask> items){
-        //父节点
-
-        DetectionResult detectionResult1 = new DetectionResult(0, TreeNode.ROOT_PARENT_ID,true, "");
-        detectionResult1.setJIANCHAXIANGTITLE("通用");
-        DetectionResult detectionResult2 = new DetectionResult(1, TreeNode.ROOT_PARENT_ID,true, "");
-        detectionResult2.setJIANCHAXIANGTITLE(materialSpinner_devType.getText().toString());
         //子节点
         List<DetectionResult> detectionResults = new ArrayList<>();
-
+        boolean flagT = false;
+        boolean flagS = false;
         for (int position=0;position<items.size();position++){
             if(items.get(position).getDEVCLASS().equals("10000")){
-                if(!detectionResults.contains(detectionResult1)){
-                    detectionResults.add(detectionResult1);
-                }
+              if(!flagT){
+                DetectionResult detectionResult1 = new DetectionResult(0, TreeNode.ROOT_PARENT_ID,true, "");
+                detectionResult1.setJIANCHAXIANGTITLE("通用");
+                detectionResults.add(detectionResult1);
+                flagT = true;
+              }
                 Log.e("tttttttt",position+"通用");
                 DetectionResult detectionResult = new DetectionResult(position+2,0,false,items.get(position).getJIANCHAXIANGTITLE());
                 detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
@@ -399,9 +434,13 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                 detectionResult.setSTATUS("2");
                 detectionResults.add(detectionResult);
             }else{
-                if(!detectionResults.contains(detectionResult2)){
-                    detectionResults.add(detectionResult2);
-                }
+
+              if(!flagS){
+                DetectionResult detectionResult2 = new DetectionResult(1, TreeNode.ROOT_PARENT_ID,true, "");
+                detectionResult2.setJIANCHAXIANGTITLE(new SearchUtil().getDevclassToType(items.get(position).getDEVCLASS()));
+                detectionResults.add(detectionResult2);
+                flagS = true;
+              }
                 Log.e("tttttttt",position+"sp");
                 DetectionResult detectionResult = new DetectionResult(position+2,1,false,items.get(position).getJIANCHAXIANGTITLE());
                 detectionResult.setCHECKCONTENT(items.get(position).getJIANCHAXIANGCONTENT());//检查内容
@@ -462,11 +501,13 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                     Log.e(TAG, "onResponse: "+result );
                     intent.putExtra("userName",LoginActivity.inputName);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    promptDialog.dismissImmediately();
+                    promptDialog = null;
                     startActivity(intent);
                     promptDialog = null;
 
                 }else{
-                    promptDialog = null;
+                    promptDialog.dismissImmediately();
                     Toasty.error(getContext(),"操作失败，请稍后重试").show();
 
                 }
@@ -533,7 +574,7 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
                         detectionResults2.addAll(detection_r);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(spKey+draft_task_spinner_fangan.getText().toString()+"1",new Gson().toJson(detectionResults1));
-                        editor.putString(spKey+draft_task_spinner_fangan.getText().toString()+"2",new Gson().toJson(detection_r));
+                        editor.putString(spKey+draft_task_spinner_fangan.getText().toString()+"2",new Gson().toJson(detectionResults2));
                         editor.commit();
                         button_getCheckItem.setVisibility(View.GONE);
                         draft_task_button_lookFangAn.setVisibility(View.VISIBLE);
@@ -582,7 +623,7 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
             public void onResponse(DoubleData<ArrayList<String>, ArrayList<String>> response, int id) {
                 if(response.getMessage().equals("获取信息成功")) {
                     cycle = response.getCycle();
-                    faName = response.getFAName();
+                    faName.addAll(response.getFAName());
                     Log.e(TAG,"cycle:"+cycle.toString());
                     Log.e(TAG,"fName:"+faName.toString());
                     materialSpinner_checkperiod.setItems(cycle);
@@ -593,4 +634,6 @@ public class DraftTaskFragment extends Fragment implements View.OnClickListener 
             }
         });
     }
+
+
 }

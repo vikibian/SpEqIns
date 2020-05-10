@@ -52,7 +52,6 @@ import com.neu.test.util.SearchUtil;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -74,9 +73,10 @@ public class CheckFragment extends Fragment {
 
   public ListView lv_check;
   private LinearLayout check_noitem;
-  //    private Map<String,String> map_devclass;
+  private TextView check_noitem_tv;
   public CheckAdapter checkAdapter;
   List<Task> tasks = new ArrayList<Task>();
+
   BottomBarLayout mBottomBarLayout;
   private String taskType;
 
@@ -84,16 +84,19 @@ public class CheckFragment extends Fragment {
   private MaterialSpinner sp_devclass;
 
   private List<String> devclassList;
-  private List<String> devidList;
+  private List<String> devType;
 
   public List<DetectionItem> testItem;
 
   private List<Task> devclassTasks;
+
   private SearchUtil searchUtil = new SearchUtil();
 
   private SharedPreferences sharedPreferences;
   private String data;//保存 缓存的字段名
-  private String[] taskTypeArray = {"日常","企业专项","政府专项"};
+
+  private String selectedType = "全部";
+  private String selectedClass = "全部";
 
   PromptDialog promptDialog;
 
@@ -133,20 +136,24 @@ public class CheckFragment extends Fragment {
     sp_tasktype = view.findViewById(R.id.sp_tasktype);
     sp_devclass = view.findViewById(R.id.sp_devclass);
     check_noitem = view.findViewById(R.id.check_noitem);
+    check_noitem_tv = view.findViewById(R.id.check_noitem_tv);
 
     promptDialog = new PromptDialog(getActivity());
 
     devclassList = new ArrayList<>();
-    devidList = new ArrayList<>();
+    devType = new ArrayList<>();
 //        map_devclass = new HashMap<>();
     devclassTasks = new ArrayList<>();
     //准备BaseAdapter
     checkAdapter = new CheckAdapter();
     devclassTasks.addAll(tasks);
+
     devclassList.add("全部");
-    devidList.add("设备类别");
-//        map_devclass.put("3000","电梯");
-//        map_devclass.put("8000","压力管道");
+    devType.add("全部");
+    devType.add("日常");
+    devType.add("企业专项");
+    devType.add("政府专项");
+
     //设置Adapter显示列表
     lv_check.setAdapter(checkAdapter);
 
@@ -165,13 +172,50 @@ public class CheckFragment extends Fragment {
     }
 
     sp_devclass.setItems(devclassList);
-    sp_tasktype.setItems(Arrays.asList(taskTypeArray));
+    sp_tasktype.setItems(devType);
+//        sp_devid.setItems(devidList);
 
-
-    sp_devclass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+    sp_tasktype.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
       @Override
       public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+        selectedType = item.toString();
+        devclassTasks.clear();
+        for(int i=0;i<tasks.size();i++){
+          if(!selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            if(tasks.get(i).getTASKTYPE().equals(selectedType)&&tasks.get(i).getDEVCLASS().equals(selectedClass)){
+              devclassTasks.add(tasks.get(i));
+            }
+          }else if(!selectedType.equals("全部")&&selectedClass.equals("全部")){
+            if(tasks.get(i).getTASKTYPE().equals(selectedType)){
+              devclassTasks.add(tasks.get(i));
+            }
 
+          }else if(selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            if(tasks.get(i).getDEVCLASS().equals(selectedClass)){
+              devclassTasks.add(tasks.get(i));
+            }
+          }else{
+            devclassTasks.add(tasks.get(i));
+          }
+        }
+
+        if(devclassTasks.size() == 0){
+          if(selectedType.equals("全部")&&selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无数据");
+          }else  if(!selectedType.equals("全部")&&selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无"+selectedType+"数据");
+          }else if(!selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无"+selectedType+sp_devclass.getText().toString()+"数据");
+          }
+          check_noitem.setVisibility(View.VISIBLE);
+          lv_check.setVisibility(View.GONE);
+        }else{
+          check_noitem.setVisibility(View.GONE);
+          lv_check.setVisibility(View.VISIBLE);
+          lv_check.setAdapter(checkAdapter);
+        }
+
+/*
         if(item.equals("全部")){
           devclassTasks.clear();
           devclassTasks.addAll(tasks);
@@ -190,9 +234,78 @@ public class CheckFragment extends Fragment {
           check_noitem.setVisibility(View.GONE);
           lv_check.setVisibility(View.VISIBLE);
           lv_check.setAdapter(checkAdapter);
-        }
+        }*/
       }
     });
+
+    sp_devclass.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+        if(item.toString().equals("全部")){
+          selectedClass = "全部";
+        }else{
+          selectedClass = getKeyByValue(searchUtil.getMapdevclass(),item.toString());
+        }
+        devclassTasks.clear();
+        for(int i=0;i<tasks.size();i++){
+          if(!selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            if(tasks.get(i).getTASKTYPE().equals(selectedType)&&tasks.get(i).getDEVCLASS().equals(selectedClass)){
+              devclassTasks.add(tasks.get(i));
+            }
+          }else if(!selectedType.equals("全部")&&selectedClass.equals("全部")){
+            if(tasks.get(i).getTASKTYPE().equals(selectedType)){
+              devclassTasks.add(tasks.get(i));
+            }
+
+          }else if(selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            if(tasks.get(i).getDEVCLASS().equals(selectedClass)){
+              devclassTasks.add(tasks.get(i));
+            }
+          }else{
+            devclassTasks.add(tasks.get(i));
+          }
+        }
+
+        if(devclassTasks.size() == 0){
+          if(selectedType.equals("全部")&&selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无数据");
+          }else  if(!selectedType.equals("全部")&&selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无"+selectedType+"数据");
+          }else if(!selectedType.equals("全部")&&!selectedClass.equals("全部")){
+            check_noitem_tv.setText("额，暂无"+selectedType+sp_devclass.getText().toString()+"数据");
+          }
+          check_noitem.setVisibility(View.VISIBLE);
+          lv_check.setVisibility(View.GONE);
+        }else{
+          check_noitem.setVisibility(View.GONE);
+          lv_check.setVisibility(View.VISIBLE);
+          lv_check.setAdapter(checkAdapter);
+        }
+
+/*
+        if(item.equals("全部")){
+          devclassTasks.clear();
+          devclassTasks.addAll(tasks);
+        }else{
+          devclassTasks.clear();
+          for(int i=0;i<tasks.size();i++){
+            if(tasks.get(i).getDEVCLASS().equals(getKeyByValue(searchUtil.getMapdevclass(),item.toString()))){
+              devclassTasks.add(tasks.get(i));
+            }
+          }
+        }
+        if(devclassTasks.size() == 0){
+          check_noitem.setVisibility(View.VISIBLE);
+          lv_check.setVisibility(View.GONE);
+        }else{
+          check_noitem.setVisibility(View.GONE);
+          lv_check.setVisibility(View.VISIBLE);
+          lv_check.setAdapter(checkAdapter);
+        }*/
+      }
+    });
+
+
 
 
     lv_check.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -200,6 +313,7 @@ public class CheckFragment extends Fragment {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         promptDialog.showLoading("任务获取中 ... ");
         Task task = tasks.get(position);
+        taskType = task.getTASKTYPE();
         String s = task.getUSEUNITNAME();
         String DEVCLASS = task.getDEVCLASS();
 
@@ -214,12 +328,12 @@ public class CheckFragment extends Fragment {
           }
         }
         else if(taskType.equals("整改")){
-            if(task.getRESULT().equals("2")){
-              getSaveReData(task,position);
-            }
-            else{
-              getReDetctionData(task,position);
-            }
+          if(task.getRESULT().equals("2")){
+            getSaveReData(task,position);
+          }
+          else{
+            getReDetctionData(task,position);
+          }
           Log.e(TAG," 整改："+"getReDetctionData");
         }else{
           String detectionResultList =  sharedPreferences.getString("detectionResultList",null);
@@ -244,14 +358,6 @@ public class CheckFragment extends Fragment {
 
     return view;
   }
-
-//    private void judgeAdapterAndSet(){
-//        if (taskType.equals(searchUtil.recify)){
-//            lv_check.setAdapter(checkAdapterForRecify);
-//        }else {
-//            lv_check.setAdapter(checkAdapter);
-//        }
-//    }
 
 
   public void goNextActivity(String detectionResultList,int position,Task task){
@@ -292,11 +398,10 @@ public class CheckFragment extends Fragment {
       detectionResult.setDEVID(task.getDEVID());
       detectionResult.setDEVCLASS(task.getDEVCLASS());
       detectionResult.setJIANCHAXIANGTITLE(items.get(position).getJIANCHAXIANGTITLE());
-      detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
-      detectionResult.setQUZHENG(items.get(position).getSHIFOUHEGEQUZHENG());
       detectionResult.setRUNWATERNUM(task.getRUNWATERNUM());
       detectionResult.setLAW(items.get(position).getLAW());
       detectionResult.setQIYEMINGCHENG(task.getUSEUNITNAME());
+      detectionResult.setQUZHENG(items.get(position).getSHIFOUHEGEQUZHENG());
       detectionResults.add(detectionResult);
       if(!items.get(position).getSHIFOUHEGEQUZHENG().equals("一律取证")){
         detectionResult.setSTATUS("0");
@@ -355,13 +460,17 @@ public class CheckFragment extends Fragment {
       public void onResponse(Result<List<DetailTask>> response, int id) {
         if(response.getMessage().equals("获取成功")) {
           List<DetailTask> items = response.getContent();
-          List<DetectionResult> detectionResults = creatDetectionResultList(items,task);
-          editorSharedPreferences(items,"listDetailTask");
-          editorSharedPreferences(detectionResults,"detectionResultList");
-          goReDetectionActivity(detectionResults,position,task);
+          if(items.size() == 0){
+            Toasty.error(getContext(),"获取失败，请联系我们").show();
+          }else{
+            List<DetectionResult> detectionResults = creatDetectionResultList(items,task);
+            editorSharedPreferences(items,"listDetailTask");
+            editorSharedPreferences(detectionResults,"detectionResultList");
+            goReDetectionActivity(detectionResults,position,task);
+          }
         }else {
           promptDialog.dismiss();
-          Toasty.error(getContext(),"获取失败！").show();
+          Toasty.error(getContext(),"获取失败,请联系我们").show();
         }
       }
     });
@@ -428,18 +537,22 @@ public class CheckFragment extends Fragment {
       public void onResponse(Result<List<DetectionResult>> listResult, int i) {
         if (listResult.getMessage().equals("获取成功")) {
           List<DetectionResult> list = listResult.getContent();
-          Log.e("size",list.size()+"");
+          if(list.size() == 0){
+            Toasty.error(getContext(),"获取失败，请联系我们").show();
+          }else {
+            Log.e("size", list.size() + "");
 //                    Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
-          for (DetectionResult d:list) {
-            d.setRUNWATERNUM(task.getRUNWATERNUM());
-          }
-          if(list.get(0).getRUNWATERNUM().equals(task.getRUNWATERNUM())){
-            editorSharedPreferences(list,"detectionResultList");
-            goRectifyListActivity(list,position,task);
+            for (DetectionResult d : list) {
+              d.setRUNWATERNUM(task.getRUNWATERNUM());
+            }
+            if (list.get(0).getRUNWATERNUM().equals(task.getRUNWATERNUM())) {
+              editorSharedPreferences(list, "detectionResultList");
+              goRectifyListActivity(list, position, task);
+            }
           }
         }else {
           promptDialog.dismiss();
-          Toasty.error(getContext(),"获取失败！").show();
+          Toasty.error(getContext(),"获取失败，请联系我们").show();
         }
       }
     });
@@ -468,14 +581,20 @@ public class CheckFragment extends Fragment {
       public void onResponse(Result<List<DetectionResult>> listResult, int i) {
         if (listResult.getMessage().equals("获取成功")) {
           List<DetectionResult> list = listResult.getContent();
-          Log.e("size",list.size()+"");
-          Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
-          intent.putExtra("items", (Serializable) list);
-          intent.putExtra("position",position);
-          intent.putExtra("task", task);
-          promptDialog.dismissImmediately();
-          startActivityForResult(intent,CHECKFRAGMENT);
+          if(list.size() == 0){
+            Toasty.error(getContext(),"获取失败,请联系我们").show();
+            return;
+          }else {
+            Log.e("size", list.size() + "");
+            Intent intent = new Intent(getActivity(), ReDetectionActivity.class);
+            intent.putExtra("items", (Serializable) list);
+            intent.putExtra("position", position);
+            intent.putExtra("task", task);
+            promptDialog.dismissImmediately();
+            startActivityForResult(intent, CHECKFRAGMENT);
+          }
         }else {
+          Toasty.error(getContext(),"获取失败,请联系我们").show();
           promptDialog.dismiss();
         }
       }
@@ -505,14 +624,19 @@ public class CheckFragment extends Fragment {
       public void onResponse(Result<List<DetectionResult>> listResult, int i) {
         if (listResult.getMessage().equals("获取成功")) {
           List<DetectionResult> list = listResult.getContent();
-          Log.e("size",list.size()+"");
-          Intent intent = new Intent(getActivity(), RectifyListActivity.class);
-          intent.putExtra("items", (Serializable) list);
-          intent.putExtra("position",position);
-          intent.putExtra("task", task);
-          promptDialog.dismissImmediately();
-          startActivityForResult(intent,CHECKFRAGMENT);
+          if(list.size() == 0){
+            Toasty.error(getContext(),"获取失败,请联系我们").show();
+            return;
+          }else{
+            Intent intent = new Intent(getActivity(), RectifyListActivity.class);
+            intent.putExtra("items", (Serializable) list);
+            intent.putExtra("position",position);
+            intent.putExtra("task", task);
+            promptDialog.dismissImmediately();
+            startActivityForResult(intent,CHECKFRAGMENT);
+          }
         }else {
+          Toasty.error(getContext(),"获取失败,请联系我们").show();
           promptDialog.dismiss();
         }
       }

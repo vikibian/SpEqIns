@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -26,8 +27,10 @@ import com.qmuiteam.qmui.widget.tab.QMUITab;
 import com.qmuiteam.qmui.widget.tab.QMUITabBuilder;
 import com.qmuiteam.qmui.widget.tab.QMUITabSegment;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
@@ -85,8 +88,6 @@ public class TemporaryTaskFragment extends Fragment  {
 
         //使用适配器将ViewPager与Fragment绑定在一起
         mViewPager = view.findViewById(R.id.fragment_temp_viewpager);
-        myFragmentPagerAdapter = new TemporaryTaskFragmentAdapter(getActivity().getSupportFragmentManager());
-        mViewPager.setAdapter(myFragmentPagerAdapter);
 
         //将TabLayout与ViewPager绑定在一起
         mTabLayout = view.findViewById(R.id.fragment_temp_tabLayout);
@@ -99,4 +100,10 @@ public class TemporaryTaskFragment extends Fragment  {
     }
 
 
+  @Override
+  public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    myFragmentPagerAdapter = new TemporaryTaskFragmentAdapter(getChildFragmentManager());
+    mViewPager.setAdapter(myFragmentPagerAdapter);
+  }
 }

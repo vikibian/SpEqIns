@@ -201,6 +201,7 @@
         <activity
             android:name=".activity.FragmentManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

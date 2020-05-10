@@ -35,114 +35,108 @@
 
             </androidx.appcompat.widget.Toolbar>
 
-            <ScrollView
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
 
                     <LinearLayout
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp">
+                        android:layout_height="50dp">
 
-                        <LinearLayout
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp">
+                        <TextView
+                            android:textColor="@color/black"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="手   机  号："
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent" />
 
-                            <TextView
-                                android:textColor="@color/black"
-                                android:textSize="15dp"
-                                android:gravity="center"
-                                android:layout_weight="1"
-                                android:text="手   机  号："
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-
-                            <EditText
-                                android:paddingLeft="2dp"
-                                android:id="@+id/me_resetphone_phone"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="11"
-                                android:background="@color/white"
-                                android:maxLines="1"
-                                android:textSize="15dp" />
-
-
-
-                        </LinearLayout>
+                        <EditText
+                            android:paddingLeft="2dp"
+                            android:id="@+id/me_resetphone_phone"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="11"
+                            android:background="@color/white"
+                            android:maxLines="1"
+                            android:textSize="15dp" />
 
 
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp">
 
-                        <LinearLayout
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp">
-
-                            <TextView
-                                android:textColor="@color/black"
-                                android:textSize="15dp"
-                                android:gravity="center"
-                                android:layout_weight="1"
-                                android:text="新手机号："
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent" />
-
-                            <EditText
-                                android:paddingLeft="2dp"
-                                android:id="@+id/me_resetphone_newphone"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="11"
-                                android:background="@color/white"
-                                android:maxLines="1"
-                                android:textSize="15dp" />
-
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_marginRight="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="35dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <Button
-                            android:id="@+id/me_resetphone_change"
-                            android:textColor="@color/white"
-                            android:text="更换手机号"
-                            android:background="@drawable/bg_button2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
 
                 </LinearLayout>
 
-            </ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <LinearLayout
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp">
+
+                        <TextView
+                            android:textColor="@color/black"
+                            android:textSize="15dp"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="新手机号："
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent" />
+
+                        <EditText
+                            android:paddingLeft="2dp"
+                            android:id="@+id/me_resetphone_newphone"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="11"
+                            android:background="@color/white"
+                            android:maxLines="1"
+                            android:textSize="15dp" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="35dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/me_resetphone_change"
+                        android:textColor="@color/white"
+                        android:text="更换手机号"
+                        android:background="@drawable/bg_button2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -95,6 +95,7 @@
         android:visibility="visible"
         android:orientation="vertical">
         <TextView
+          android:id="@+id/check_noitem_tv"
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="center"

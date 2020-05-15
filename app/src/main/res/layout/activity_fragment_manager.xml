@@ -80,9 +80,9 @@
 
         android:orientation="horizontal"
 
-        android:gravity="center"
+        android:gravity="bottom"
 
-        android:layout_gravity="center"
+        android:layout_gravity="bottom"
 
         android:background="@color/tab_gb"
 

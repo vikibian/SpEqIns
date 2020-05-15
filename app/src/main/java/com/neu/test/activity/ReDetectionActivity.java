@@ -62,6 +62,7 @@ import com.neu.test.util.ClickUtil;
 import com.neu.test.util.PermissionUtils;
 import com.neu.test.util.SearchUtil;
 import com.neu.test.util.ToastUtil;
+import com.xiaweizi.marquee.MarqueeTextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -139,12 +140,14 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
     Dialog dlg;
     PromptDialog promptDialog;
     private PermissionUtils permissionUtils;
+    private  boolean[] isFirst;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detction);
+
         promptDialog = new PromptDialog(this);
         permissionUtils = new PermissionUtils(this,ReDetectionActivity.this,null,null);
         intent1 = getIntent();
@@ -188,6 +191,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
 //        ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
 
+        isFirst = new boolean[detectionResults.size()];
         reflashTotalItem();
         setEnable(button_left);//默认选择未操作的
         detectionAdapter = new ReDetectionActivity.ReDetectionAdapter(detectionundo,undo);
@@ -475,6 +479,8 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             detectionResult.setDEVID(detectionResults.get(0).getDEVID());
                             detectionResult.setDEVCLASS(detectionResults.get(0).getDEVCLASS());
                             detectionResult.setLOGINNAME(detectionResults.get(0).getLOGINNAME());
+                            detectionResult.setQUZHENG("一律取证");
+                            detectionResult.setQIYEMINGCHENG(detectionResults.get(0).getQIYEMINGCHENG());
 //                            ToastUtil.showNumber(getApplicationContext(),detectionResults.size()+"");
                             detectionadd.add(detectionResult);
                             detectionResults.add(detectionResult);
@@ -600,7 +606,16 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
             convertView.setTag(viewHolder);
             //检查项标题
-            viewHolder.detction_item_text_context.setText(listdetectionresult.get(position).getJIANCHAXIANGTITLE());
+          /*List<String> ll = new ArrayList<>();
+          ll.clear();
+          ll.add(listdetectionresult.get(position).getJIANCHAXIANGTITLE()+"555");
+          viewHolder.detction_item_text_context.setContent(ll);*/
+           viewHolder.detction_item_text_context.setText(listdetectionresult.get(position).getJIANCHAXIANGTITLE());
+           if(!isFirst[position]){
+             viewHolder.detction_item_text_context.startScroll();
+             isFirst[position] = true;
+           }
+
 
             //检查任务的number设置
             viewHolder.detction_item_text_leftnum.setText(position+1+"");
@@ -664,7 +679,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             }else{
                                 //页面跳转
                                 //detectionResults.get(position).setSTATUS("1");
-                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                if (!listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
                                     promptDialog.showLoading("加载中 ... ");
                                     jumpToSuggesstionActivity( getIndex(flag,position),"1");
                                 }
@@ -679,7 +694,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                                 reflashList(listdetectionresult,flag);
                             }else{
                                 //页面跳转  现场整改
-                                if (listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
+                                if (!listdetectionresult.get(position).getQUZHENG().equals("不用取证")){
                                     promptDialog.showLoading("加载中 ... ");
                                     jumpToRectifyResultActivity( getIndex(flag,position),"3");
                                     reflashList(listdetectionresult,flag);
@@ -701,6 +716,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
                             dlg = new Dialog(ReDetectionActivity.this,R.style.FullScreen);
                             View textEntryView = View.inflate(ReDetectionActivity.this,R.layout.show_law_and_other, null);
                             TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
+                            TextView tv_paichaxxiangmu = textEntryView.findViewById(R.id.tv_paichaxxiangmu);
                             TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
                             Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
                             btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -712,6 +728,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 //                    tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
 //                    tv_laws.setText(detectionResults.get(position).getLAW());
                             tv_paichaxize.setText(detectionResults.get(getIndex(flag,position)).getCHECKCONTENT());
+                            tv_paichaxxiangmu.setText(detectionResults.get(getIndex(flag,position)).getJIANCHAXIANGTITLE());
                             tv_laws.setText(detectionResults.get(getIndex(flag,position)).getLAW());
                             dlg.setContentView(textEntryView);
                             dlg.show();
@@ -897,7 +914,7 @@ public class ReDetectionActivity extends BaseActivity implements View.OnClickLis
 
 
     static class ViewHolder{
-        public MyTextView detction_item_text_context;
+        public MarqueeTextView detction_item_text_context;
         public TextView detction_item_text_leftnum;
         public CheckBox rectify_item_status_unrectify;
         public CheckBox rectify_item_status_rectified;

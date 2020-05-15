@@ -5,400 +5,413 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:windowSoftInputMode="adjustPan"
     android:background="#EEEEEE">
 
-
-    <ScrollView
-
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical"
+        <ScrollView
+            android:layout_above="@id/button_lin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:paddingBottom="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="任务名: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <EditText
+                        android:id="@+id/draft_task_edittext_taskID"
+                        android:textSize="13dp"
+                        android:hint="请输入任务名..."
+                        android:paddingLeft="5dp"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="2.52"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="任务来源: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/draft_task_spinner_tasksource"
+                        style="@android:style/Widget.Spinner"
+                        android:layout_marginLeft="5dp"
+                        android:textAlignment="textStart"
+                        android:layout_weight="2.5"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="方案名称: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/draft_task_spinner_fangan"
+                        style="@android:style/Widget.Spinner"
+                        android:layout_marginLeft="5dp"
+                        android:textAlignment="textStart"
+                        android:layout_weight="2.5"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="截止时间: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/draft_task_textview_deadline"
+                        android:textSize="13dp"
+                        android:hint="请选择截止时间..."
+                        android:paddingLeft="5dp"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="2.52"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="设备种类: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/draft_task_spinner_devtype"
+                        style="@android:style/Widget.Spinner"
+                        android:layout_marginLeft="5dp"
+                        android:textAlignment="textStart"
+                        android:layout_weight="2.5"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+              <LinearLayout
+                android:id="@+id/ll_devid_task"
+                android:visibility="gone"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:paddingBottom="5dp"
+                android:layout_marginTop="4dp"
+                android:paddingBottom="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="任务名: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
+                  android:paddingTop="9dp"
+                  android:paddingBottom="9dp"
+                  android:background="@drawable/bg_drafttask"
+                  android:gravity="center"
+                  android:layout_gravity="center_vertical"
+                  android:textSize="15dp"
+                  android:textAlignment="center"
+                  android:layout_weight="1"
+                  android:text="设备ID: "
+                  android:textColor="@color/black"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent" />
 
                 <EditText
-                    android:id="@+id/draft_task_edittext_taskID"
-                    android:textSize="13dp"
-                    android:hint="请输入任务名..."
-                    android:paddingLeft="5dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="2.52"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
+                  android:id="@+id/draft_task_edittext_devID"
+                  android:textSize="13dp"
+                  android:hint="请输入设备ID..."
+                  android:text="1000010000"
+                  android:paddingLeft="5dp"
+                  android:paddingTop="9dp"
+                  android:paddingBottom="9dp"
+                  android:background="@drawable/bg_drafttask"
+                  android:layout_marginLeft="5dp"
+                  android:layout_weight="2.52"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent" />
+
+              </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/zq_tv"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="检验周期: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <com.jaredrummler.materialspinner.MaterialSpinner
+                        android:id="@+id/draft_task_spinner_checkperiod"
+                        style="@android:style/Widget.Spinner"
+                        android:layout_marginLeft="5dp"
+                        android:textAlignment="textStart"
+                        android:layout_weight="2.5"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="企业名称: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/draft_task_textview_companyname"
+                        android:textSize="13dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="2.52"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:gravity="center"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="15dp"
+                        android:textAlignment="center"
+                        android:layout_weight="1"
+                        android:text="排查人员: "
+                        android:textColor="@color/black"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:id="@+id/draft_task_textview_person"
+                        android:textSize="13dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        android:background="@drawable/bg_drafttask"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="2.52"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        </ScrollView>
 
-                <TextView
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="任务来源: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
+        <LinearLayout
+            android:id="@+id/button_lin"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
 
-                <com.jaredrummler.materialspinner.MaterialSpinner
-                    android:id="@+id/draft_task_spinner_tasksource"
-                    style="@android:style/Widget.Spinner"
-                    android:layout_marginLeft="5dp"
-                    android:textAlignment="textStart"
-                    android:layout_weight="2.5"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_task_button_getCheckItem"
+                android:textColor="@color/white"
+                android:text="获取检查项"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="方案名称: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <com.jaredrummler.materialspinner.MaterialSpinner
-                    android:id="@+id/draft_task_spinner_fangan"
-                    style="@android:style/Widget.Spinner"
-                    android:layout_marginLeft="5dp"
-                    android:textAlignment="textStart"
-                    android:layout_weight="2.5"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="设备ID: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <EditText
-                    android:id="@+id/draft_task_edittext_devID"
-                    android:textSize="13dp"
-                    android:hint="请输入设备ID..."
-                    android:paddingLeft="5dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="2.52"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="截止时间: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/draft_task_textview_deadline"
-                    android:textSize="13dp"
-                    android:hint="请选择截止时间..."
-                    android:paddingLeft="5dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="2.52"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="设备种类: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <com.jaredrummler.materialspinner.MaterialSpinner
-                    android:id="@+id/draft_task_spinner_devtype"
-                    style="@android:style/Widget.Spinner"
-                    android:layout_marginLeft="5dp"
-                    android:textAlignment="textStart"
-                    android:layout_weight="2.5"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/zq_tv"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="检验周期: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <com.jaredrummler.materialspinner.MaterialSpinner
-                    android:id="@+id/draft_task_spinner_checkperiod"
-                    style="@android:style/Widget.Spinner"
-                    android:layout_marginLeft="5dp"
-                    android:textAlignment="textStart"
-                    android:layout_weight="2.5"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="企业名称: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/draft_task_textview_companyname"
-                    android:textSize="13dp"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="2.52"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="4dp"
-                android:paddingBottom="4dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="15dp"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:text="排查人员: "
-                    android:textColor="@color/black"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/draft_task_textview_person"
-                    android:textSize="13dp"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:background="@drawable/bg_drafttask"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="2.52"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" />
-
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_task_button_donwload"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:text="下载方案"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
 
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginRight="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="30dp"
-                android:layout_width="match_parent"
-                android:layout_height="35dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/draft_task_button_getCheckItem"
-                    android:textColor="@color/white"
-                    android:text="获取检查项"
-                    android:background="@drawable/bg_button2"
-                    android:layout_weight="1"
-                    android:layout_marginRight="3dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/draft_task_button_donwload"
-                    android:visibility="gone"
-                    android:textColor="@color/white"
-                    android:text="下载方案"
-                    android:background="@drawable/bg_button2"
-                    android:layout_weight="1"
-                    android:layout_marginRight="3dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_task_button_lookFangAn"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:text="查看方案"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_marginRight="3dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
 
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/draft_task_button_lookFangAn"
-                    android:visibility="gone"
-                    android:textColor="@color/white"
-                    android:text="查看方案"
-                    android:background="@drawable/bg_button2"
-                    android:layout_weight="1"
-                    android:layout_marginRight="3dp"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/draft_task_button_ok"
-                    android:textColor="@color/white"
-                    android:text="确定"
-                    android:layout_marginLeft="3dp"
-                    android:background="@drawable/bg_button2"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/draft_task_button_ok"
+                android:textColor="@color/white"
+                android:text="确定"
+                android:layout_marginLeft="3dp"
+                android:background="@drawable/bg_button2"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
-    </ScrollView>
+    </RelativeLayout>
+
+
+
 
 </LinearLayout>

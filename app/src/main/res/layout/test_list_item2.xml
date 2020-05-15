@@ -66,17 +66,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <com.neu.test.layout.MyTextView
-                        android:layout_marginTop="2dp"
-                        android:layout_weight="8"
-                        android:id="@+id/detction_item_text_context_2"
-                        android:textColor="@color/black"
-                        android:textSize="?fontsize_1"
-                        android:ellipsize="marquee"
-                        android:text="管道安全"
-                        android:singleLine="true"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                    <com.xiaweizi.marquee.MarqueeTextView
+                      android:layout_marginTop="2dp"
+                      android:layout_weight="8"
+                      android:layout_width="0dp"
+                      android:text="ttttt"
+                      android:textSize="?fontsize_3"
+                      app:scroll_first_delay="0"
+                      app:scroll_interval="2800"
+                      app:scroll_mode="mode_once"
+                      android:id="@+id/detction_item_text_context_2"
+                      android:layout_height="wrap_content" />
 
                     <RelativeLayout
 

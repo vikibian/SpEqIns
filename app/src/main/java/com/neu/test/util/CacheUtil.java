@@ -57,6 +57,9 @@ public class CacheUtil {
             fis = new FileInputStream(file);
             size = fis.available();
             Log.e("获取文件大小",size+"-");
+            if(fis != null){
+              fis.close();
+            }
         }
         else{
             file.createNewFile();

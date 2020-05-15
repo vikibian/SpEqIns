@@ -167,6 +167,12 @@ public class SearchFragment extends Fragment implements View.OnClickListener {
         });
 
         initsidebar();
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          getSearchedData();
+        }
+      }).start();
 
         return view;
     }

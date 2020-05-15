@@ -45,6 +45,7 @@ public class OkHttp {
                 .content(gsonString)
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()
+                .readTimeOut(20000)
                 .execute(Callback);
         Log.d(TAG,"Okhttp: --> postString");
 

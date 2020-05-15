@@ -2,6 +2,7 @@ package com.neu.test.fragment;
 
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +69,7 @@ public class MakeListFragment extends Fragment implements View.OnClickListener {
     private Toolbar generate_toolbar;//顶部导航
     private TextView generate_toolbar_textview;//顶部导航
     private String task_devclass = "10000";//设备种类
-    private List<CheckLists> checkLists;
+    private List<CheckLists> checkLists = new ArrayList<>();
     private PromptDialog promptDialog;
 
     public MakeListFragment() {
@@ -83,6 +84,7 @@ public class MakeListFragment extends Fragment implements View.OnClickListener {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         SimpleToolbar simple_toolbar = activity.findViewById(R.id.simple_toolbar);
         simple_toolbar.setVisibility(View.VISIBLE);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         searchUtil = new SearchUtil();
         promptDialog = new PromptDialog(getActivity());
 
@@ -123,8 +125,20 @@ public class MakeListFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.generate_button_sure:
+              if (generate_edittext_fanganname.getText().toString().replace(" ","").equals("")){
+                Toasty.error(getContext(),"请输入有效方案名称").show();
+                return;
+              }
+              if (generate_edittext_fangan.getText().toString().replace(" ","").equals("")){
+                Toasty.error(getContext(),"请输入有效方案描述").show();
+                return;
+              }
+              if(checkLists.size() == 0){
+                Toasty.error(getContext(),"请添加检查项").show();
+              }else{
                 promptDialog.showLoading("方案生成中 ...");
                 draftTask();
+              }
                 break;
             case R.id.generate_button_addCheckItem:
                 promptDialog.showLoading("检查项获取中 ...");
@@ -209,7 +223,8 @@ public class MakeListFragment extends Fragment implements View.OnClickListener {
             cl.setSHENGXIAOTIME(time);
             cl.setUNITNAME(LoginActivity.user.getUSEUNITNAME());
             cl.setSTARANDMIAOSHU(generate_edittext_fangan.getText().toString().replace(" ",""));
-            cl.setSTARANDNAME(generate_edittext_fanganname.getText().toString().replace(" ",""));
+            cl.setSTARANDNAME(generate_edittext_fanganname.getText().toString().replace(" ","")
+              +"_"+generate_spinner_devtype.getText().toString());
             if(cl.getDEVCLASS().equals("10000")){//通用
                 if (!checkLists.contains(checkLists1)){
                     checkLists.add(checkLists1);
@@ -264,10 +279,13 @@ public class MakeListFragment extends Fragment implements View.OnClickListener {
 
                 if(response.getMessage().equals("操作成功")){
                     Toasty.success(getContext(),"成功").show();
-                    promptDialog = null;
+                  generate_edittext_fanganname.setText(null);
+                  generate_edittext_fangan.setText(null);
+
+                    promptDialog.dismissImmediately();
 //                    finish();
                 }else{
-                    promptDialog = null;
+                    promptDialog.dismissImmediately();
                     Toasty.error(getContext(),"操作失败，请稍后重试").show();
                 }
 

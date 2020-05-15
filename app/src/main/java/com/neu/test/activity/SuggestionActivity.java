@@ -218,7 +218,7 @@ public class SuggestionActivity extends BaseActivity implements View.OnClickList
 
     private void submit(){
         if (pathlistOfPhoto.size() == 0) {
-            Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
+            //Toasty.warning(SuggestionActivity.this,"没有选择图片或视频！", Toast.LENGTH_LONG,true).show();
             resetAttribute();
             intent.putExtra("detectionResult",detectionResult);
             intent.putExtra("position",position);

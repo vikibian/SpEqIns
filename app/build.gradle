@@ -15,8 +15,8 @@ android {
         applicationId "com.neu.test"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -181,6 +181,13 @@ dependencies {
     implementation files('libs/activation.jar')
     implementation files('libs/additionnal.jar')
     implementation files('libs/mail.jar')
+
+  //跑马灯
+  implementation 'com.github.xiaweizi:MarqueeTextView:1.0'
+
+
+
+
 }
 
 repositories {

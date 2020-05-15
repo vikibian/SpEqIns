@@ -316,6 +316,7 @@ public class RectifyListActivity extends BaseActivity  {
                             dlg = new Dialog(RectifyListActivity.this,R.style.FullScreen);
                             View textEntryView = View.inflate(RectifyListActivity.this,R.layout.show_law_and_other, null);
                             TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
+                            TextView tv_paichaxxiangmu = textEntryView.findViewById(R.id.tv_paichaxxiangmu);
                             TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
                             Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
                             btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -325,6 +326,7 @@ public class RectifyListActivity extends BaseActivity  {
                                 }
                             });
                             tv_paichaxize.setText(detectionResults.get(position).getCHECKCONTENT());
+                            tv_paichaxxiangmu.setText(detectionResults.get(position).getJIANCHAXIANGTITLE());
                             tv_laws.setText(detectionResults.get(position).getLAW());
                             dlg.setContentView(textEntryView);
                             dlg.show();

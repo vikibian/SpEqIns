@@ -38,16 +38,20 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-
+<!-- 当allowBackup未设置值（默认值为true）或者标志值为true时，攻击者可通过adb backup和adb restore来备份和恢复应用程序数据-->
+<!-- android:debuggable="false"（默认值为true）当debuggable标志值为true时，该程序可被任意调试，导致APP被恶意攻击者控制-->
+  <!-- 资源关闭前先判断是否为null,且放在finally里-->
     <application
         android:allowBackup="true"
+
         android:icon="@drawable/fangdajing"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+      >
 
         <activity android:name=".activity.BoSourceActivity"
             android:theme="@style/NoBar">
@@ -201,10 +205,11 @@
         <activity
             android:name=".activity.FragmentManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/QMNoBar" />
+            android:theme="@style/QMNoBar"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

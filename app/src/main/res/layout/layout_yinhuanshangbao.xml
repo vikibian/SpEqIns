@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:background="#EEEEEE">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+      android:layout_above="@+id/button_lin"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="4dp"
+          android:paddingBottom="4dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+            android:background="@drawable/bg_drafttask"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:text="设备类型: "
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+          <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/draft_yinhuan_spinner_devtype"
+            style="@android:style/Widget.Spinner"
+            android:layout_marginLeft="5dp"
+            android:textAlignment="textStart"
+            android:layout_weight="2.5"
+            android:background="@drawable/bg_drafttask"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/ll_devid_yinhuan"
+          android:visibility="gone"
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="10dp"
+          android:paddingBottom="5dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:text="设备ID: "
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+          <EditText
+            android:id="@+id/draft_yinhuan_edittext_devID"
+            android:textSize="13sp"
+            android:hint="请输入设备ID..."
+            android:text="1000010000"
+            android:paddingLeft="5dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="2.52"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="4dp"
+          android:paddingBottom="4dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:text="隐患内容: "
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+          <EditText
+            android:id="@+id/draft_yinhuan_edittext_content"
+            android:textSize="13sp"
+            android:hint="请输入隐患内容..."
+            android:paddingLeft="5dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="2.52"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="4dp"
+          android:paddingBottom="4dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:text="隐患原因分析: "
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+          <EditText
+            android:id="@+id/draft_yinhuan_edittext_fenxi"
+            android:textSize="13sp"
+            android:hint="请输入原因分析..."
+            android:paddingLeft="5dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="2.52"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/ll_zhili"
+          android:visibility="gone"
+          android:layout_marginLeft="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginTop="4dp"
+          android:paddingBottom="4dp"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+          <TextView
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="13sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:text="治理措施: "
+            android:textColor="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+
+          <EditText
+            android:id="@+id/draft_yinhuan_edittext_zhilicuoshi"
+            android:textSize="13sp"
+            android:hint="请输入治理措施..."
+            android:paddingLeft="5dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:background="@drawable/bg_drafttask"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="2.52"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+      </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+      android:layout_alignParentBottom="true"
+      android:id="@+id/button_lin"
+      android:orientation="horizontal"
+      android:layout_marginRight="8dp"
+      android:layout_marginLeft="8dp"
+      android:layout_marginTop="5dp"
+      android:layout_width="match_parent"
+      android:layout_height="30dp">
+
+      <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/draft_yinhuan_button_zhili"
+        android:textColor="@color/white"
+        android:text="隐患治理"
+        android:background="@drawable/bg_button2"
+        android:layout_weight="1"
+        android:layout_marginRight="3dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+      <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/draft_yinhuan_button_upload"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:text="结果上报"
+        android:background="@drawable/bg_button2"
+        android:layout_weight="1"
+        android:layout_marginRight="3dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+
+      <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/draft_yinhuan_button_shangbao"
+        android:textColor="@color/white"
+        android:text="隐患上报"
+        android:layout_marginLeft="3dp"
+        android:background="@drawable/bg_button2"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+
+</LinearLayout>

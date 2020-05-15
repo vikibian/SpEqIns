@@ -32,6 +32,32 @@
           />
       </RelativeLayout>
       <LinearLayout
+        android:background="@color/whitesmoke"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+          android:layout_marginLeft="15dp"
+          android:layout_marginTop="5dp"
+          android:textColor="@color/black"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="20dp"
+          android:text="排查项目："/>
+        <TextView
+          android:padding="5dp"
+          android:layout_marginLeft="15dp"
+          android:layout_marginTop="15dp"
+          android:layout_marginRight="15dp"
+          android:layout_marginBottom="5dp"
+          android:id="@+id/tv_paichaxxiangmu"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="18dp"
+          />
+      </LinearLayout>
+      <LinearLayout
           android:background="@color/whitesmoke"
           android:layout_marginTop="10dp"
           android:layout_width="match_parent"

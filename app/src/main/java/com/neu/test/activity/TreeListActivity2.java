@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -213,6 +214,8 @@ public class TreeListActivity2 extends AppCompatActivity {
         public void onClick(View v) {
           Dialog dlg = new Dialog(TreeListActivity2.this,R.style.FullScreen);
           View textEntryView = View.inflate(TreeListActivity2.this,R.layout.show_law_and_other, null);
+          LinearLayout linearLayout = textEntryView.findViewById(R.id.xiangmuID);
+          linearLayout.setVisibility(View.GONE);
           TextView tv_paichaxize = textEntryView.findViewById(R.id.tv_paichaxize);
           TextView tv_laws = textEntryView.findViewById(R.id.tv_laws);
           Button btn_cancel = textEntryView.findViewById(R.id.btn_cancel);
